@@ -1,3 +1,4 @@
+import Main from '../screen/Main';
 import Loading from '../components/Loading';
 import Settings from '../data/Settings';
 import { screen } from '../types/enums';
@@ -18,7 +19,7 @@ class UI extends Phaser.Scene {
 
   public create(): void {
     if (Settings.getScreen() === screen.MAIN) {
-
+      new Main(this)
     }
   }
 

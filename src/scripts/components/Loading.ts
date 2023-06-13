@@ -1,4 +1,4 @@
-// import img from '../../assets/images/img.png';
+import buttonGreen from '../../assets/images/button-green.png';
 
 // import sound from '../../assets/images/sound.mp3';
 
@@ -45,7 +45,7 @@ class Loading {
   }
 
   private _loadImages(): void {
-    // this._scene.load.image('img', img);
+    this._scene.load.image('button-green', buttonGreen);
   }
 
   private _loadSounds(): void {

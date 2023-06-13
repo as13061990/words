@@ -10,6 +10,8 @@ class Settings {
   }
   private _screen: screen = screen.MAIN;
   private _mobile: boolean = false;
+  private _level: number = null
+
   public sounds: Isounds;
   public interval: Interval;
 
@@ -28,6 +30,14 @@ class Settings {
 
   public setMobile(mobile: boolean): void {
     this._mobile = mobile;
+  }
+
+  public setLevel(level:number): void {
+    this._level = level
+  }
+
+  public getLevel(): number {
+    return this._level
   }
 }
 

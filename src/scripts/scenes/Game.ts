@@ -20,7 +20,6 @@ class Game extends Phaser.Scene {
 
   public create(): void {
     this.actions.build();
-    this.scene.launch('UI');
   }
 
 
