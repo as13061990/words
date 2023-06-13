@@ -1,17 +1,17 @@
 import Button from "../components/Button";
 import Settings from "../data/Settings";
-import UI from "../scenes/UI";
+import Menu from "../scenes/Menu";
 
 
 const buttons = [{text: '1 уровень', level: 1}, {text: '2 уровень', level: 2}, {text: '3 уровень', level: 3},]
 
 class Main {
-  constructor(scene: UI) {
-    this._scene = scene;
+  constructor(scene: Menu) {
+    this._scene = scene
     this._build();
   }
 
-  private _scene: UI;
+  private _scene: Menu;
 
   private _build(): void {
     const { centerX, centerY } = this._scene.cameras.main;

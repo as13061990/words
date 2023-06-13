@@ -3,9 +3,9 @@ import Loading from '../components/Loading';
 import Settings from '../data/Settings';
 import { screen } from '../types/enums';
 
-class UI extends Phaser.Scene {
+class Menu extends Phaser.Scene {
   constructor() {
-    super('UI');
+    super('Menu');
   }
 
   private _loading: boolean = false;
@@ -74,4 +74,4 @@ class UI extends Phaser.Scene {
   }
 }
 
-export default UI;
+export default Menu;

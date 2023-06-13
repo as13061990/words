@@ -8,6 +8,7 @@ class Game extends Phaser.Scene {
   }
 
   public actions: GameActions = new GameActions(this);
+  public title: Phaser.GameObjects.Text
 
   public init(): void {
 

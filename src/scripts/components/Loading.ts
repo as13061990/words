@@ -1,4 +1,5 @@
 import buttonGreen from '../../assets/images/button-green.png';
+import wordLetter from '../../assets/images/word-letter.png';
 
 // import sound from '../../assets/images/sound.mp3';
 
@@ -46,6 +47,7 @@ class Loading {
 
   private _loadImages(): void {
     this._scene.load.image('button-green', buttonGreen);
+    this._scene.load.image('word-letter', wordLetter);
   }
 
   private _loadSounds(): void {
