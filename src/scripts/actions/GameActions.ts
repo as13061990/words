@@ -1,4 +1,5 @@
 import Button from "../components/Button";
+import Letters from "../components/Letters";
 import Word from "../components/Word";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
@@ -27,7 +28,6 @@ class GameActions {
 
   private _scene: Game;
   private _level: number
-  private _words: Word[] = []
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -40,12 +40,13 @@ class GameActions {
     btn.callback = this._back.bind(this)
 
     this._scene.title = this._scene.add.text(centerX, centerY - 400, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
-
+    
     this._generateWords()
+    this._generateLetters()
   }
 
   private _generateWords(): void {
-    const { centerX, centerY } = this._scene.cameras.main
+    const { centerX } = this._scene.cameras.main
 
     const wordsStringArr = levels[this._level - 1].words
 
@@ -56,9 +57,15 @@ class GameActions {
       return a.localeCompare(b);
     });
 
-    wordsStringArr.forEach((word, i)=>{
-      this._words.push(new Word(this._scene, word, centerX, this._scene.title.getBounds().bottom + 80 + (i * 110))) 
+    wordsStringArr.forEach((word, i) => {
+      this._scene.words.push(new Word(this._scene, word, centerX, this._scene.title.getBounds().bottom + 80 + (i * 110)))
     })
+  }
+
+  private _generateLetters(): void {
+    const { centerX } = this._scene.cameras.main
+    const lettersStringArr = levels[this._level - 1].letters
+    new Letters(this._scene, lettersStringArr, centerX, this._scene.words[this._scene.words.length - 1].sprite.getBounds().bottom + 250, )
   }
 
   private _back(): void {

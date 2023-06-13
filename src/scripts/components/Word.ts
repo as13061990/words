@@ -11,14 +11,15 @@ class Word {
   private _word: string
   private _x: number
   private _y: number
+  public sprite: Phaser.GameObjects.Sprite
 
   private _build(): void {
-    const emptySprite = this._scene.add.sprite(this._x, this._y, 'word-letter').setOrigin(0.5, 0.5)
-    emptySprite.setDisplaySize(emptySprite.width * this._word.length, emptySprite.height)
-    emptySprite.setAlpha(0)
+    this.sprite = this._scene.add.sprite(this._x, this._y, 'word-letter').setOrigin(0.5, 0.5)
+    this.sprite.setDisplaySize(this._word.length * 108, this.sprite.height)
+    this.sprite.setAlpha(0)
 
     this._word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(emptySprite.getBounds().left + (i * 110), this._y, 'word-letter').setOrigin(0, 0.5)
+      const sprite = this._scene.add.sprite(this.sprite.getBounds().left + (i * 110), this._y, 'word-letter').setOrigin(0, 0.5)
       this._scene.add.existing(sprite)
     })
   }
