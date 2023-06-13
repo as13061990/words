@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import Settings from "../data/Settings";
+import Session from "../data/Session";
 import Menu from "../scenes/Menu";
 
 
@@ -31,7 +31,7 @@ class Main {
 
   private _play(level: number): void {
     this._scene.scene.start('Game');
-    Settings.setLevel(level)
+    Session.setLevel(level)
   }
 }
 

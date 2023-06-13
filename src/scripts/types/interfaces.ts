@@ -12,3 +12,7 @@ interface Isounds {
   unmute: () => void;
   getVolume: () => number;
 }
+interface ILevel {
+  words: string[],
+  letters: string[]
+}
