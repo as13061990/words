@@ -6,6 +6,7 @@ import Word from "../components/Word";
 import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Game from "../scenes/Game";
+import { currentWordType } from "../types/enums";
 
 
 const levels = [
@@ -60,7 +61,7 @@ class GameActions {
   private _createWords(): void {
     const { centerX } = this._scene.cameras.main
 
-    const wordsStringArr = levels[this._level - 1].words
+    const wordsStringArr = Session.getLevelWords()
 
     wordsStringArr.sort((a, b) => {
       if (a.length !== b.length) {
@@ -75,7 +76,7 @@ class GameActions {
   }
 
   private _createCurrentWord(): void {
-    new CurrentWord(this._scene)
+    this._scene.currentWord = new CurrentWord(this._scene)
   }
 
   private _createLettersCircle(): void {
@@ -101,11 +102,11 @@ class GameActions {
   private _addLogicToLetterButtons(): void {
 
     for (let button of this._scene.letterButtons) {
-
       const zone = Zone.createFromSprite(button)
       const letter = button.getLetter()
 
       zone.downClickCallback = () => {
+        this._scene.currentWord.destroyAll()
         Session.addLetterToCurrentWord(letter)
         button.setActivated(true)
         button.scaleTween()
@@ -113,6 +114,7 @@ class GameActions {
 
       zone.hoverOn = () => {
         if (Session.getCurrentWord().length > 0 && !button.getActivated()) {
+          this._scene.currentWord.destroyAll()
           Session.addLetterToCurrentWord(letter)
           button.setActivated(true)
           button.scaleTween()
@@ -121,14 +123,49 @@ class GameActions {
 
       zone.upCallback = () => {
         if (button.getActivated()) {
+
+          this._scene.letterButtons.forEach((btn) => {
+            if (btn.getActivated()){
+              btn.setActivated(false)
+              btn.normalTween()
+            }
+          })
+
+          let solved = false
+          let repeat = false
+
           for (let word of this._scene.words) {
             if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
+              if (word.getSolved()) repeat = true
               word.setSolved(true)
+              Session.setCurrentWordType(currentWordType.SOLVED)
+              solved = true
             }
           }
-          Session.resetCurrentWord()
-          button.setActivated(false)
-          button.normalTween()
+
+          if (!solved) Session.setCurrentWordType(currentWordType.WRONG)
+          if (repeat) Session.setCurrentWordType(currentWordType.REPEAT)
+
+          switch (Session.getCurrentWordType()) {
+            case currentWordType.WRONG:
+              Session.setCurrentWordType(currentWordType.DEFAULT)
+              Session.resetCurrentWord()
+              this._scene.currentWord.wrongAnimation()
+              console.log('wrong')
+              break;
+            case currentWordType.REPEAT:
+              Session.setCurrentWordType(currentWordType.DEFAULT)
+              Session.resetCurrentWord()
+              this._scene.currentWord.destroyAll()
+              console.log('repeat')
+              break;
+            case currentWordType.SOLVED:
+              Session.setCurrentWordType(currentWordType.DEFAULT)
+              Session.resetCurrentWord()
+              this._scene.currentWord.destroyAll()
+              console.log('solved')
+              break;
+          }
         }
 
       }

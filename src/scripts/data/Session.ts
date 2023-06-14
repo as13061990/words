@@ -1,5 +1,8 @@
+import { currentWordType } from "../types/enums"
+
 class Session {
   private _currentWord: string = ""
+  private _currentWordType: currentWordType = currentWordType.DEFAULT
   private _level: number = null
   private _levelWords: string[] = []
   private _levelLetters: string[] = []
@@ -38,6 +41,14 @@ class Session {
 
   public getLevelLetters(): string[] {
     return this._levelLetters
+  }
+
+  public setCurrentWordType(type: currentWordType): void {
+    this._currentWordType = type
+  }
+
+  public getCurrentWordType(): currentWordType {
+    return this._currentWordType
   }
 
 }

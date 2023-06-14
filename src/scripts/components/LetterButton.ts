@@ -79,7 +79,7 @@ class LetterButton extends Phaser.GameObjects.Sprite {
 
         const colorText = `#${colorObjectText.color.toString(16)}`
         const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        console.log(colorObjectText.color.toString(16))
+        
         this._text.setColor(colorText);
         this.setTint(colorSprite);
       },

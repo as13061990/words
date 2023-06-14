@@ -49,7 +49,7 @@ class Word extends Phaser.GameObjects.Sprite {
       this._sprites.forEach((word, i)=>{
         this._scene.add.text(word.getBounds().centerX, word.getBounds().centerY, (this._word[i]).toUpperCase(), {
           color: 'rgb(44,52,75)',
-          font: '50px Triomphe',
+          font: '60px Triomphe',
         }).setOrigin(.5, .5).setDepth(3)
       })
     }
