@@ -4,7 +4,7 @@ import Game from "../scenes/Game";
 class CurrentWord extends Phaser.GameObjects.Text {
   constructor(scene: Game) {
     const { centerX } = scene.cameras.main
-    super(scene, centerX, scene.words[scene.words.length - 1].sprite.getBounds().bottom + 30, '', {})
+    super(scene, centerX, scene.words[scene.words.length - 1].getBounds().bottom + 30, '', {})
     this._scene = scene
     this._build()
   }

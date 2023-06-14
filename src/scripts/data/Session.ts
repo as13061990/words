@@ -5,7 +5,7 @@ class Session {
   private _levelLetters: string[] = []
 
   addLetterToCurrentWord(letter: string) {
-    this._currentWord += letter.toLowerCase()
+    this._currentWord += letter
   }
 
   getCurrentWord(): string {

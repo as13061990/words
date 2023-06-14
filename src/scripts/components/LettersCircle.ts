@@ -1,10 +1,11 @@
 import Session from "../data/Session"
+import Game from "../scenes/Game"
 import Button from "./Button"
 import LetterButton from "./LetterButton"
 import Zone from "./Zone"
 
 class LettersCircle {
-  constructor(scene: Phaser.Scene, letters: string[], x: number, y: number) {
+  constructor(scene: Game, letters: string[], x: number, y: number) {
     this._scene = scene
     this._letters = letters
     this._x = x
@@ -12,7 +13,7 @@ class LettersCircle {
     this._build()
   }
 
-  private _scene: Phaser.Scene
+  private _scene: Game
   private _letters: string[]
   private _radius: number = 150
   private _letterSprites: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[] = []

@@ -72,7 +72,7 @@ class GameActions {
   private _generateLetters(): void {
     const { centerX } = this._scene.cameras.main
     const lettersStringArr = levels[this._level - 1].letters
-    new LettersCircle(this._scene, lettersStringArr, centerX, this._scene.words[this._scene.words.length - 1].sprite.getBounds().bottom + 270, )
+    new LettersCircle(this._scene, lettersStringArr, centerX, this._scene.words[this._scene.words.length - 1].getBounds().bottom + 270, )
   }
 
   private _back(): void {

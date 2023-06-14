@@ -1,15 +1,16 @@
 import Session from "../data/Session"
+import Game from "../scenes/Game"
 import Zone from "./Zone"
 
 class LetterButton extends Phaser.GameObjects.Sprite {
-  constructor(scene: Phaser.Scene, x: number, y: number, letter: string) {
+  constructor(scene: Game, x: number, y: number, letter: string) {
     super(scene, x, y, 'letter-empty')
     this._scene = scene
     this._letter = letter
     this._build()
   }
 
-  private _scene: Phaser.Scene
+  private _scene: Game
   private _letter: string
   private _text: Phaser.GameObjects.Text
   private _active: boolean = false
@@ -40,6 +41,11 @@ class LetterButton extends Phaser.GameObjects.Sprite {
 
     zone.upCallback = () => {
       if (this._active) {
+        for (let word of this._scene.words) {
+          if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
+            word.setSolved(true)
+          }
+        }
         Session.resetCurrentWord()
         this._active = false
       }
