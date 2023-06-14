@@ -13,7 +13,7 @@ class LetterButton extends Phaser.GameObjects.Sprite {
   private _scene: Game
   private _letter: string
   private _text: Phaser.GameObjects.Text
-  private _active: boolean = false
+  private _activated: boolean = false
 
   private _build(): void {
     this._scene.add.existing(this)
@@ -21,36 +21,6 @@ class LetterButton extends Phaser.GameObjects.Sprite {
       color: 'rgb(44,52,75)',
       font: '40px Triomphe',
     }).setOrigin(.5, .5)
-
-
-    const zone = Zone.createFromSprite(this)
-
-    zone.downClickCallback = () => {
-      Session.addLetterToCurrentWord(this._letter)
-      this._active = true
-      this.scaleTween()
-    }
-
-    zone.hoverOn = () => {
-      if (Session.getCurrentWord().length > 0 && !this._active) {
-        Session.addLetterToCurrentWord(this._letter)
-        this._active = true
-        this.scaleTween()
-      }
-    }
-
-    zone.upCallback = () => {
-      if (this._active) {
-        for (let word of this._scene.words) {
-          if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
-            word.setSolved(true)
-          }
-        }
-        Session.resetCurrentWord()
-        this._active = false
-      }
-      this.normalTween()
-    }
   }
 
   public normalTween(): void {
@@ -72,6 +42,19 @@ class LetterButton extends Phaser.GameObjects.Sprite {
       ease: 'Power2'
     })
   }
+
+  public getActivated(): boolean {
+    return this._activated
+  }
+
+  public setActivated(activated: boolean): void {
+    this._activated = activated
+  }
+
+  public getLetter(): string {
+    return this._letter
+  }
+
 }
 
 

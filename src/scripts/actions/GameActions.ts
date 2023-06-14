@@ -1,7 +1,9 @@
 import Button from "../components/Button";
 import CurrentWord from "../components/CurrentWord";
+import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
+import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Game from "../scenes/Game";
 
@@ -29,6 +31,7 @@ class GameActions {
 
   private _scene: Game;
   private _level: number
+  private _centerYLettersCircle: number
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -45,14 +48,16 @@ class GameActions {
     btn.callback = this._back.bind(this)
 
     this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
-    
 
-    this._generateWords()
-    new CurrentWord(this._scene)
-    this._generateLetters()
+
+    this._createWords()
+    this._createCurrentWord()
+    this._createLettersCircle()
+    this._createLetterButtons()
+    this._addLogicToLetterButtons()
   }
 
-  private _generateWords(): void {
+  private _createWords(): void {
     const { centerX } = this._scene.cameras.main
 
     const wordsStringArr = levels[this._level - 1].words
@@ -69,10 +74,64 @@ class GameActions {
     })
   }
 
-  private _generateLetters(): void {
+  private _createCurrentWord(): void {
+    new CurrentWord(this._scene)
+  }
+
+  private _createLettersCircle(): void {
     const { centerX } = this._scene.cameras.main
-    const lettersStringArr = levels[this._level - 1].letters
-    new LettersCircle(this._scene, lettersStringArr, centerX, this._scene.words[this._scene.words.length - 1].getBounds().bottom + 270, )
+    this._centerYLettersCircle = this._scene.words[this._scene.words.length - 1].getBounds().bottom + 270
+    this._scene.lettersCircle = new LettersCircle(this._scene, centerX, this._centerYLettersCircle)
+  }
+
+  private _createLetterButtons(): void {
+    const letters = Session.getLevelLetters()
+    const circle = this._scene.lettersCircle
+    const { centerX } = this._scene.cameras.main
+
+    letters.forEach((letter, i) => {
+      let theta = -Math.PI / 2 + (i * 2 * Math.PI / letters.length)
+
+      const x = centerX + circle.getRadius() * Math.cos(theta);
+      const y = this._centerYLettersCircle + circle.getRadius() * Math.sin(theta);
+      this._scene.letterButtons.push(new LetterButton(this._scene, x, y, letter));
+    })
+  }
+
+  private _addLogicToLetterButtons(): void {
+
+    for (let button of this._scene.letterButtons) {
+
+      const zone = Zone.createFromSprite(button)
+      const letter = button.getLetter()
+
+      zone.downClickCallback = () => {
+        Session.addLetterToCurrentWord(letter)
+        button.setActivated(true)
+        button.scaleTween()
+      }
+
+      zone.hoverOn = () => {
+        if (Session.getCurrentWord().length > 0 && !button.getActivated()) {
+          Session.addLetterToCurrentWord(letter)
+          button.setActivated(true)
+          button.scaleTween()
+        }
+      }
+
+      zone.upCallback = () => {
+        if (button.getActivated()) {
+          for (let word of this._scene.words) {
+            if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
+              word.setSolved(true)
+            }
+          }
+          Session.resetCurrentWord()
+          button.setActivated(false)
+        }
+        button.normalTween()
+      }
+    }
   }
 
   private _back(): void {
