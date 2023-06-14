@@ -16,7 +16,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
 
   private _build(): void {
     this._scene.add.existing(this)
-    this.lineStyle(25, 0xffffff, 0.3);
+    this.lineStyle(25, 0x3f4a68, 1);
     this.strokeCircle(this._x, this._y, this._radius)
   }
 

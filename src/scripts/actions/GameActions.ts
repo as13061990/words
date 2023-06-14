@@ -128,8 +128,9 @@ class GameActions {
           }
           Session.resetCurrentWord()
           button.setActivated(false)
+          button.normalTween()
         }
-        button.normalTween()
+
       }
     }
   }
