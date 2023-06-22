@@ -5,24 +5,9 @@ import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
 import Zone from "../components/Zone";
 import Session from "../data/Session";
+import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType } from "../types/enums";
-
-
-const levels = [
-  {
-    letters: ['М', 'А', 'Х', 'У'],
-    words: ['Муха', 'Хам', 'Ум', 'Уха']
-  },
-  {
-    letters: ['Р', 'Т', 'С', 'О'],
-    words: ['Рот', 'Рост', 'Сто', 'Сорт', 'Трос']
-  },
-  {
-    letters: ['Т', 'Е', 'Р', 'Н', 'О'],
-    words: ['Рот', 'Енот', 'Тон', 'Тенор', 'Трон']
-  }
-]
 
 
 class GameActions {
@@ -38,8 +23,8 @@ class GameActions {
     const { centerX, centerY } = this._scene.cameras.main
 
     this._level = Session.getLevel()
-    Session.setLevelWords(levels[this._level - 1].words)
-    Session.setLevelLetters(levels[this._level - 1].letters)
+    Session.setLevelWords(Settings.getCurrentLevel().data.words)
+    Session.setLevelLetters(Settings.getCurrentLevel().data.letters)
 
     const btn = new Button(this._scene, centerX, centerY - 600, 'button-green')
     btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {

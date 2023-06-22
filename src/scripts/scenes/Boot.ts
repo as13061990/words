@@ -6,6 +6,7 @@ import Interval from '../actions/Interval';
 import Sounds from '../actions/Sounds';
 import Settings from '../data/Settings';
 import User from '../data/User';
+import Api from '../data/Api';
 
 class Boot extends Phaser.Scene {
   constructor() {
@@ -14,6 +15,7 @@ class Boot extends Phaser.Scene {
 
   private _fonts: boolean = false;
   private _user: boolean = false;
+  private _levels: boolean = false;
 
   public init(): void {
     Webfont.load({
@@ -26,7 +28,9 @@ class Boot extends Phaser.Scene {
     });
     Settings.sounds = new Sounds(this);
     Settings.interval = new Interval(this);
+
     this._checkUser();
+    this._initLevels()
   }
 
   public preload(): void {
@@ -36,14 +40,25 @@ class Boot extends Phaser.Scene {
   public update(): void {
     if (!this._fonts) return;
     if (!this._user) return;
+    if (!this._levels) return;
     this._fonts = false;
     this._user = false;
+    this._levels = false;
     this.scene.launch('Menu');
   }
 
   private async _checkUser(): Promise<void> {
     User.setID('0')
     this._user = true;
+  }
+
+  private async _initLevels(): Promise<void> {
+    const data = await Api.getLevels()
+    Settings.setLevels(data)
+    if (data) {
+      Settings.setCurrentLevel(data[0])
+      this._levels = true
+    }
   }
 }
 

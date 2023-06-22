@@ -10,6 +10,8 @@ class Settings {
   }
   private _screen: screen = screen.MAIN;
   private _mobile: boolean = false;
+  private _levels: Ilevel[] = []
+  private _currentLevel: Ilevel = null
 
   public sounds: Isounds;
   public interval: Interval;
@@ -29,6 +31,22 @@ class Settings {
 
   public setMobile(mobile: boolean): void {
     this._mobile = mobile;
+  }
+
+  public setLevels(levels: Ilevel[]): void {
+    this._levels = levels
+  }
+
+  public getLevels(): Ilevel[] {
+    return this._levels
+  }
+
+  public setCurrentLevel(level: Ilevel): void {
+    this._currentLevel = level
+  }
+
+  public getCurrentLevel(): Ilevel {
+    return this._currentLevel
   }
 }
 

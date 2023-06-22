@@ -51,10 +51,10 @@ class Button extends Phaser.GameObjects.Sprite {
       let filter = 0xFFFFFF;
 
       const interval = this.scene.time.addEvent({ delay: 5, callback: (): void => {
-        filter -= 0x222222;
-        this.setTint(filter);
-        this.text?.setTint(filter);
-        this.icon?.setTint(filter);
+        // filter -= 0x222222;
+        // this.setTint(filter);
+        // this.text?.setTint(filter);
+        // this.icon?.setTint(filter);
 
         if (!this._simple) {
           this.y = Math.round(this.y + 1);
@@ -76,10 +76,10 @@ class Button extends Phaser.GameObjects.Sprite {
         let filter = 0x999999;
 
         const interval = this.scene.time.addEvent({ delay: 10, callback: (): void => {
-          filter += 0x222222;
-          this.setTint(filter);
-          this.text?.setTint(filter);
-          this.icon?.setTint(filter);
+          // filter += 0x222222;
+          // this.setTint(filter);
+          // this.text?.setTint(filter);
+          // this.icon?.setTint(filter);
 
           if (!this._simple) {
             this.y = Math.round(this.y - 1);
@@ -101,10 +101,10 @@ class Button extends Phaser.GameObjects.Sprite {
         let counter = 0;
         let filter = 0x999999;
         const interval = this.scene.time.addEvent({ delay: 10, callback: (): void => {
-          filter += 0x222222;
-          this.setTint(filter);
-          this.text?.setTint(filter);
-          this.icon?.setTint(filter);
+          // filter += 0x222222;
+          // this.setTint(filter);
+          // this.text?.setTint(filter);
+          // this.icon?.setTint(filter);
           
           if (!this._simple) {
             this.y = Math.round(this.y - 1);

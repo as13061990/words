@@ -3,6 +3,7 @@ import CurrentWord from "../components/CurrentWord";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
+import Settings from "../data/Settings";
 
 
 
@@ -19,7 +20,9 @@ class Game extends Phaser.Scene {
   public currentWord: CurrentWord
 
   public init(): void {
-
+    this.words = []
+    this.letterButtons = []
+    console.log(Settings.getLevels())
   }
 
   public preload(): void {
