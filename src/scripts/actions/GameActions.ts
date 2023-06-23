@@ -119,13 +119,16 @@ class GameActions {
 
           let solved = false
           let repeat = false
-
+          let solvedX:number, solvedY:number 
+          
           for (let word of this._scene.words) {
             if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
               if (word.getSolved()) repeat = true
               word.setSolved(true)
               Session.setCurrentWordType(currentWordType.SOLVED)
               solved = true
+              solvedX = word.x
+              solvedY = word.y
             }
           }
 
@@ -148,7 +151,7 @@ class GameActions {
             case currentWordType.SOLVED:
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
-              this._scene.currentWord.destroyAll()
+              this._scene.currentWord.solvedAnimation(solvedX, solvedY)
               console.log('solved')
               break;
           }

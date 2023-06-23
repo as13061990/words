@@ -1,4 +1,5 @@
 const WORD_STEP = 110
+const SOLVED_ANIMATION_DURATION = 700
 
 class Word extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, word: string, x: number, y: number) {
@@ -37,13 +38,16 @@ class Word extends Phaser.GameObjects.Container {
   protected preUpdate(time: number, delta: number): void {
     if (this._solved && this._empty) {
       this._empty = false
-      this.list.forEach((word: Phaser.GameObjects.Sprite, i)=>{
-        const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (this._word[i]).toUpperCase(), {
-          color: 'rgb(44,52,75)',
-          font: '60px Triomphe',
-        }).setOrigin(.5, .5).setDepth(3)
-        this.add(text)
-      })
+      this._scene.time.addEvent({ delay: SOLVED_ANIMATION_DURATION, callback: (): void => {
+        this.list.forEach((word: Phaser.GameObjects.Sprite, i)=>{
+          word.setTint(0x6ebe68)
+          const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (this._word[i]).toUpperCase(), {
+            color: 'rgb(255, 255, 255)',
+            font: '60px Triomphe',
+          }).setOrigin(.5, .5).setDepth(3)
+          this.add(text)
+        })
+      }, loop: false });
     }
   }
 }
