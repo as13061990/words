@@ -1,33 +1,24 @@
-class Word extends Phaser.GameObjects.Sprite {
+const WORD_STEP = 110
+
+class Word extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, word: string, x: number, y: number) {
-    super(scene, x, y, 'word-letter')
+    super(scene, x, y)
     this._scene = scene
     this._word = word
-    this._x = x
-    this._y = y
     this._build()
   }
 
   private _scene: Phaser.Scene
   private _word: string
-  private _x: number
-  private _y: number
-
   private _solved: boolean = false
   private _empty: boolean = true
 
-  private _sprites: Phaser.GameObjects.Sprite[] = []
 
   private _build(): void {
     this._scene.add.existing(this)
-    this.setOrigin(0.5, 0.5)
-    this.setDisplaySize(this._word.length * 108, this.height)
-    this.setAlpha(0)
-
     this._word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(this.getBounds().left + (i * 110), this._y, 'word-letter').setOrigin(0, 0.5)
-      this._scene.add.existing(sprite)
-      this._sprites.push(sprite)
+      const sprite = this._scene.add.sprite(0 + (i * WORD_STEP), 0, 'word-letter')
+      this.add(sprite)
     })
   }
 
@@ -46,11 +37,12 @@ class Word extends Phaser.GameObjects.Sprite {
   protected preUpdate(time: number, delta: number): void {
     if (this._solved && this._empty) {
       this._empty = false
-      this._sprites.forEach((word, i)=>{
-        this._scene.add.text(word.getBounds().centerX, word.getBounds().centerY, (this._word[i]).toUpperCase(), {
+      this.list.forEach((word: Phaser.GameObjects.Sprite, i)=>{
+        const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (this._word[i]).toUpperCase(), {
           color: 'rgb(44,52,75)',
           font: '60px Triomphe',
         }).setOrigin(.5, .5).setDepth(3)
+        this.add(text)
       })
     }
   }

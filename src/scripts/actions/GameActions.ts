@@ -9,6 +9,7 @@ import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType } from "../types/enums";
 
+const WORD_STEP = 110
 
 class GameActions {
   constructor(scene: Game) {
@@ -56,7 +57,7 @@ class GameActions {
     });
 
     wordsStringArr.forEach((word, i) => {
-      this._scene.words.push(new Word(this._scene, word, centerX, this._scene.title.getBounds().bottom + 80 + (i * 110)))
+      this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length/2) - WORD_STEP/2), this._scene.title.getBounds().bottom + 80 + (i * 110)))
     })
   }
 
@@ -66,7 +67,7 @@ class GameActions {
 
   private _createLettersCircle(): void {
     const { centerX } = this._scene.cameras.main
-    this._centerYLettersCircle = this._scene.words[this._scene.words.length - 1].getBounds().bottom + 270
+    this._centerYLettersCircle = this._scene.words[this._scene.words.length - 1].getBounds().bottom + 300
     this._scene.lettersCircle = new LettersCircle(this._scene, centerX, this._centerYLettersCircle)
   }
 

@@ -2,31 +2,33 @@ import Session from "../data/Session";
 import Game from "../scenes/Game";
 import { currentWordType } from "../types/enums";
 
-class CurrentWord extends Phaser.GameObjects.Text {
+const REDUCE_SCALE = 0.7
+const WORD_STEP = 110 * REDUCE_SCALE
+
+class CurrentWord extends Phaser.GameObjects.Container {
   constructor(scene: Game) {
     const { centerX } = scene.cameras.main
-    super(scene, centerX, scene.words[scene.words.length - 1].getBounds().bottom + 30, '', {})
+    super(scene, centerX, scene.words[scene.words.length - 1].getBounds().bottom + 50)
     this._scene = scene
     this._build()
   }
 
   private _scene: Game
-  private _emptySpriteContainer: Phaser.GameObjects.Sprite
-  private _letterSprites: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[] = []
+  private _text: string = ''
 
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._emptySpriteContainer = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'word-letter').setOrigin(0.5, 0.5)
-    this._emptySpriteContainer.setDisplaySize(this._emptySpriteContainer.width / 1.8, this._emptySpriteContainer.height / 1.8)
-    this._emptySpriteContainer.setAlpha(0)
-    this.setAlpha(0)
   }
 
   public destroyAll(): void {
-    this._letterSprites.forEach((element) => {
-      element.destroy()
-    })
+    this.removeAll(true)
+    this._resetPosition()
+  }
+
+  private _resetPosition(): void {
+    const { centerX } = this._scene.cameras.main
+    this.setPosition(centerX, this._scene.words[this._scene.words.length - 1].getBounds().bottom + 50)
   }
 
   public wrongAnimation(): void {
@@ -44,14 +46,14 @@ class CurrentWord extends Phaser.GameObjects.Text {
 
     //     const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
     //     const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        
-        
+
+
     //     const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
     //     const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
 
     //     const colorText = `#${colorObjectText.color.toString(16)}`
     //     const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        
+
     //     this._letterSprites.forEach((el)=>{
     //       if (el instanceof Phaser.GameObjects.Sprite) {
     //         el.setTint(colorSprite);
@@ -65,23 +67,25 @@ class CurrentWord extends Phaser.GameObjects.Text {
 
   protected preUpdate(time: number, delta: number): void {
 
-    if (this.text !== Session.getCurrentWord()) {
+    if (this._text !== Session.getCurrentWord()) {
 
       const word = Session.getCurrentWord()
-      this.setText(Session.getCurrentWord())
+      this._text = word
 
-      this._emptySpriteContainer.setDisplaySize(word.length * 108 / 1.7, this._emptySpriteContainer.height)
 
       word.split('').forEach((letter, i) => {
-        const sprite = this._scene.add.sprite(this._emptySpriteContainer.getBounds().left + (i * 110 / 1.7), this._emptySpriteContainer.getBounds().centerY, 'word-letter').setOrigin(0, 0.5)
-        sprite.setDisplaySize(sprite.width / 1.7, sprite.height / 1.7)
 
-        const text = this._scene.add.text(sprite.getBounds().centerX, sprite.getBounds().centerY, (letter).toUpperCase(), {
+        const sprite = this._scene.add.sprite(0 + (i * WORD_STEP), 0, 'word-letter')
+        sprite.setScale(REDUCE_SCALE)
+
+        const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (letter).toUpperCase(), {
           color: 'rgb(44,52,75)',
           font: '40px Triomphe',
-        }).setOrigin(.5, .5)
-        this._scene.add.existing(sprite)
-        this._letterSprites.push(sprite, text)
+        }).setOrigin(0.5, 0.5)
+
+        this.add([sprite, text])
+        const { centerX } = this._scene.cameras.main
+        this.setPosition(centerX - (WORD_STEP * (word.length/2) - WORD_STEP/2), this.y)
       })
     }
   }
