@@ -142,7 +142,7 @@ class GameActions {
             case currentWordType.REPEAT:
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
-              this._scene.currentWord.destroyAll()
+              this._scene.currentWord.repeatAnimation()
               console.log('repeat')
               break;
             case currentWordType.SOLVED:
