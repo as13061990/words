@@ -27,7 +27,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _build(): void {
     this._scene.add.existing(this)
   }
-  
+
   public destroyAll(): void {
     if (this._animations.length > 0) {
       this._animations.forEach((animation) => {
@@ -207,7 +207,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   private _startToWordAnimation(x: number, y: number): void {
     this._copyContainer = this._scene.add.container(this.x, this.y).setDepth(5)
-    this.list.forEach((el)=>{
+    this.list.forEach((el) => {
       if (el instanceof Phaser.GameObjects.Text) {
         const text = this._scene.add.text(el.x, el.y, el.text, el.style).setOrigin(el.originX, el.originY).setScale(el.scale)
         this._copyContainer.add(text)
@@ -250,29 +250,38 @@ class CurrentWord extends Phaser.GameObjects.Container {
     })
   }
 
+  private _createWord(): void {
+    const word =  Session.getCurrentWord()
+    word.split('').forEach((letter, i) => {
+      const sprite = this._scene.add.sprite(0 + (i * WORD_STEP * REDUCE_SCALE), 0, 'word-letter')
+      sprite.setScale(REDUCE_SCALE)
+
+      const text = this._scene.add.text(0 + (i * WORD_STEP * REDUCE_SCALE), 0, (letter).toUpperCase(), {
+        color: 'rgb(44,52,75)',
+        font: '60px Triomphe',
+      }).setOrigin(0.5, 0.5)
+      text.setScale(REDUCE_SCALE)
+
+      this.add([sprite, text])
+      const { centerX } = this._scene.cameras.main
+      this.setPosition(centerX - (WORD_STEP * REDUCE_SCALE * (word.length / 2) - WORD_STEP * REDUCE_SCALE / 2), this.y)
+    })
+  }
+
 
   protected preUpdate(time: number, delta: number): void {
 
     if (this._text !== Session.getCurrentWord()) {
-
       const word = Session.getCurrentWord()
-      this._text = word
-
-      word.split('').forEach((letter, i) => {
-
-        const sprite = this._scene.add.sprite(0 + (i * WORD_STEP * REDUCE_SCALE), 0, 'word-letter')
-        sprite.setScale(REDUCE_SCALE)
-
-        const text = this._scene.add.text(0 + (i * WORD_STEP * REDUCE_SCALE), 0, (letter).toUpperCase(), {
-          color: 'rgb(44,52,75)',
-          font: '60px Triomphe',
-        }).setOrigin(0.5, 0.5)
-        text.setScale(REDUCE_SCALE)
-
-        this.add([sprite, text])
-        const { centerX } = this._scene.cameras.main
-        this.setPosition(centerX - (WORD_STEP * REDUCE_SCALE * (word.length / 2) - WORD_STEP * REDUCE_SCALE / 2), this.y)
-      })
+      if (word > this._text) {
+        this._text = word
+        this._createWord()
+      } else {
+        this._text = word
+        if (this._text.length === 0) return
+        this.removeAll(true)
+        this._createWord()
+      }
     }
   }
 }

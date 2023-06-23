@@ -15,6 +15,10 @@ class Session {
     return this._currentWord
   }
 
+  minusCurrentWord(): void {
+    this._currentWord =  this._currentWord.slice(0, -1)
+  }
+
   resetCurrentWord(): void {
     this._currentWord = ""
   }

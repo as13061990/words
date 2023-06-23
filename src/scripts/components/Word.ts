@@ -1,6 +1,6 @@
 const WORD_STEP = 110
 const SOLVED_ANIMATION_DURATION = 650
-const REPEAT_ANIMATION_DURATION_STEP = 200
+const REPEAT_ANIMATION_DURATION_STEP = 310
 
 class Word extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, word: string, x: number, y: number) {
@@ -46,7 +46,7 @@ class Word extends Phaser.GameObjects.Container {
     this._scene.add.tween({
       targets: this.list,
       duration: REPEAT_ANIMATION_DURATION_STEP,
-      scale: 1.08,
+      scale: 1.09,
       ease: 'Power2',
       onUpdate: (tweeen) => {
         const interpolationValue = tweeen.progress + 0.1

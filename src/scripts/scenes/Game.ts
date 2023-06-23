@@ -17,12 +17,13 @@ class Game extends Phaser.Scene {
   public words: Word[] = []
   public lettersCircle: LettersCircle
   public letterButtons: LetterButton[] = []
+  public activeLetterButtons: LetterButton[] = []
   public currentWord: CurrentWord
 
   public init(): void {
     this.words = []
     this.letterButtons = []
-    console.log(Settings.getLevels())
+    this.activeLetterButtons = []
   }
 
   public preload(): void {

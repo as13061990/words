@@ -87,7 +87,7 @@ class GameActions {
 
   private _addLogicToLetterButtons(): void {
 
-    for (let button of this._scene.letterButtons) {
+    this._scene.letterButtons.forEach((button, i) => {
       const zone = Zone.createFromSprite(button)
       const letter = button.getLetter()
 
@@ -96,14 +96,30 @@ class GameActions {
         Session.addLetterToCurrentWord(letter)
         button.setActivated(true)
         button.scaleTween()
+        this._scene.activeLetterButtons.push(button)
       }
 
       zone.hoverOn = () => {
-        if (Session.getCurrentWord().length > 0 && !button.getActivated()) {
-          this._scene.currentWord.destroyAll()
-          Session.addLetterToCurrentWord(letter)
-          button.setActivated(true)
-          button.scaleTween()
+
+        if (Session.getCurrentWord().length) {
+          if (!button.getActivated()) {
+            this._scene.currentWord.destroyAll()
+            Session.addLetterToCurrentWord(letter)
+            button.setActivated(true)
+            button.scaleTween()
+            this._scene.activeLetterButtons.push(button)
+          } else {
+            if (Session.getCurrentWord().length > 1) {
+              const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn=>btn === button)
+              if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated() ) {
+                Session.minusCurrentWord()
+                this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
+                this._scene.activeLetterButtons[activeBtnIndex + 1].normalTween()
+                this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
+                console.log( this._scene.activeLetterButtons)
+              }
+            }
+          }
         }
       }
 
@@ -116,6 +132,7 @@ class GameActions {
               btn.normalTween()
             }
           })
+          this._scene.activeLetterButtons = []
 
           let solved = false
           let repeat = false
@@ -143,25 +160,22 @@ class GameActions {
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
               this._scene.currentWord.wrongAnimation()
-              console.log('wrong')
               break;
             case currentWordType.REPEAT:
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
               this._scene.currentWord.repeatAnimation()
-              console.log('repeat')
               break;
             case currentWordType.SOLVED:
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
               this._scene.currentWord.solvedAnimation(solvedX, solvedY)
-              console.log('solved')
               break;
           }
         }
 
       }
-    }
+    })
   }
 
   private _back(): void {
