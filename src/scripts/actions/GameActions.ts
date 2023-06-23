@@ -57,7 +57,7 @@ class GameActions {
     });
 
     wordsStringArr.forEach((word, i) => {
-      this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length/2) - WORD_STEP/2), this._scene.title.getBounds().bottom + 80 + (i * 110)))
+      this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length / 2) - WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110)))
     })
   }
 
@@ -111,7 +111,7 @@ class GameActions {
         if (button.getActivated()) {
 
           this._scene.letterButtons.forEach((btn) => {
-            if (btn.getActivated()){
+            if (btn.getActivated()) {
               btn.setActivated(false)
               btn.normalTween()
             }
@@ -119,11 +119,14 @@ class GameActions {
 
           let solved = false
           let repeat = false
-          let solvedX:number, solvedY:number 
-          
+          let solvedX: number, solvedY: number
+
           for (let word of this._scene.words) {
             if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
-              if (word.getSolved()) repeat = true
+              if (word.getSolved()) {
+                repeat = true
+                word.repeatAnimation()
+              }
               word.setSolved(true)
               Session.setCurrentWordType(currentWordType.SOLVED)
               solved = true

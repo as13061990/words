@@ -8,7 +8,7 @@ const WRONG_ANIMATION_STEP_DURATION = 60
 const COLOR_CHANGE_ANIMATION_DURATION = 130
 const SOLVED_ANIMATION_DURATION = 600
 const SOLVED_ANIMATION_DESTROY_DURATION = 100
-const DESTROY_ANIMATION_DURATION = 300
+const DESTROY_ANIMATION_DURATION = 500
 
 
 class CurrentWord extends Phaser.GameObjects.Container {
@@ -206,7 +206,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   }
 
   private _startToWordAnimation(x: number, y: number): void {
-    this._copyContainer = this._scene.add.container(this.x, this.y)
+    this._copyContainer = this._scene.add.container(this.x, this.y).setDepth(5)
     this.list.forEach((el)=>{
       if (el instanceof Phaser.GameObjects.Text) {
         const text = this._scene.add.text(el.x, el.y, el.text, el.style).setOrigin(el.originX, el.originY).setScale(el.scale)
