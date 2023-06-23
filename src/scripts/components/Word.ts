@@ -1,5 +1,5 @@
 const WORD_STEP = 110
-const SOLVED_ANIMATION_DURATION = 700
+const SOLVED_ANIMATION_DURATION = 650
 
 class Word extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, word: string, x: number, y: number) {
