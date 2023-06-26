@@ -1,6 +1,7 @@
 import buttonGreen from '../../assets/images/button-green.png';
 import wordLetter from '../../assets/images/word-letter.png';
 import letterEmpty from '../../assets/images/letter-empty.png';
+import restartButtons from '../../assets/images/restart-buttons.png';
 
 // import sound from '../../assets/images/sound.mp3';
 
@@ -48,8 +49,9 @@ class Loading {
 
   private _loadImages(): void {
     this._scene.load.image('button-green', buttonGreen);
-    this._scene.load.image('word-letter', wordLetter);letterEmpty
+    this._scene.load.image('word-letter', wordLetter);
     this._scene.load.image('letter-empty', letterEmpty);
+    this._scene.load.image('restart-buttons', restartButtons);
   }
 
   private _loadSounds(): void {

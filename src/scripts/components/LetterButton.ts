@@ -4,9 +4,9 @@ import Zone from "./Zone"
 
 const ANIMATION_DURATION = 280
 
-class LetterButton extends Phaser.GameObjects.Sprite {
+class LetterButton extends Phaser.GameObjects.Container {
   constructor(scene: Game, x: number, y: number, letter: string) {
-    super(scene, x, y, 'letter-empty')
+    super(scene, x, y)
     this._scene = scene
     this._letter = letter
     this._build()
@@ -16,14 +16,16 @@ class LetterButton extends Phaser.GameObjects.Sprite {
   private _letter: string
   private _text: Phaser.GameObjects.Text
   private _activated: boolean = false
+  private _sprite: Phaser.GameObjects.Sprite
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._text = this._scene.add.text(this.getBounds().centerX, this.getBounds().centerY, (this._letter).toUpperCase(), {
+    this._sprite = this._scene.add.sprite(0, 0, 'letter-empty').setOrigin(.5, .5)
+    this._text = this._scene.add.text(0, 0, (this._letter).toUpperCase(), {
       color: 'rgb(44,52,75)',
       font: '40px Triomphe',
     }).setOrigin(.5, .5)
-
+    this.add([this._sprite, this._text])
   }
 
   public normalTween(): void {
@@ -51,7 +53,7 @@ class LetterButton extends Phaser.GameObjects.Sprite {
         const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
 
         this._text.setColor(colorText);
-        this.setTint(colorSprite);
+        this._sprite.setTint(colorSprite);
       },
     })
   }
@@ -81,7 +83,7 @@ class LetterButton extends Phaser.GameObjects.Sprite {
         const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
         
         this._text.setColor(colorText);
-        this.setTint(colorSprite);
+        this._sprite.setTint(colorSprite);
       },
     })
   }
@@ -96,6 +98,14 @@ class LetterButton extends Phaser.GameObjects.Sprite {
 
   public getLetter(): string {
     return this._letter
+  }
+
+  public getText(): Phaser.GameObjects.Text {
+    return this._text
+  }
+
+  public getSprite(): Phaser.GameObjects.Sprite {
+    return this._sprite
   }
 
 }

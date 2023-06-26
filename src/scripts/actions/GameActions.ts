@@ -10,6 +10,7 @@ import Game from "../scenes/Game";
 import { currentWordType } from "../types/enums";
 
 const WORD_STEP = 110
+const SHUFFLE_ANIMATION_DURATION = 200
 
 class GameActions {
   constructor(scene: Game) {
@@ -19,6 +20,7 @@ class GameActions {
   private _scene: Game;
   private _level: number
   private _centerYLettersCircle: number
+  private _shuffleAnimation: boolean = false
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -42,6 +44,7 @@ class GameActions {
     this._createLettersCircle()
     this._createLetterButtons()
     this._addLogicToLetterButtons()
+    this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
   }
 
   private _createWords(): void {
@@ -85,6 +88,41 @@ class GameActions {
     })
   }
 
+  private _addLogicToShuffleButtonsBtn(): void {
+    if (!this._shuffleAnimation) {
+      const circle = this._scene.lettersCircle;
+      const centerX = circle.getPosition().x;
+      const letters = Session.getLevelLetters()
+      this._shuffleAnimation = true
+  
+      this._scene.tweens.add({
+        targets: [...this._scene.letterButtons],
+        ease: 'Exponential.easeOut',
+        x: this._scene.lettersCircle.getPosition().x,
+        y: this._scene.lettersCircle.getPosition().y,
+        duration: SHUFFLE_ANIMATION_DURATION,
+        onComplete: () => {
+          const shuffledButtons = Phaser.Utils.Array.Shuffle(this._scene.letterButtons.slice());
+          shuffledButtons.forEach((button, i) => {
+            let theta = -Math.PI / 2 + (i * 2 * Math.PI / letters.length)
+            const x = centerX + circle.getRadius() * Math.cos(theta);
+            const y = this._centerYLettersCircle + circle.getRadius() * Math.sin(theta);
+  
+            this._scene.tweens.add({
+              targets: button,
+              ease: 'Exponential.easeOut',
+              x,
+              y,
+              duration: SHUFFLE_ANIMATION_DURATION,
+              onComplete: () => this._shuffleAnimation = false
+            });
+          });
+        }
+      })
+    }
+
+  }
+
 
 
   private _addLogicToLetterButtons(): void {
@@ -120,10 +158,14 @@ class GameActions {
     });
 
     this._scene.letterButtons.forEach((button, i) => {
-      const zone = Zone.createFromSprite(button)
+      const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
       const letter = button.getLetter()
 
+      button.add(zone)
+
       zone.downClickCallback = () => {
+        if (this._shuffleAnimation) return
+
         this._scene.currentWord.destroyAll()
         Session.addLetterToCurrentWord(letter)
         button.setActivated(true)
@@ -164,7 +206,7 @@ class GameActions {
                 this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
                 this._scene.activeLetterButtons[activeBtnIndex + 1].normalTween()
                 this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
-                
+
                 graphicCircleMid.clear()
                 let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
                 graphicCircleMid.lineStyle(29, 0x568cbd);
@@ -177,15 +219,15 @@ class GameActions {
 
       zone.upCallback = () => {
 
-        graphicCircleStart.clear()
-        graphicCircleEnd.clear()
-        graphicCircleMid.clear()
-
-        this._scene?.graphics?.clear();
-        points.splice(0)
-        pointsMouse.splice(0)
-
+        
         if (button.getActivated()) {
+          graphicCircleStart.clear()
+          graphicCircleEnd.clear()
+          graphicCircleMid.clear()
+  
+          this._scene?.graphics?.clear();
+          points.splice(0)
+          pointsMouse.splice(0)
 
           this._scene.letterButtons.forEach((btn) => {
             if (btn.getActivated()) {
