@@ -85,7 +85,39 @@ class GameActions {
     })
   }
 
+
+
   private _addLogicToLetterButtons(): void {
+    const graphicCircleStart = this._scene.add.graphics();
+    const graphicCircleEnd = this._scene.add.graphics();
+    const graphicCircleMid = this._scene.add.graphics();
+    const points = [];
+    const pointsMouse = []
+    this._scene.graphics = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } });
+
+    this._scene.input.on('pointermove', (pointer) => {
+
+      if (this._scene.activeLetterButtons.length > 0) {
+        pointsMouse.splice(0)
+        graphicCircleEnd.clear()
+        this._scene.graphics.clear();
+
+        for (let i = 0; i < this._scene.activeLetterButtons.length; i++) {
+          const preLastBtn = this._scene.activeLetterButtons[i].getBounds()
+          const preLastBtnPoint = new Phaser.Math.Vector2(preLastBtn.centerX, preLastBtn.centerY);
+          pointsMouse.push(preLastBtnPoint);
+        }
+
+        let circle = new Phaser.Geom.Circle(pointer.x, pointer.y, 1);
+        graphicCircleEnd.lineStyle(28, 0x568cbd);
+        graphicCircleEnd.strokeCircleShape(circle);
+
+        const pointerPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
+        pointsMouse.push(pointerPoint);
+        const curve = new Phaser.Curves.Spline(pointsMouse);
+        this._scene.graphics.strokePoints(curve.getPoints(200));
+      }
+    });
 
     this._scene.letterButtons.forEach((button, i) => {
       const zone = Zone.createFromSprite(button)
@@ -97,6 +129,14 @@ class GameActions {
         button.setActivated(true)
         button.scaleTween()
         this._scene.activeLetterButtons.push(button)
+
+        let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+        graphicCircleStart.lineStyle(28, 0x568cbd);
+        graphicCircleStart.strokeCircleShape(circle);
+
+        const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
+        points.push(point);
+        pointsMouse.push(point);
       }
 
       zone.hoverOn = () => {
@@ -108,15 +148,27 @@ class GameActions {
             button.setActivated(true)
             button.scaleTween()
             this._scene.activeLetterButtons.push(button)
+
+            pointsMouse.splice(0)
+
+            graphicCircleMid.clear()
+            let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+            graphicCircleMid.lineStyle(29, 0x568cbd);
+            graphicCircleMid.strokeCircleShape(circle);
+
           } else {
             if (Session.getCurrentWord().length > 1) {
-              const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn=>btn === button)
-              if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated() ) {
+              const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn => btn === button)
+              if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated()) {
                 Session.minusCurrentWord()
                 this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
                 this._scene.activeLetterButtons[activeBtnIndex + 1].normalTween()
                 this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
-                console.log( this._scene.activeLetterButtons)
+                
+                graphicCircleMid.clear()
+                let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+                graphicCircleMid.lineStyle(29, 0x568cbd);
+                graphicCircleMid.strokeCircleShape(circle);
               }
             }
           }
@@ -124,6 +176,15 @@ class GameActions {
       }
 
       zone.upCallback = () => {
+
+        graphicCircleStart.clear()
+        graphicCircleEnd.clear()
+        graphicCircleMid.clear()
+
+        this._scene?.graphics?.clear();
+        points.splice(0)
+        pointsMouse.splice(0)
+
         if (button.getActivated()) {
 
           this._scene.letterButtons.forEach((btn) => {
