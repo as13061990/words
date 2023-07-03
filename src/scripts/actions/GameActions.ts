@@ -1,5 +1,6 @@
 import Button from "../components/Button";
 import CurrentWord from "../components/CurrentWord";
+import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
@@ -7,7 +8,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType, wordDirection } from "../types/enums";
+import { currentWordType, screen, wordDirection } from "../types/enums";
 
 const WORD_STEP = 110
 const SHUFFLE_ANIMATION_DURATION = 200
@@ -21,6 +22,31 @@ class GameActions {
   private _level: number
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
+
+
+  public build(): void {
+    const { centerX, centerY } = this._scene.cameras.main
+
+    Session.startLevel()
+    this._level = Session.getLevel()
+
+    const btn = new Button(this._scene, centerX, centerY - 600, 'button-green')
+    btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
+      color: 'white',
+      font: '40px Triomphe',
+    }).setOrigin(.5, .6).setDepth(11);
+    btn.callback = this._back.bind(this)
+
+    this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
+
+    this._createLettersCircle()
+    this._createCurrentWord()
+    this._createWords()
+    this._createLetterButtons()
+    this._addLogicToLetterButtons()
+    this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
+    this._createEndLevelRectangle()
+  }
 
   private _getWords(): { horizontal: any[], vertical: any[] } {
     const configLevel = Session.getLevelConfig()
@@ -40,7 +66,7 @@ class GameActions {
         verticalWords.push({ word: word, position: col + 1, startPosition: first });
       }
     }
-    
+
     const horizontalWords = [];
     configLevel.forEach((row, i) => {
       let word = '';
@@ -51,7 +77,7 @@ class GameActions {
           word += letter;
         }
       });
-      
+
       if (words.includes(word) && !(horizontalWords.map((el) => el?.word)).includes(word)) {
         horizontalWords.push({ word: word, position: i + 1, startPosition: first });
       }
@@ -60,42 +86,13 @@ class GameActions {
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
-  public build(): void {
-    const { centerX, centerY } = this._scene.cameras.main
-
-    this._level = Session.getLevel()
-
-    Session.setLevelWords(Settings.getCurrentLevel().data.words)
-    Session.setLevelLetters(Settings.getCurrentLevel().data.letters)
-
-    if (Settings.getCurrentLevel().data?.config?.length > 0) {
-      Session.setLevelConfig(Settings.getCurrentLevel().data.config)
-    }
-
-    const btn = new Button(this._scene, centerX, centerY - 600, 'button-green')
-    btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
-      color: 'white',
-      font: '40px Triomphe',
-    }).setOrigin(.5, .6).setDepth(11);
-    btn.callback = this._back.bind(this)
-
-    this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
-
-    this._createLettersCircle()
-    this._createCurrentWord()
-    this._createWords()
-    this._createLetterButtons()
-    this._addLogicToLetterButtons()
-    this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
-  }
-
   private _createWords(): void {
     const { centerX, width } = this._scene.cameras.main
     const configLevel = Session.getLevelConfig()
 
     if (configLevel.length > 0) {
       const { horizontal, vertical } = this._getWords()
-      console.log(horizontal, vertical)
+
       let scale = 1
       if (configLevel.length > 5) {
         switch (configLevel.length) {
@@ -357,6 +354,7 @@ class GameActions {
               }
               word.setSolved(true)
               Session.setCurrentWordType(currentWordType.SOLVED)
+              Session.addToCompletedWords(word.getWord().toLowerCase())
               solved = true
               solvedX = word.x
               solvedY = word.y
@@ -390,9 +388,20 @@ class GameActions {
     })
   }
 
+  private _createEndLevelRectangle(): void {
+    const { centerX, centerY, height, width } = this._scene.cameras.main
+    this._scene.endLevelRectangle = new EndLevelRectangle(this._scene, centerX, centerY, width, height, 0x2d344b)
+    this._scene.endLevelRectangle.endAnimationCallback = this._complete.bind(this)
+  }
+
+  private _complete(): void {
+    this._scene.scene.start('Menu')
+    Settings.setScreen(screen.COMPLETE)
+  }
+
   private _back(): void {
     this._scene.scene.start('Menu')
-    Session.setLevelConfig([])
+    Settings.setScreen(screen.MAIN)
   }
 }
 

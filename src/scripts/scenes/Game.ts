@@ -1,8 +1,10 @@
 import GameActions from "../actions/GameActions";
 import CurrentWord from "../components/CurrentWord";
+import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
+import Session from "../data/Session";
 import Settings from "../data/Settings";
 
 
@@ -20,8 +22,10 @@ class Game extends Phaser.Scene {
   public activeLetterButtons: LetterButton[] = []
   public currentWord: CurrentWord
   public graphics: Phaser.GameObjects.Graphics;
-  // тест
+  public endLevelRectangle: EndLevelRectangle;
+
   public init(): void {
+    Session.clear()
     this.words = []
     this.letterButtons = []
     this.activeLetterButtons = []

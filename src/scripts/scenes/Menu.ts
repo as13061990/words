@@ -2,6 +2,7 @@ import Main from '../screen/Main';
 import Loading from '../components/Loading';
 import Settings from '../data/Settings';
 import { screen } from '../types/enums';
+import Complete from '../screen/Complete';
 
 class Menu extends Phaser.Scene {
   constructor() {
@@ -20,6 +21,8 @@ class Menu extends Phaser.Scene {
   public create(): void {
     if (Settings.getScreen() === screen.MAIN) {
       new Main(this)
+    } else if (Settings.getScreen() === screen.COMPLETE) {
+      new Complete(this)
     }
   }
 

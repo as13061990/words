@@ -1,5 +1,6 @@
 enum screen {
-  MAIN
+  MAIN,
+  COMPLETE,
 }
 
 enum currentWordType {

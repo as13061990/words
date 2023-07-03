@@ -56,7 +56,7 @@ class Main {
 
   private _lvlUp(): void {
     if (0 === this._currentLevelIndex) return
-    console.log('lvlup')
+
     const levels = Settings.getLevels()
     this._currentLevelIndex--
     Settings.setCurrentLevel(levels[this._currentLevelIndex])
@@ -69,7 +69,7 @@ class Main {
   private _lvlDown(): void {
     const levels = Settings.getLevels()
     if (levels.length === this._currentLevelIndex + 1) return
-    console.log('lvldown')
+
     this._currentLevelIndex++
     Settings.setCurrentLevel(levels[this._currentLevelIndex])
 
