@@ -6,6 +6,7 @@ class Session {
   private _level: number = null
   private _levelWords: string[] = []
   private _levelLetters: string[] = []
+  private _levelConfig: ((string | number)[])[] = []
 
   addLetterToCurrentWord(letter: string) {
     this._currentWord += letter
@@ -45,6 +46,14 @@ class Session {
 
   public getLevelLetters(): string[] {
     return this._levelLetters
+  }
+
+  public setLevelConfig(levelConfig: ((string | number)[])[]): void {
+    this._levelConfig = levelConfig
+  }
+
+  public getLevelConfig(): ((string | number)[])[] {
+    return this._levelConfig
   }
 
   public setCurrentWordType(type: currentWordType): void {

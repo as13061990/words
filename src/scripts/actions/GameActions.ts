@@ -7,7 +7,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType } from "../types/enums";
+import { currentWordType, wordDirection } from "../types/enums";
 
 const WORD_STEP = 110
 const SHUFFLE_ANIMATION_DURATION = 200
@@ -22,12 +22,55 @@ class GameActions {
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
 
+  private _getWords(): { horizontal: any[], vertical: any[] } {
+    const configLevel = Session.getLevelConfig()
+    const words = Session.getLevelWords()
+    const verticalWords = [];
+
+    for (let col = 0; col < configLevel[0].length; col++) {
+      let word = '';
+      let first = -1
+      for (let row = 0; row < configLevel.length; row++) {
+        if (configLevel[row][col] !== 0) {
+          if (first === -1) first = row + 1
+          word += configLevel[row][col];
+        }
+      }
+      if (words.includes(word)) {
+        verticalWords.push({ word: word, position: col + 1, startPosition: first });
+      }
+    }
+    
+    const horizontalWords = [];
+    configLevel.forEach((row, i) => {
+      let word = '';
+      let first = -1
+      row.forEach((letter, j) => {
+        if (letter !== 0) {
+          if (first === -1) first = j + 1
+          word += letter;
+        }
+      });
+      
+      if (words.includes(word) && !(horizontalWords.map((el) => el?.word)).includes(word)) {
+        horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+      }
+    });
+
+    return { horizontal: horizontalWords, vertical: verticalWords }
+  }
+
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
 
     this._level = Session.getLevel()
+
     Session.setLevelWords(Settings.getCurrentLevel().data.words)
     Session.setLevelLetters(Settings.getCurrentLevel().data.letters)
+
+    if (Settings.getCurrentLevel().data?.config?.length > 0) {
+      Session.setLevelConfig(Settings.getCurrentLevel().data.config)
+    }
 
     const btn = new Button(this._scene, centerX, centerY - 600, 'button-green')
     btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
@@ -38,30 +81,93 @@ class GameActions {
 
     this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
 
-
-    this._createWords()
-    this._createCurrentWord()
     this._createLettersCircle()
+    this._createCurrentWord()
+    this._createWords()
     this._createLetterButtons()
     this._addLogicToLetterButtons()
     this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
   }
 
   private _createWords(): void {
-    const { centerX } = this._scene.cameras.main
+    const { centerX, width } = this._scene.cameras.main
+    const configLevel = Session.getLevelConfig()
 
-    const wordsStringArr = Session.getLevelWords()
-
-    wordsStringArr.sort((a, b) => {
-      if (a.length !== b.length) {
-        return a.length - b.length;
+    if (configLevel.length > 0) {
+      const { horizontal, vertical } = this._getWords()
+      console.log(horizontal, vertical)
+      let scale = 1
+      if (configLevel.length > 5) {
+        switch (configLevel.length) {
+          case 6:
+            scale = 0.85
+            break;
+          case 7:
+            scale = 0.74
+            break;
+          case 8:
+            scale = 0.65
+            break;
+          case 9:
+            scale = 0.585
+            break;
+          case 10:
+            scale = 0.52
+            break;
+          case 11:
+            scale = 0.475
+            break;
+          case 12:
+            scale = 0.445
+            break;
+          default:
+            scale = 0.445 - (0.05 * configLevel.length - 12)
+            break;
+        }
       }
-      return a.localeCompare(b);
-    });
+      if (configLevel[0].length > 10 && scale === 1) {
+        switch (configLevel[0].length) {
+          case 11:
+            scale = 0.8
+            break;
+          case 12:
+            scale = 0.7
+            break;
+          default:
+            scale = 0.7 - (0.08 * configLevel.length - 12)
+            break;
+        }
+      }
+      vertical.forEach((word, i) => {
 
-    wordsStringArr.forEach((word, i) => {
-      this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length / 2) - WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110)))
-    })
+        const newWord = new Word(this._scene, word.word,
+          centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
+          WORD_STEP * scale * word.startPosition + this._scene.title.getBounds().bottom + 20,
+          wordDirection.VERTICAL).setScale(scale)
+        this._scene.words.push(newWord)
+      })
+
+      horizontal.forEach((word, i) => {
+
+        // centerX - (WORD_STEP * scale * word.startPosition)  centerX - (length / 2 * unit),
+        const newWord = new Word(this._scene, word.word,
+          centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.startPosition) - WORD_STEP * scale / 2,
+          word.position * scale * 110 + this._scene.title.getBounds().bottom + 20,
+          wordDirection.HORIZONTAL).setScale(scale)
+        this._scene.words.push(newWord)
+      })
+    } else {
+      const wordsStringArr = Session.getLevelWords()
+      wordsStringArr.sort((a, b) => {
+        if (a.length !== b.length) {
+          return a.length - b.length;
+        }
+        return a.localeCompare(b);
+      });
+      wordsStringArr.forEach((word, i) => {
+        this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length / 2) - WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
+      })
+    }
   }
 
   private _createCurrentWord(): void {
@@ -69,10 +175,11 @@ class GameActions {
   }
 
   private _createLettersCircle(): void {
-    const { centerX } = this._scene.cameras.main
-    this._centerYLettersCircle = this._scene.words[this._scene.words.length - 1].getBounds().bottom + 300
+    const { centerX, height } = this._scene.cameras.main
+    this._centerYLettersCircle = height - 240
     this._scene.lettersCircle = new LettersCircle(this._scene, centerX, this._centerYLettersCircle)
   }
+
 
   private _createLetterButtons(): void {
     const letters = Session.getLevelLetters()
@@ -94,7 +201,7 @@ class GameActions {
       const centerX = circle.getPosition().x;
       const letters = Session.getLevelLetters()
       this._shuffleAnimation = true
-  
+
       this._scene.tweens.add({
         targets: [...this._scene.letterButtons],
         ease: 'Exponential.easeOut',
@@ -107,7 +214,7 @@ class GameActions {
             let theta = -Math.PI / 2 + (i * 2 * Math.PI / letters.length)
             const x = centerX + circle.getRadius() * Math.cos(theta);
             const y = this._centerYLettersCircle + circle.getRadius() * Math.sin(theta);
-  
+
             this._scene.tweens.add({
               targets: button,
               ease: 'Exponential.easeOut',
@@ -219,12 +326,12 @@ class GameActions {
 
       zone.upCallback = () => {
 
-        
+
         if (button.getActivated()) {
           graphicCircleStart.clear()
           graphicCircleEnd.clear()
           graphicCircleMid.clear()
-  
+
           this._scene?.graphics?.clear();
           points.splice(0)
           pointsMouse.splice(0)
@@ -240,6 +347,7 @@ class GameActions {
           let solved = false
           let repeat = false
           let solvedX: number, solvedY: number
+          let type: wordDirection
 
           for (let word of this._scene.words) {
             if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
@@ -252,6 +360,7 @@ class GameActions {
               solved = true
               solvedX = word.x
               solvedY = word.y
+              type = word.getType()
             }
           }
 
@@ -272,7 +381,7 @@ class GameActions {
             case currentWordType.SOLVED:
               Session.setCurrentWordType(currentWordType.DEFAULT)
               Session.resetCurrentWord()
-              this._scene.currentWord.solvedAnimation(solvedX, solvedY)
+              this._scene.currentWord.solvedAnimation(solvedX, solvedY, type)
               break;
           }
         }
@@ -283,6 +392,7 @@ class GameActions {
 
   private _back(): void {
     this._scene.scene.start('Menu')
+    Session.setLevelConfig([])
   }
 }
 

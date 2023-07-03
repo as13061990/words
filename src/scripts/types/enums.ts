@@ -9,7 +9,13 @@ enum currentWordType {
   REPEAT = 'repeat'
 }
 
+enum wordDirection {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical'
+}
+
 export {
   currentWordType,
+  wordDirection,
   screen
 }
