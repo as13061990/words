@@ -233,12 +233,12 @@ class GameActions {
 
 
   private _addLogicToLetterButtons(): void {
-    const graphicCircleStart = this._scene.add.graphics();
-    const graphicCircleEnd = this._scene.add.graphics();
-    const graphicCircleMid = this._scene.add.graphics();
+    const graphicCircleStart = this._scene.add.graphics().setDepth(6);;
+    const graphicCircleEnd = this._scene.add.graphics().setDepth(6);
+    const graphicCircleMid = this._scene.add.graphics().setDepth(6);;
     const points = [];
     const pointsMouse = []
-    this._scene.graphics = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } });
+    this._scene.graphics = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } }).setDepth(6);;
 
     this._scene.input.on('pointermove', (pointer) => {
 
