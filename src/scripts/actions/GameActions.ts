@@ -94,62 +94,39 @@ class GameActions {
       const { horizontal, vertical } = this._getWords()
 
       let scale = 1
-      if (configLevel.length > 5) {
-        switch (configLevel.length) {
-          case 6:
-            scale = 0.85
-            break;
-          case 7:
-            scale = 0.74
-            break;
-          case 8:
-            scale = 0.65
-            break;
-          case 9:
-            scale = 0.585
-            break;
-          case 10:
-            scale = 0.52
-            break;
-          case 11:
-            scale = 0.475
-            break;
-          case 12:
-            scale = 0.445
-            break;
-          default:
-            scale = 0.445 - (0.05 * configLevel.length - 12)
-            break;
-        }
-      }
-      if (configLevel[0].length > 10 && scale === 1) {
-        switch (configLevel[0].length) {
-          case 11:
-            scale = 0.8
-            break;
-          case 12:
-            scale = 0.7
-            break;
-          default:
-            scale = 0.7 - (0.08 * configLevel.length - 12)
-            break;
-        }
-      }
-      vertical.forEach((word, i) => {
 
+      const space = width - 200;
+      const length = configLevel[0].length
+      scale = space / (WORD_STEP * length);
+
+      const startY = this._scene.title.getBounds().bottom + 20
+      const endY = this._scene.currentWord.y - 60 - (configLevel.length * 8)
+      const centerY = endY - startY
+      
+      const spaceY = Math.abs(endY - startY)
+      const lengthY = configLevel.length
+      const scaleY = spaceY / (WORD_STEP * lengthY);
+
+      if (scaleY < scale) {
+        scale = scaleY
+      }
+
+      if (scale >= 1) {
+        scale = 1
+      }
+      
+      vertical.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
           centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
-          WORD_STEP * scale * word.startPosition + this._scene.title.getBounds().bottom + 20,
+          centerY - (configLevel.length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.startPosition) - WORD_STEP * scale / 2,
           wordDirection.VERTICAL).setScale(scale)
         this._scene.words.push(newWord)
       })
 
       horizontal.forEach((word, i) => {
-
-        // centerX - (WORD_STEP * scale * word.startPosition)  centerX - (length / 2 * unit),
         const newWord = new Word(this._scene, word.word,
           centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.startPosition) - WORD_STEP * scale / 2,
-          word.position * scale * 110 + this._scene.title.getBounds().bottom + 20,
+          centerY - (configLevel.length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
           wordDirection.HORIZONTAL).setScale(scale)
         this._scene.words.push(newWord)
       })
