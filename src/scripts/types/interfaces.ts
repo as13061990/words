@@ -20,6 +20,7 @@ interface Ilevel {
     level: number;
     words: string[];
     letters: string[];
+    config?: ((string | number)[])[];
   }
 }
 

@@ -1,12 +1,16 @@
+import { wordDirection } from "../types/enums"
+
 const WORD_STEP = 110
 const SOLVED_ANIMATION_DURATION = 650
 const REPEAT_ANIMATION_DURATION_STEP = 310
 
 class Word extends Phaser.GameObjects.Container {
-  constructor(scene: Phaser.Scene, word: string, x: number, y: number) {
+  constructor(scene: Phaser.Scene, word: string, x: number, y: number, type?: wordDirection,) {
     super(scene, x, y)
     this._scene = scene
     this._word = word
+    this._type = type
+
     this._build()
   }
 
@@ -14,14 +18,26 @@ class Word extends Phaser.GameObjects.Container {
   private _word: string
   private _solved: boolean = false
   private _empty: boolean = true
+  private _type: wordDirection
 
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(0 + (i * WORD_STEP), 0, 'word-letter')
-      this.add(sprite)
-    })
+    if (this._type === wordDirection.VERTICAL) {
+      this._word.split('').forEach((letter, i) => {
+        const sprite = this._scene.add.sprite(0, 0 + (i * WORD_STEP), 'word-letter')
+        this.add(sprite)
+      })
+    } else {
+      this._word.split('').forEach((letter, i) => {
+        const sprite = this._scene.add.sprite(0 + (i * WORD_STEP), 0, 'word-letter')
+        this.add(sprite)
+      })
+    }
+  }
+
+  public getType(): wordDirection {
+    return this._type
   }
 
   public getWord(): string {
@@ -41,6 +57,7 @@ class Word extends Phaser.GameObjects.Container {
   }
 
   private _repeatAnimatioStepForward(): void {
+    this.setDepth(5)
     const startPhaserColor = new Phaser.Display.Color(110, 190, 104)
     const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
     this._scene.add.tween({
@@ -82,6 +99,9 @@ class Word extends Phaser.GameObjects.Container {
           }
         });
       },
+      onComplete: () => {
+        this.setDepth(2)
+      }
     })
   }
 
@@ -90,13 +110,22 @@ class Word extends Phaser.GameObjects.Container {
       this._empty = false
       this._scene.time.addEvent({
         delay: SOLVED_ANIMATION_DURATION, callback: (): void => {
+          this.setDepth(2)
           this.list.forEach((word: Phaser.GameObjects.Sprite, i) => {
             word.setTint(0x6ebe68)
-            const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (this._word[i]).toUpperCase(), {
-              color: 'rgb(255, 255, 255)',
-              font: '60px Triomphe',
-            }).setOrigin(.5, .5).setDepth(3)
-            this.add(text)
+            if (this._type === 'horizontal') {
+              const text = this._scene.add.text(0 + (i * WORD_STEP), 0, (this._word[i]).toUpperCase(), {
+                color: 'rgb(255, 255, 255)',
+                font: '60px Triomphe',
+              }).setOrigin(.5, .5).setDepth(3)
+              this.add(text)
+            } else {
+              const text = this._scene.add.text(0, 0 + (i * WORD_STEP), (this._word[i]).toUpperCase(), {
+                color: 'rgb(255, 255, 255)',
+                font: '60px Triomphe',
+              }).setOrigin(.5, .5).setDepth(3)
+              this.add(text)
+            }
           })
         }, loop: false
       });

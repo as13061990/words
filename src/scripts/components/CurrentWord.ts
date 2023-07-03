@@ -1,8 +1,8 @@
 import Session from "../data/Session";
 import Game from "../scenes/Game";
-import { currentWordType } from "../types/enums";
+import { currentWordType, wordDirection } from "../types/enums";
 
-const REDUCE_SCALE = 0.7
+const REDUCE_SCALE = 0.4
 const WORD_STEP = 110
 const WRONG_ANIMATION_STEP_DURATION = 60
 const COLOR_CHANGE_ANIMATION_DURATION = 130
@@ -14,7 +14,7 @@ const DESTROY_ANIMATION_DURATION = 500
 class CurrentWord extends Phaser.GameObjects.Container {
   constructor(scene: Game) {
     const { centerX } = scene.cameras.main
-    super(scene, centerX, scene.words[scene.words.length - 1].getBounds().bottom + 50)
+    super(scene, centerX, scene.lettersCircle.getPosition().y - 200)
     this._scene = scene
     this._build()
   }
@@ -48,8 +48,8 @@ class CurrentWord extends Phaser.GameObjects.Container {
     this._startOrangeAnimation()
   }
 
-  public solvedAnimation(x: number, y: number): void {
-    this._startToWordAnimation(x, y)
+  public solvedAnimation(x: number, y: number, type: wordDirection): void {
+    this._startToWordAnimation(x, y, type)
     this.destroyAll()
     this._startGreenAnimation()
   }
@@ -205,8 +205,8 @@ class CurrentWord extends Phaser.GameObjects.Container {
     }))
   }
 
-  private _startToWordAnimation(x: number, y: number): void {
-    this._copyContainer = this._scene.add.container(this.x, this.y).setDepth(5)
+  private _startToWordAnimation(x: number, y: number, type: wordDirection): void {
+    this._copyContainer = this._scene.add.container(this.x, this.y).setDepth(2)
     this.list.forEach((el) => {
       if (el instanceof Phaser.GameObjects.Text) {
         const text = this._scene.add.text(el.x, el.y, el.text, el.style).setOrigin(el.originX, el.originY).setScale(el.scale)
@@ -239,15 +239,28 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
     const texts = this._copyContainer.list.filter((el) => el instanceof Phaser.GameObjects.Text)
     const sprites = this._copyContainer.list.filter((el) => el instanceof Phaser.GameObjects.Sprite)
-    sprites.forEach((el, i) => {
-      this._scene.add.tween({
-        targets: [el, texts[i]],
-        scale: 1,
-        ease: 'Power2',
-        x: 0 + (i * WORD_STEP),
-        duration: SOLVED_ANIMATION_DURATION,
+    if (type === wordDirection.HORIZONTAL) {
+      sprites.forEach((el, i) => {
+        this._scene.add.tween({
+          targets: [el, texts[i]],
+          scale: this._scene.words[0].scale,
+          ease: 'Power2',
+          x: 0 + (i * WORD_STEP * this._scene.words[0].scale),
+          duration: SOLVED_ANIMATION_DURATION,
+        })
       })
-    })
+    } else {
+      sprites.forEach((el, i) => {
+        this._scene.add.tween({
+          targets: [el, texts[i]],
+          scale: this._scene.words[0].scale,
+          ease: 'Power2',
+          y: 0 + (i * WORD_STEP * this._scene.words[0].scale),
+          x: 0,
+          duration: SOLVED_ANIMATION_DURATION,
+        })
+      })
+    }
   }
 
   private _createWord(): void {
@@ -264,7 +277,8 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
       this.add([sprite, text])
       const { centerX } = this._scene.cameras.main
-      this.setPosition(centerX - (WORD_STEP * REDUCE_SCALE * (word.length / 2) - WORD_STEP * REDUCE_SCALE / 2), this.y)
+
+      this.setPosition(centerX - (WORD_STEP * REDUCE_SCALE * (word.length / 2) - WORD_STEP * REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
     })
   }
 
