@@ -46,6 +46,7 @@ class GameActions {
     this._addLogicToLetterButtons()
     this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
     this._createEndLevelRectangle()
+    this._createBoosters()
   }
 
   private _getWords(): { horizontal: any[], vertical: any[] } {
@@ -104,7 +105,7 @@ class GameActions {
         word = '';
       }
     });
-    console.log(horizontalWords, verticalWords)
+
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
@@ -391,6 +392,32 @@ class GameActions {
     const { centerX, centerY, height, width } = this._scene.cameras.main
     this._scene.endLevelRectangle = new EndLevelRectangle(this._scene, centerX, centerY, width, height, 0x2d344b)
     this._scene.endLevelRectangle.endAnimationCallback = this._complete.bind(this)
+  }
+
+  private _createBoosters(): void {
+    const { x, y } = this._scene.lettersCircle.getPosition()
+    const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4)
+    const booster2 = this._scene.add.sprite(x + 240, y - 130, 'booster-circle').setTint(0x688ec4)
+    const booster3 = this._scene.add.sprite(x + 240, y + 80, 'booster-circle').setTint(0x688ec4)
+
+    const hummer = this._scene.add.sprite(booster1.getBounds().centerX, booster1.getBounds().centerY, 'hummer')
+    const finger = this._scene.add.sprite(booster2.getBounds().centerX, booster2.getBounds().centerY, 'finger')
+    const lamp = this._scene.add.sprite(booster3.getBounds().centerX, booster3.getBounds().centerY, 'lamp')
+
+    const zone3 = Zone.createFromSprite(booster3)
+
+    zone3.clickCallback = () => {
+      let randomWord
+      while (true) {
+        const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
+        randomWord = this._scene.words[randomIndex]
+        if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
+        break;
+      }
+      console.log(randomWord.getWord().toLowerCase())
+      Session.addToCompletedWords(randomWord.getWord().toLowerCase())
+      randomWord.setSolved(true)
+    }
   }
 
   private _complete(): void {

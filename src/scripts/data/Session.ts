@@ -96,6 +96,10 @@ class Session {
     }
   }
 
+  public getToCompletedWords(): string[] {
+    return this._levelCompletedWords
+  }
+
 }
 
 export default new Session();
