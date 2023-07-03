@@ -40,7 +40,7 @@ class GameActions {
         verticalWords.push({ word: word, position: col + 1, startPosition: first });
       }
     }
-
+    
     const horizontalWords = [];
     configLevel.forEach((row, i) => {
       let word = '';
@@ -50,10 +50,11 @@ class GameActions {
           if (first === -1) first = j + 1
           word += letter;
         }
-        if (words.includes(word) && !(horizontalWords.map((el) => el?.word)).includes(word)) {
-          horizontalWords.push({ word: word, position: i + 1, startPosition: first });
-        }
       });
+      
+      if (words.includes(word) && !(horizontalWords.map((el) => el?.word)).includes(word)) {
+        horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+      }
     });
 
     return { horizontal: horizontalWords, vertical: verticalWords }
