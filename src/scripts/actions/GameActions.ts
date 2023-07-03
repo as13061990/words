@@ -51,38 +51,60 @@ class GameActions {
   private _getWords(): { horizontal: any[], vertical: any[] } {
     const configLevel = Session.getLevelConfig()
     const words = Session.getLevelWords()
+
     const verticalWords = [];
 
     for (let col = 0; col < configLevel[0].length; col++) {
       let word = '';
-      let first = -1
+      let first = -1;
       for (let row = 0; row < configLevel.length; row++) {
         if (configLevel[row][col] !== 0) {
-          if (first === -1) first = row + 1
+          if (first === -1) first = row + 1;
           word += configLevel[row][col];
+        } else if (word !== '') {
+          if (words.includes(word)) {
+            verticalWords.push({ word: word, position: col + 1, startPosition: first });
+          }
+          word = '';
+          first = -1;
         }
       }
-      if (words.includes(word)) {
-        verticalWords.push({ word: word, position: col + 1, startPosition: first });
+      if (word !== '') {
+        if (words.includes(word)) {
+          verticalWords.push({ word: word, position: col + 1, startPosition: first });
+        }
       }
     }
 
     const horizontalWords = [];
+    let word = '';
+
     configLevel.forEach((row, i) => {
-      let word = '';
-      let first = -1
+      let first = -1;
+
       row.forEach((letter, j) => {
         if (letter !== 0) {
-          if (first === -1) first = j + 1
+          if (first === -1) first = j + 1;
           word += letter;
+        } else {
+          if (word.length > 0) {
+            if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
+              horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+            }
+            word = '';
+            first = -1;
+          }
         }
       });
 
-      if (words.includes(word) && !(horizontalWords.map((el) => el?.word)).includes(word)) {
-        horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+      if (word.length > 0) {
+        if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
+          horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+        }
+        word = '';
       }
     });
-
+    console.log(horizontalWords, verticalWords)
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
@@ -102,7 +124,7 @@ class GameActions {
       const startY = this._scene.title.getBounds().bottom + 20
       const endY = this._scene.currentWord.y - 60 - (configLevel.length * 8)
       const centerY = endY - startY
-      
+
       const spaceY = Math.abs(endY - startY)
       const lengthY = configLevel.length
       const scaleY = spaceY / (WORD_STEP * lengthY);
@@ -114,7 +136,7 @@ class GameActions {
       if (scale >= 1) {
         scale = 1
       }
-      
+
       vertical.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
           centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
