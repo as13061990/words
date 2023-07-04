@@ -9,7 +9,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType, screen, wordDirection } from "../types/enums";
+import { currentWordType, resolveWord, screen, wordDirection } from "../types/enums";
 
 
 class GameActions {
@@ -351,7 +351,7 @@ class GameActions {
                 repeat = true
                 word.repeatAnimation()
               }
-              word.setSolved(true)
+              word.setSolved(resolveWord.STANDART)
               Session.setCurrentWordType(currentWordType.SOLVED)
               Session.addToCompletedWords(word.getWord().toLowerCase())
               solved = true
@@ -417,7 +417,7 @@ class GameActions {
       }
       Session.addToCompletedWords(randomWord.getWord().toLowerCase())
       boosterRandomWord.setWord(randomWord)
-      randomWord.setSolved(true, true)
+      randomWord.setSolved(resolveWord.BOOSTER_WORD)
     }
 
   }

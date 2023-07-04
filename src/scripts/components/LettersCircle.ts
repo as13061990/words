@@ -1,7 +1,6 @@
+import Settings from "../data/Settings"
 import Game from "../scenes/Game"
 import Zone from "./Zone"
-
-const BTN_ANIMATION_DURATION = 100
 
 class LettersCircle extends Phaser.GameObjects.Graphics {
   constructor(scene: Game, x: number, y: number) {
@@ -38,7 +37,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
       targets: this._btnSprite,
       scale: 0.9,
       ease: 'Power2',
-      duration: BTN_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_SHUFFLE_BUTTON,
       onComplete: this._scaleAnimation.bind(this)
     })
   }
@@ -48,7 +47,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
       targets: this._btnSprite,
       scale: 1,
       ease: 'Power2',
-      duration: BTN_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_SHUFFLE_BUTTON,
     })
   }
 

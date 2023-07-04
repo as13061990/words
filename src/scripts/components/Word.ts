@@ -1,9 +1,5 @@
 import Settings from "../data/Settings"
-import { wordDirection } from "../types/enums"
-
-
-
-const REPEAT_ANIMATION_DURATION_STEP = 310
+import { resolveWord, wordDirection } from "../types/enums"
 
 class Word extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, word: string, x: number, y: number, type?: wordDirection,) {
@@ -46,9 +42,13 @@ class Word extends Phaser.GameObjects.Container {
     return this._word
   }
 
-  public setSolved(solved: boolean, booster: boolean = false): void {
-    this._solved = solved
-    this._booster = booster
+  public setSolved(solved: resolveWord): void {
+    if (resolveWord.STANDART === solved) {
+      this._solved = true
+    } else if (resolveWord.BOOSTER_WORD === solved) {
+      this._solved = true
+      this._booster = true
+    }
   }
 
   public getSolved(): boolean {
@@ -65,7 +65,7 @@ class Word extends Phaser.GameObjects.Container {
     const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
     this._scene.add.tween({
       targets: this.list,
-      duration: REPEAT_ANIMATION_DURATION_STEP,
+      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
       scale: 1.09,
       ease: 'Power2',
       onUpdate: (tweeen) => {
@@ -88,7 +88,7 @@ class Word extends Phaser.GameObjects.Container {
     const startPhaserColor = new Phaser.Display.Color(222, 153, 85)
     this._scene.add.tween({
       targets: this.list,
-      duration: REPEAT_ANIMATION_DURATION_STEP,
+      duration:  Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
       scale: 1,
       ease: 'Power2',
       onUpdate: (tweeen) => {

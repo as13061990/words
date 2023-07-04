@@ -3,13 +3,6 @@ import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType, wordDirection } from "../types/enums";
 
-const REDUCE_SCALE = 0.4
-const WRONG_ANIMATION_STEP_DURATION = 60
-const COLOR_CHANGE_ANIMATION_DURATION = 130
-
-const SOLVED_ANIMATION_DESTROY_DURATION = 100
-const DESTROY_ANIMATION_DURATION = 500
-
 
 class CurrentWord extends Phaser.GameObjects.Container {
   constructor(scene: Game) {
@@ -61,25 +54,25 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   private _startShakingAnimation = () => {
     const { centerX } = this._scene.cameras.main
-    const x = centerX - (Settings.WORD_STEP * REDUCE_SCALE * (this.list.length / 4) - Settings.WORD_STEP * REDUCE_SCALE / 2)
+    const x = centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (this.list.length / 4) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2)
     this._animations.push(this._scene.add.tween({
       targets: this,
-      duration: WRONG_ANIMATION_STEP_DURATION,
+      duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
       x: x + 12,
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
-          duration: WRONG_ANIMATION_STEP_DURATION,
+          duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
           x: x - 12,
           onComplete: () => {
             this._animations.push(this._scene.add.tween({
               targets: this,
-              duration: WRONG_ANIMATION_STEP_DURATION,
+              duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
               x: x,
               onComplete: () => {
                 this._animations.push(this._scene.add.tween({
                   targets: this,
-                  duration: DESTROY_ANIMATION_DURATION,
+                  duration: Settings.DURATION_ANIMATION_CURRENTWORD_DESTROY,
                   x: x,
                   onComplete: () => {
                     this.destroyAll()
@@ -100,7 +93,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     const endPhaserColor = new Phaser.Display.Color(240, 85, 87)
     this._animations.push(this._scene.add.tween({
       targets: this,
-      duration: COLOR_CHANGE_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       scale: 1,
       ease: 'Power2',
       onUpdate: (tweeen) => {
@@ -134,7 +127,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
     this._animations.push(this._scene.add.tween({
       targets: this,
-      duration: COLOR_CHANGE_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       scale: 1,
       ease: 'Power2',
       onUpdate: (tweeen) => {
@@ -161,7 +154,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
-          duration: DESTROY_ANIMATION_DURATION,
+          duration: Settings.DURATION_ANIMATION_CURRENTWORD_DESTROY,
           scale: 1,
           onComplete: () => {
             this.destroyAll()
@@ -178,7 +171,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     const endPhaserColor = new Phaser.Display.Color(110, 190, 104)
     this._animations.push(this._scene.add.tween({
       targets: this._copyContainer,
-      duration: COLOR_CHANGE_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       scale: 1,
       ease: 'Power2',
       onUpdate: (tweeen) => {
@@ -226,7 +219,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
-          duration: SOLVED_ANIMATION_DESTROY_DURATION,
+          duration: Settings.DURATION_ANIMATION_CURRENTWORD_SOLVED_DESTOY,
           scale: this.scale,
           onComplete: () => {
             this._copyContainer.removeAll(true)
@@ -266,19 +259,19 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _createWord(): void {
     const word =  Session.getCurrentWord()
     word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * REDUCE_SCALE), 0, 'word-letter')
-      sprite.setScale(REDUCE_SCALE)
+      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, 'word-letter')
+      sprite.setScale(Settings.REDUCE_SCALE)
 
-      const text = this._scene.add.text(0 + (i * Settings.WORD_STEP * REDUCE_SCALE), 0, (letter).toUpperCase(), {
+      const text = this._scene.add.text(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, (letter).toUpperCase(), {
         color: 'rgb(44,52,75)',
         font: '60px Triomphe',
       }).setOrigin(0.5, 0.5)
-      text.setScale(REDUCE_SCALE)
+      text.setScale(Settings.REDUCE_SCALE)
 
       this.add([sprite, text])
       const { centerX } = this._scene.cameras.main
 
-      this.setPosition(centerX - (Settings.WORD_STEP * REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
+      this.setPosition(centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
     })
   }
 

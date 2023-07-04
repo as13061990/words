@@ -1,8 +1,7 @@
 import Session from "../data/Session"
+import Settings from "../data/Settings"
 import Game from "../scenes/Game"
 import Zone from "./Zone"
-
-const ANIMATION_DURATION = 280
 
 class LetterButton extends Phaser.GameObjects.Container {
   constructor(scene: Game, x: number, y: number, letter: string) {
@@ -37,7 +36,7 @@ class LetterButton extends Phaser.GameObjects.Container {
       targets: [this, this._text],
       scaleX: 1,
       scaleY: 1,
-      duration: ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
       ease: 'Power2',
       onUpdate: (tweeen) => {
         const interpolationValue = tweeen.progress;
@@ -67,7 +66,7 @@ class LetterButton extends Phaser.GameObjects.Container {
       targets: [this, this._text],
       scaleX: 1.2,
       scaleY: 1.2,
-      duration: ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
       ease: 'Power2',
       onUpdate: (tweeen) => {
         const interpolationValue = tweeen.progress;

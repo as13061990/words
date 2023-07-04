@@ -1,8 +1,6 @@
 import Session from "../data/Session"
+import Settings from "../data/Settings"
 import Game from "../scenes/Game"
-
-const ANIMATION_VISABLE_DURATION = 800
-const ANIMATION_VISABLE_DELAY = 1200
 
 class EndLevelRectangle extends Phaser.GameObjects.Rectangle {
   constructor(scene: Game, x: number, y: number, width: number, height: number, color: number) {
@@ -25,10 +23,10 @@ class EndLevelRectangle extends Phaser.GameObjects.Rectangle {
   private _startVisableAnimation(): void {
     this._scene.tweens.add({
       targets: this,
-      duration: ANIMATION_VISABLE_DURATION,
+      duration: Settings.DURATION_ANIMATION_ENDLEVELRECTANGLE,
       ease: 'Power2',
       alpha: 1,
-      delay: ANIMATION_VISABLE_DELAY,
+      delay: Settings.DELAY_ANIMATION_ENDLEVELRECTANGLE,
       onComplete: this.endAnimationCallback
     })
   }

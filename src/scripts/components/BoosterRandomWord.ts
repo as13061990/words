@@ -19,15 +19,17 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
   private _startAnimation(): void {
     this._word.list.forEach((el: Phaser.GameObjects.Sprite) => {
-      const star = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'star').setDepth(6)
-      this._scene.tweens.add({
-        targets: star,
-        x: el.getBounds().centerX,
-        y: el.getBounds().centerY,
-        duration: Settings.DURATION_ANIMATION_BOOSTER_RANDOM_WORD,
-        ease: 'Power1',
-        onComplete: () => star.destroy()
-      })
+      if (el instanceof Phaser.GameObjects.Sprite) {
+        const star = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'star').setDepth(6)
+        this._scene.tweens.add({
+          targets: star,
+          x: el.getBounds().centerX,
+          y: el.getBounds().centerY,
+          duration: Settings.DURATION_ANIMATION_BOOSTER_RANDOM_WORD,
+          ease: 'Power1',
+          onComplete: () => star.destroy()
+        })
+      }
     })
   }
 
