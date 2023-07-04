@@ -1,3 +1,4 @@
+import BoosterRandomWord from "../components/BoosterRandomWord";
 import Button from "../components/Button";
 import CurrentWord from "../components/CurrentWord";
 import EndLevelRectangle from "../components/EndLevelRectangle";
@@ -10,8 +11,6 @@ import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType, screen, wordDirection } from "../types/enums";
 
-const WORD_STEP = 110
-const SHUFFLE_ANIMATION_DURATION = 200
 
 class GameActions {
   constructor(scene: Game) {
@@ -120,7 +119,7 @@ class GameActions {
 
       const space = width - 200;
       const length = configLevel[0].length
-      scale = space / (WORD_STEP * length);
+      scale = space / (Settings.WORD_STEP * length);
 
       const startY = this._scene.title.getBounds().bottom + 20
       const endY = this._scene.currentWord.y - 60 - (configLevel.length * 8)
@@ -128,7 +127,7 @@ class GameActions {
 
       const spaceY = Math.abs(endY - startY)
       const lengthY = configLevel.length
-      const scaleY = spaceY / (WORD_STEP * lengthY);
+      const scaleY = spaceY / (Settings.WORD_STEP * lengthY);
 
       if (scaleY < scale) {
         scale = scaleY
@@ -140,16 +139,16 @@ class GameActions {
 
       vertical.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.startPosition) - WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.position) - Settings.WORD_STEP * scale / 2,
+          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.startPosition) - Settings.WORD_STEP * scale / 2,
           wordDirection.VERTICAL).setScale(scale)
         this._scene.words.push(newWord)
       })
 
       horizontal.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.startPosition) - WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (WORD_STEP * scale)) + (WORD_STEP * scale * word.position) - WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.startPosition) - Settings.WORD_STEP * scale / 2,
+          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.position) - Settings.WORD_STEP * scale / 2,
           wordDirection.HORIZONTAL).setScale(scale)
         this._scene.words.push(newWord)
       })
@@ -162,7 +161,7 @@ class GameActions {
         return a.localeCompare(b);
       });
       wordsStringArr.forEach((word, i) => {
-        this._scene.words.push(new Word(this._scene, word, centerX - (WORD_STEP * (word.length / 2) - WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
+        this._scene.words.push(new Word(this._scene, word, centerX - (Settings.WORD_STEP * (word.length / 2) - Settings.WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
       })
     }
   }
@@ -204,7 +203,7 @@ class GameActions {
         ease: 'Exponential.easeOut',
         x: this._scene.lettersCircle.getPosition().x,
         y: this._scene.lettersCircle.getPosition().y,
-        duration: SHUFFLE_ANIMATION_DURATION,
+        duration: Settings.DURATION_ANIMATION_SHUFFLE_STEP,
         onComplete: () => {
           const shuffledButtons = Phaser.Utils.Array.Shuffle(this._scene.letterButtons.slice());
           shuffledButtons.forEach((button, i) => {
@@ -217,7 +216,7 @@ class GameActions {
               ease: 'Exponential.easeOut',
               x,
               y,
-              duration: SHUFFLE_ANIMATION_DURATION,
+              duration: Settings.DURATION_ANIMATION_SHUFFLE_STEP,
               onComplete: () => this._shuffleAnimation = false
             });
           });
@@ -396,28 +395,31 @@ class GameActions {
 
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
-    const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4)
+    const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4) 
     const booster2 = this._scene.add.sprite(x + 240, y - 130, 'booster-circle').setTint(0x688ec4)
-    const booster3 = this._scene.add.sprite(x + 240, y + 80, 'booster-circle').setTint(0x688ec4)
+
+    const boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(0x688ec4)
 
     const hummer = this._scene.add.sprite(booster1.getBounds().centerX, booster1.getBounds().centerY, 'hummer')
     const finger = this._scene.add.sprite(booster2.getBounds().centerX, booster2.getBounds().centerY, 'finger')
-    const lamp = this._scene.add.sprite(booster3.getBounds().centerX, booster3.getBounds().centerY, 'lamp')
 
-    const zone3 = Zone.createFromSprite(booster3)
+    const zone3 = Zone.createFromSprite(boosterRandomWord)
 
     zone3.clickCallback = () => {
-      let randomWord
-      while (true) {
+      let randomWord: Word
+      let counter = 0
+      while (counter < 100) {
         const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
         randomWord = this._scene.words[randomIndex]
+        counter++
         if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
         break;
       }
-      console.log(randomWord.getWord().toLowerCase())
       Session.addToCompletedWords(randomWord.getWord().toLowerCase())
-      randomWord.setSolved(true)
+      boosterRandomWord.setWord(randomWord)
+      randomWord.setSolved(true, true)
     }
+
   }
 
   private _complete(): void {

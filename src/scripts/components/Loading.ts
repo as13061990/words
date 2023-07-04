@@ -6,6 +6,7 @@ import hummer from '../../assets/images/hummer.png';
 import lamp from '../../assets/images/lamp.png';
 import finger from '../../assets/images/finger.png';
 import boosterCircle from '../../assets/images/booster-circle.png';
+import star from '../../assets/images/star.png';
 
 // import sound from '../../assets/images/sound.mp3';
 class Loading {
@@ -60,6 +61,7 @@ class Loading {
     this._scene.load.image('lamp', lamp);
     this._scene.load.image('finger', finger);
     this._scene.load.image('booster-circle', boosterCircle);
+    this._scene.load.image('star', star);
   }
 
   private _loadSounds(): void {

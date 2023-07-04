@@ -1,12 +1,12 @@
 import Session from "../data/Session";
+import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType, wordDirection } from "../types/enums";
 
 const REDUCE_SCALE = 0.4
-const WORD_STEP = 110
 const WRONG_ANIMATION_STEP_DURATION = 60
 const COLOR_CHANGE_ANIMATION_DURATION = 130
-const SOLVED_ANIMATION_DURATION = 600
+
 const SOLVED_ANIMATION_DESTROY_DURATION = 100
 const DESTROY_ANIMATION_DURATION = 500
 
@@ -61,7 +61,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   private _startShakingAnimation = () => {
     const { centerX } = this._scene.cameras.main
-    const x = centerX - (WORD_STEP * REDUCE_SCALE * (this.list.length / 4) - WORD_STEP * REDUCE_SCALE / 2)
+    const x = centerX - (Settings.WORD_STEP * REDUCE_SCALE * (this.list.length / 4) - Settings.WORD_STEP * REDUCE_SCALE / 2)
     this._animations.push(this._scene.add.tween({
       targets: this,
       duration: WRONG_ANIMATION_STEP_DURATION,
@@ -222,7 +222,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       x: x,
       y: y,
       ease: 'Power2',
-      duration: SOLVED_ANIMATION_DURATION,
+      duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
@@ -245,8 +245,8 @@ class CurrentWord extends Phaser.GameObjects.Container {
           targets: [el, texts[i]],
           scale: this._scene.words[0].scale,
           ease: 'Power2',
-          x: 0 + (i * WORD_STEP * this._scene.words[0].scale),
-          duration: SOLVED_ANIMATION_DURATION,
+          x: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
+          duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
         })
       })
     } else {
@@ -255,9 +255,9 @@ class CurrentWord extends Phaser.GameObjects.Container {
           targets: [el, texts[i]],
           scale: this._scene.words[0].scale,
           ease: 'Power2',
-          y: 0 + (i * WORD_STEP * this._scene.words[0].scale),
+          y: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
           x: 0,
-          duration: SOLVED_ANIMATION_DURATION,
+          duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
         })
       })
     }
@@ -266,10 +266,10 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _createWord(): void {
     const word =  Session.getCurrentWord()
     word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(0 + (i * WORD_STEP * REDUCE_SCALE), 0, 'word-letter')
+      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * REDUCE_SCALE), 0, 'word-letter')
       sprite.setScale(REDUCE_SCALE)
 
-      const text = this._scene.add.text(0 + (i * WORD_STEP * REDUCE_SCALE), 0, (letter).toUpperCase(), {
+      const text = this._scene.add.text(0 + (i * Settings.WORD_STEP * REDUCE_SCALE), 0, (letter).toUpperCase(), {
         color: 'rgb(44,52,75)',
         font: '60px Triomphe',
       }).setOrigin(0.5, 0.5)
@@ -278,7 +278,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       this.add([sprite, text])
       const { centerX } = this._scene.cameras.main
 
-      this.setPosition(centerX - (WORD_STEP * REDUCE_SCALE * (word.length / 2) - WORD_STEP * REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
+      this.setPosition(centerX - (Settings.WORD_STEP * REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
     })
   }
 
