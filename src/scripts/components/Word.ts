@@ -1,4 +1,5 @@
 import Settings from "../data/Settings"
+import Utils from "../data/Utils"
 import { solvedWord, wordDirection } from "../types/enums"
 
 class Word extends Phaser.GameObjects.Container {
@@ -17,7 +18,7 @@ class Word extends Phaser.GameObjects.Container {
   private _empty: boolean = true
   private _type: wordDirection
   private _boosterWord: boolean = false
-  private _solvedLetters: number[] = []
+  private _solvedLetters: number[] = [] // показывает какие буквы у слова отгаданы, если 0 то нет, если 1, то да
   private _boosterLetters: boolean = false
 
 
@@ -66,179 +67,6 @@ class Word extends Phaser.GameObjects.Container {
     this._repeatAnimatioStepForward()
   }
 
-  private _repeatAnimatioStepForward(): void {
-    this.setDepth(5)
-    const startPhaserColor = new Phaser.Display.Color(110, 190, 104)
-    const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
-    this._scene.add.tween({
-      targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
-      scale: 1.09,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          }
-        });
-      },
-      onComplete: this._repeatAnimatioStepBack.bind(this)
-    })
-  }
-
-  private _repeatAnimatioStepBack(): void {
-    const endPhaserColor = new Phaser.Display.Color(110, 190, 104)
-    const startPhaserColor = new Phaser.Display.Color(222, 153, 85)
-    this._scene.add.tween({
-      targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
-      scale: 1,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          }
-        });
-      },
-      onComplete: () => {
-        this.setDepth(2)
-      }
-    })
-  }
-
-  private _standartResolveAnimation(): void {
-    this._scene.time.addEvent({
-      delay: Settings.DELAY_ANIMATION_WORD_STANDART_RESOLVE, callback: (): void => {
-        this.setDepth(2)
-        this.list.forEach((word: Phaser.GameObjects.Sprite, i) => {
-          word.setTint(0x6ebe68)
-          let x, y
-
-          if (this._type === 'horizontal') {
-            x = 0 + (i * Settings.WORD_STEP)
-            y = 0
-          } else {
-            x = 0
-            y = 0 + (i * Settings.WORD_STEP)
-          }
-
-          const text = this._scene.add.text(x, y, (this._word[i]).toUpperCase(), {
-            color: 'rgb(255, 255, 255)',
-            font: '60px Triomphe',
-          }).setOrigin(.5, .5).setDepth(3)
-          this.add(text)
-
-        })
-      }, loop: false
-    });
-  }
-
-  private _boosterWordResolveAnimation(): void {
-    this._scene.time.addEvent({
-      delay: Settings.DURATION_ANIMATION_BOOSTER_RANDOM_WORD, callback: (): void => {
-        this.list.forEach((word: Phaser.GameObjects.Sprite, i) => {
-          if (word instanceof Phaser.GameObjects.Sprite) {
-            this._startBoosterWordResolveAnimation()
-            let x, y
-
-            if (this._type === 'horizontal') {
-              x = 0 + (i * Settings.WORD_STEP)
-              y = 0
-            } else {
-              x = 0
-              y = 0 + (i * Settings.WORD_STEP)
-            }
-
-
-            const text = this._scene.add.text(x, y, (this._word[i]).toUpperCase(), {
-              color: 'rgb(255, 255, 255)',
-              font: '60px Triomphe',
-            }).setOrigin(.5, .5).setDepth(3)
-            this.add(text)
-          }
-        })
-      }, loop: false
-    });
-  }
-
-  private _boosterLettersResolveAnimation(): void {
-    const startPhaserColor = new Phaser.Display.Color(222, 153, 85)
-    const endPhaserColor = new Phaser.Display.Color(110, 190, 104)
-    this._scene.add.tween({
-      delay: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
-      targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP,
-      scale: 1.09,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          }
-        });
-      },
-      onStart: () => {
-        this.setDepth(5)
-      },
-      onComplete: () => {
-        this._scene.add.tween({
-          targets: this.list,
-          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP,
-          scale: 1,
-          ease: 'Power2',
-        })
-        this.setDepth(2)
-      }
-    })
-  }
-
-  private _startBoosterWordResolveAnimation(): void {
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const endPhaserColor = new Phaser.Display.Color(110, 190, 104)
-    this._scene.add.tween({
-      targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP,
-      scale: 1.09,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          }
-        });
-      },
-      onStart: () => {
-        this.setDepth(5)
-      },
-      onComplete: () => {
-        this._scene.add.tween({
-          targets: this.list,
-          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP,
-          scale: 1,
-          ease: 'Power2',
-        })
-        this.setDepth(2)
-      }
-    })
-  }
-
   public getSolvedLetters(): number[] {
     return this._solvedLetters
   }
@@ -247,37 +75,162 @@ class Word extends Phaser.GameObjects.Container {
     this._solvedLetters = letters
   }
 
-  public solveLetterAnimation(index): void {
+  public solveLetterAnimation(index: number): void {
+    this._startBoosterLetterSolvedAnimation(index)
+  }
+
+
+  private _repeatAnimatioStepForward(): void {
+    this._scene.add.tween({
+      onStart: () => this.setDepth(5),
+      targets: this.list,
+      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      scale: 1.09,
+      ease: 'Power2',
+      onComplete: this._repeatAnimatioStepBack.bind(this)
+    })
+
+    Utils.createChangeSpriteColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite)[],
+      Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      Settings.GREEN, Settings.ORANGE,
+      this._repeatAnimatioStepBack.bind(this)
+    )
+  }
+
+  private _repeatAnimatioStepBack(): void {
+    this._scene.add.tween({
+      targets: this.list,
+      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      scale: 1,
+      ease: 'Power2',
+      onComplete: () => {
+        this.setDepth(2)
+      }
+    })
+
+    Utils.createChangeSpriteColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite)[],
+      Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      Settings.ORANGE, Settings.GREEN,
+    )
+  }
+
+  private _standartSolvedAnimation(): void {
+    this._scene.time.addEvent({
+      delay: Settings.DELAY_ANIMATION_WORD_STANDART_SOLVED, callback: (): void => {
+        this.setDepth(2)
+        this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
+          if (element instanceof Phaser.GameObjects.Sprite) {
+            element.setTint(0x6ebe68)
+            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            this._createLetter(x, y, index)
+          }
+        })
+      }, loop: false
+    });
+  }
+
+  private _boosterWordSolvedAnimation(): void {
+    this._scene.time.addEvent({
+      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => {
+        this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
+          if (element instanceof Phaser.GameObjects.Sprite) {
+            this._startBoosterWordSolvedAnimation()
+            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            this._createLetter(x, y, index)
+          }
+        })
+      }, loop: false
+    });
+  }
+
+  private _boosterLettersSolvedAnimation(): void {
+    this._scene.add.tween({
+      delay: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      targets: this.list,
+      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      scale: 1.09,
+      ease: 'Power2',
+      onStart: () => {
+        this.setDepth(5)
+        Utils.createChangeSpriteColorAnimation(
+          this._scene,
+          this.list as (Phaser.GameObjects.Sprite)[],
+          Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          Settings.ORANGE, Settings.GREEN,
+        )
+      },
+      onComplete: () => {
+        this._scene.add.tween({
+          targets: this.list,
+          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          scale: 1,
+          ease: 'Power2',
+        })
+        this.setDepth(2)
+      }
+    })
+  }
+
+  private _startBoosterWordSolvedAnimation(): void {
+    this._scene.add.tween({
+      targets: this.list,
+      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      scale: 1.09,
+      ease: 'Power2',
+      onStart: () => {
+        this.setDepth(5)
+        Utils.createChangeSpriteColorAnimation(
+          this._scene,
+          this.list as (Phaser.GameObjects.Sprite)[],
+          Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          Settings.WHITE, Settings.GREEN,
+        )
+      },
+      onComplete: () => {
+        this._scene.add.tween({
+          targets: this.list,
+          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          scale: 1,
+          ease: 'Power2',
+        })
+        this.setDepth(2)
+      }
+    })
+  }
+
+  private _startBoosterLetterSolvedAnimation(index: number): void {
     const arrWithOnlySprites = this.list.map(el => {
       if (el instanceof Phaser.GameObjects.Sprite) {
         return el
       }
     })
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
+
     this._scene.time.addEvent({
-      delay: Settings.DURATION_ANIMATION_BOOSTER_RANDOM_WORD, callback: (): void => {
+      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => {
         this._scene.add.tween({
-          onStart: () => arrWithOnlySprites[index].setDepth(5),
           targets: arrWithOnlySprites[index],
           duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
           scale: 1.09,
           ease: 'Power2',
-          onUpdate: (tweeen) => {
-            const interpolationValue = tweeen.progress + 0.1
-            const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-            const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-            const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-            this.list.forEach((el) => {
-              if (el instanceof Phaser.GameObjects.Sprite) {
-                arrWithOnlySprites[index].setTint(colorSprite);
-              }
-            });
+          onStart: () => {
+            arrWithOnlySprites[index].setDepth(5)
+            Utils.createChangeSpriteColorAnimation(
+              this._scene,
+              [arrWithOnlySprites[index]],
+              Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+              Settings.WHITE, Settings.ORANGE,
+            )
           },
           onComplete: () => {
             this._scene.add.tween({
               targets: arrWithOnlySprites[index],
-              duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP,
+              duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
               scale: 1,
               ease: 'Power2',
             })
@@ -288,36 +241,32 @@ class Word extends Phaser.GameObjects.Container {
           }
         })
 
-        let x, y
+        const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
+        const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
 
-        if (this._type === 'horizontal') {
-          x = 0 + (index * Settings.WORD_STEP)
-          y = 0
-        } else {
-          x = 0
-          y = 0 + (index * Settings.WORD_STEP)
-        }
-        const text = this._scene.add.text(x, y, (this._word[index]).toUpperCase(), {
-          color: 'rgb(255, 255, 255)',
-          font: '60px Triomphe',
-        }).setOrigin(.5, .5).setDepth(3)
-        this.add(text)
+        this._createLetter(x, y, index)
       }, loop: false
     })
   }
 
-
+  private _createLetter(x: number, y: number, index: number): void {
+    const text = this._scene.add.text(x, y, (this._word[index]).toUpperCase(), {
+      color: 'rgb(255, 255, 255)',
+      font: '60px Triomphe',
+    }).setOrigin(.5, .5).setDepth(3)
+    this.add(text)
+  }
 
   protected preUpdate(time: number, delta: number): void {
     if (this._solved && this._empty) {
       this._empty = false
       if (this._boosterWord) {
-        this._boosterWordResolveAnimation()
+        this._boosterWordSolvedAnimation()
         return
       } else if (this._boosterLetters) {
-        this._boosterLettersResolveAnimation()
+        this._boosterLettersSolvedAnimation()
       } else {
-        this._standartResolveAnimation()
+        this._standartSolvedAnimation()
       }
 
     }

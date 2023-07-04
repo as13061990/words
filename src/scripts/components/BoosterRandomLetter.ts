@@ -26,7 +26,7 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
         targets: star,
         x: this._letter.getBounds().centerX,
         y: this._letter.getBounds().centerY,
-        duration: Settings.DURATION_ANIMATION_BOOSTER_RANDOM_WORD,
+        duration: Settings.DURATION_ANIMATION_BOOSTER,
         ease: 'Power1',
         onComplete: () => star.destroy()
       })

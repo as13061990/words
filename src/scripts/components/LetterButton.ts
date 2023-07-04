@@ -1,5 +1,6 @@
 import Session from "../data/Session"
 import Settings from "../data/Settings"
+import Utils from "../data/Utils"
 import Game from "../scenes/Game"
 import Zone from "./Zone"
 
@@ -28,63 +29,40 @@ class LetterButton extends Phaser.GameObjects.Container {
   }
 
   public normalTween(): void {
-    const startTextColor = new Phaser.Display.Color(255,255,255)
-    const endTextColor = new Phaser.Display.Color(45,52,75 )
-    const endPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const startPhaserColor = new Phaser.Display.Color(227, 109, 162)
     this._scene.add.tween({
       targets: [this, this._text],
       scaleX: 1,
       scaleY: 1,
       duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
       ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress;
-        
-        const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-        const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
-        
-
-        const colorText = `#${colorObjectText.color.toString(16)}`
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-
-        this._text.setColor(colorText);
-        this._sprite.setTint(colorSprite);
-      },
     })
+
+    Utils.createChangeColorAnimation(
+      this._scene,
+      [this._text, this._sprite],
+      Settings.DURATION_ANIMATION_LETTER_BUTTON,
+      Settings.PINK, Settings.WHITE,
+      Settings.WHITE, Settings.DARK_BLUE
+    )
   }
 
   public scaleTween(): void {
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const startTextColor = new Phaser.Display.Color(45,52,75)
-    const endTextColor = new Phaser.Display.Color(255,255,255)
-    const endPhaserColor = new Phaser.Display.Color(227, 109, 162)
+
     this._scene.add.tween({
       targets: [this, this._text],
       scaleX: 1.2,
       scaleY: 1.2,
       duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
       ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress;
-
-        const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-        
-        
-        const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-
-        const colorText = `#${colorObjectText.color.toString(16)}`
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-        
-        this._text.setColor(colorText);
-        this._sprite.setTint(colorSprite);
-      },
     })
+
+    Utils.createChangeColorAnimation(
+      this._scene,
+      [this._text, this._sprite],
+      Settings.DURATION_ANIMATION_LETTER_BUTTON,
+      Settings.WHITE, Settings.PINK,
+      Settings.DARK_BLUE, Settings.WHITE
+    )
   }
 
   public getActivated(): boolean {

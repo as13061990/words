@@ -1,4 +1,6 @@
 import GameActions from "../actions/GameActions";
+import BoosterRandomLetter from "../components/BoosterRandomLetter";
+import BoosterRandomWord from "../components/BoosterRandomWord";
 import CurrentWord from "../components/CurrentWord";
 import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
@@ -23,6 +25,8 @@ class Game extends Phaser.Scene {
   public currentWord: CurrentWord
   public graphics: Phaser.GameObjects.Graphics;
   public endLevelRectangle: EndLevelRectangle;
+  public boosterRandomWord: BoosterRandomWord
+  public boosterRandomLetter: BoosterRandomLetter
 
   public init(): void {
     Session.clear()

@@ -10,6 +10,7 @@ class Session {
   private _levelCompletedWords: string[] = []
   private _levelLetters: string[] = []
   private _levelConfig: ((string | number)[])[] = []
+  private _lastWordFromBooster: boolean = false
 
 
   public startLevel(): void {
@@ -26,6 +27,7 @@ class Session {
     this._levelWords = []
     this._levelComplete = false
     this._levelCompletedWords = []
+    this._lastWordFromBooster = false
   }
 
   public addLetterToCurrentWord(letter: string) {
@@ -100,6 +102,13 @@ class Session {
     return this._levelCompletedWords
   }
 
+  public getLastWordFromBooster(): boolean {
+    return this._lastWordFromBooster
+  }
+
+  public setLastWordFromBooster(booster: boolean): void {
+    this._lastWordFromBooster = booster
+  }
 }
 
 export default new Session();

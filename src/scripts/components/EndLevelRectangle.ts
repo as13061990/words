@@ -21,12 +21,14 @@ class EndLevelRectangle extends Phaser.GameObjects.Rectangle {
   }
 
   private _startVisableAnimation(): void {
+    let moreDelay = 0
+    if (Session.getLastWordFromBooster()) moreDelay = Settings.DURATION_ANIMATION_BOOSTER
     this._scene.tweens.add({
       targets: this,
       duration: Settings.DURATION_ANIMATION_ENDLEVELRECTANGLE,
       ease: 'Power2',
       alpha: 1,
-      delay: Settings.DELAY_ANIMATION_ENDLEVELRECTANGLE,
+      delay: Settings.DELAY_ANIMATION_ENDLEVELRECTANGLE + moreDelay,
       onComplete: this.endAnimationCallback
     })
   }

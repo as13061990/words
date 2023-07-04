@@ -13,9 +13,9 @@ class Settings {
   private _levels: Ilevel[] = []
   private _currentLevel: Ilevel = null
 
-  readonly DURATION_ANIMATION_WORD_STANDART_RESOLVE = 600 // анимация решенного слова 
-  readonly DURATION_ANIMATION_BOOSTER_RANDOM_WORD = 1000 // анимация от бустера к слову
-  readonly DURATION_ANIMATION_WORD_BOOSTER_RESOLVE_STEP = 310  // 1 шаг (их 2) анимации решенного слова от бустера
+  readonly DURATION_ANIMATION_WORD_STANDART_SOLVED = 600 // анимация решенного слова 
+  readonly DURATION_ANIMATION_BOOSTER = 1000 // анимация от бустера к слову
+  readonly DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP = 310  // 1 шаг (их 2) анимации решенного слова от бустера
   readonly DURATION_ANIMATION_SHUFFLE_STEP = 200 // 1 шаг (их 2) анимации перемешиванния слов
   readonly DURATION_ANIMATION_LETTER_BUTTON = 280 // анимация кнопки с буквой
   readonly DURATION_ANIMATION_SHUFFLE_BUTTON = 100 // анимация кнопки перемешки
@@ -24,13 +24,20 @@ class Settings {
   readonly DURATION_ANIMATION_CURRENTWORD_WRONG_STEP = 60 // 1 шаг(их3) анимации неправильного слова у текущего слова
   readonly DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE = 130 //  анимация изменения цвета у текущего слова
   readonly DURATION_ANIMATION_CURRENTWORD_SOLVED_DESTOY = 100 //  анимация разрушения решенного у текущего слова
-  readonly DURATION_ANIMATION_CURRENTWORD_DESTROY = 500 //  анимация разрушения у текущего слова
-
-  readonly DELAY_ANIMATION_WORD_STANDART_RESOLVE = 650 // задержка анимации решенного слова 
+  
+  readonly DELAY_ANIMATION_CURRENTWORD_DESTROY = 500 //  анимация разрушения у текущего слова
+  readonly DELAY_ANIMATION_WORD_STANDART_SOLVED = 650 // задержка анимации решенного слова 
   readonly DELAY_ANIMATION_ENDLEVELRECTANGLE = 1200 // задержка анимации завершения уровня
 
   readonly WORD_STEP = 110  // ширина и высота одной клетки с отступом
   readonly REDUCE_SCALE = 0.4  // уменьшение у текущего слова
+
+  readonly WHITE = [255, 255, 255]
+  readonly GREEN = [110, 190, 104]
+  readonly ORANGE = [222, 153, 85]
+  readonly PINK = [227, 109, 162]
+  readonly DARK_BLUE = [45,52,75]
+  readonly RED = [240, 85, 87]
 
 
 

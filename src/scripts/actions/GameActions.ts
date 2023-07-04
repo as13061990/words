@@ -10,7 +10,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType, solvedWord, screen,  wordDirection } from "../types/enums";
+import { currentWordType, solvedWord, screen, wordDirection } from "../types/enums";
 
 
 class GameActions {
@@ -396,75 +396,64 @@ class GameActions {
 
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
-    const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4) 
-    
-    const boosterRandomLetter = new BoosterRandomLetter(this._scene,x + 240, y - 130).setTint(0x688ec4)
-    const boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(0x688ec4)
+    const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4)
+
+    this._scene.boosterRandomLetter = new BoosterRandomLetter(this._scene, x + 240, y - 130).setTint(0x688ec4)
+    this._scene.boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(0x688ec4)
 
     const hummer = this._scene.add.sprite(booster1.getBounds().centerX, booster1.getBounds().centerY, 'hummer')
 
-    const boosterRandomLetterZone = Zone.createFromSprite(boosterRandomLetter)
-    const boosterRandomWordZone = Zone.createFromSprite(boosterRandomWord)
+    const boosterRandomLetterZone = Zone.createFromSprite(this._scene.boosterRandomLetter)
+    const boosterRandomWordZone = Zone.createFromSprite(this._scene.boosterRandomWord)
 
-    boosterRandomWordZone.clickCallback = () => {
-      let randomWord: Word
-      let counter = 0
-      while (counter < 20) {
-        const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
-        randomWord = this._scene.words[randomIndex]
-        counter++
-        console.log(counter)
-        if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
-        break;
-      }
-      if (counter === 20) return
-      Session.addToCompletedWords(randomWord.getWord().toLowerCase())
-      boosterRandomWord.setWord(randomWord)
-      randomWord.setSolved(solvedWord.BOOSTER_WORD)
+    boosterRandomWordZone.clickCallback = this._boosterRandomWordCallback.bind(this)
+    boosterRandomLetterZone.clickCallback = this._boosterRandomLetterCallback.bind(this)
+  }
+
+  private _boosterRandomWordCallback(): void {
+    let unsolvedWord = this._findUnsolvedWord()
+    if (!unsolvedWord) return
+    this._addCompletedWordWithBooster(unsolvedWord)
+    this._scene.boosterRandomWord.setWord(unsolvedWord)
+    unsolvedWord.setSolved(solvedWord.BOOSTER_WORD)
+
+  }
+
+  private _boosterRandomLetterCallback(): void {
+    let unsolvedWord = this._findUnsolvedWord()
+    if (!unsolvedWord) return
+    const spritesOnlyArray = unsolvedWord.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+
+    const randomIndices = spritesOnlyArray.map((_, index) => index);
+    const randomIndex = randomIndices.find(index => unsolvedWord.getSolvedLetters()[index] === 0);
+    if (randomIndex === undefined) return
+
+    const arr = unsolvedWord.getSolvedLetters()
+    arr[randomIndex] = 1
+
+    unsolvedWord.setSolvedLetters(arr)
+    this._scene.boosterRandomLetter.setLetter(spritesOnlyArray[randomIndex])
+    unsolvedWord.solveLetterAnimation(randomIndex)
+
+    if (unsolvedWord.getSolvedLetters().filter(el => el === 0).length === 0) {
+      this._addCompletedWordWithBooster(unsolvedWord)
     }
 
-    boosterRandomLetterZone.clickCallback = () => {
-      let randomWord: Word
-      let counter = 0
-      while (counter < 20) {
-        const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
-        randomWord = this._scene.words[randomIndex]
-        counter++
-        if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
-        break;
-      }
+  }
 
-      if (counter === 20) return
-      const arrWithOnlySprites = randomWord.list.map(el => {
-        if (el instanceof Phaser.GameObjects.Sprite) {
-          return el
-        }
-      })
+  private _addCompletedWordWithBooster(word: Word): void {
+    Session.addToCompletedWords(word.getWord().toLowerCase())
+    Session.setLastWordFromBooster(true)
+    this._scene.time.addEvent({
+      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => { Session.setLastWordFromBooster(false) },
+      loop: false
+    })
+  }
 
-      let randomIndex
-      let counterSecond = 0
-
-      while (counterSecond < 20) {
-        randomIndex = Phaser.Math.Between(0, arrWithOnlySprites.length - 1)
-        counterSecond++
-        if (randomWord.getSolvedLetters()[randomIndex] !== 0) continue
-        break;
-      }
-      if (counterSecond === 20) return
-
-      const arr = randomWord.getSolvedLetters()
-      arr[randomIndex] = 1
-
-      randomWord.setSolvedLetters(arr) 
-      boosterRandomLetter.setLetter(arrWithOnlySprites[randomIndex])
-      randomWord.solveLetterAnimation(randomIndex)
-
-      if (randomWord.getSolvedLetters().filter(el => el === 0).length === 0) {
-        Session.addToCompletedWords(randomWord.getWord().toLowerCase())
-      }
-
-    }
-
+  private _findUnsolvedWord(): Word | undefined {
+    const unsolvedWords = this._scene.words.filter(word => !Session.getToCompletedWords().includes(word.getWord()))
+    const randomIndex = Phaser.Math.Between(0, unsolvedWords.length - 1)
+    return unsolvedWords[randomIndex]
   }
 
   private _complete(): void {

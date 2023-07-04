@@ -1,5 +1,6 @@
 import Session from "../data/Session";
 import Settings from "../data/Settings";
+import Utils from "../data/Utils";
 import Game from "../scenes/Game";
 import { currentWordType, wordDirection } from "../types/enums";
 
@@ -69,16 +70,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
               targets: this,
               duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
               x: x,
-              onComplete: () => {
-                this._animations.push(this._scene.add.tween({
-                  targets: this,
-                  duration: Settings.DURATION_ANIMATION_CURRENTWORD_DESTROY,
-                  x: x,
-                  onComplete: () => {
-                    this.destroyAll()
-                  }
-                }))
-              }
+              onComplete: this._destroyCurrentWordWithDelay.bind(this)
             }))
           }
         }))
@@ -87,115 +79,40 @@ class CurrentWord extends Phaser.GameObjects.Container {
   }
 
   private _startRedAnimation = () => {
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const startTextColor = new Phaser.Display.Color(45, 52, 75)
-    const endTextColor = new Phaser.Display.Color(255, 255, 255)
-    const endPhaserColor = new Phaser.Display.Color(240, 85, 87)
-    this._animations.push(this._scene.add.tween({
-      targets: this,
-      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      scale: 1,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1;
-
-        const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-
-
-        const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-
-        const colorText = `#${colorObjectText.color.toString(16)}`
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          } else if (el instanceof Phaser.GameObjects.Text) {
-            el.setColor(colorText)
-          }
-        });
-      },
-    }))
+    Utils.createChangeColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      Settings.WHITE, Settings.RED,
+      Settings.DARK_BLUE, Settings.WHITE
+    )
   }
 
   private _startOrangeAnimation = () => {
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const startTextColor = new Phaser.Display.Color(45, 52, 75)
-    const endTextColor = new Phaser.Display.Color(255, 255, 255)
-    const endPhaserColor = new Phaser.Display.Color(222, 153, 85)
-    this._animations.push(this._scene.add.tween({
-      targets: this,
-      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      scale: 1,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
+    Utils.createChangeColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      Settings.WHITE, Settings.ORANGE,
+      Settings.DARK_BLUE, Settings.WHITE,
+      this._destroyCurrentWordWithDelay.bind(this)
+    )
+  }
 
-        const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-
-
-        const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-
-        const colorText = `#${colorObjectText.color.toString(16)}`
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-
-        this.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          } else if (el instanceof Phaser.GameObjects.Text) {
-            el.setColor(colorText)
-          }
-        });
-      },
-      onComplete: () => {
-        this._animations.push(this._scene.add.tween({
-          targets: this,
-          duration: Settings.DURATION_ANIMATION_CURRENTWORD_DESTROY,
-          scale: 1,
-          onComplete: () => {
-            this.destroyAll()
-          }
-        }))
-      }
-    }))
+  private _destroyCurrentWordWithDelay(): void {
+    this._scene.time.addEvent({
+      delay: Settings.DELAY_ANIMATION_CURRENTWORD_DESTROY, callback: (): void => { this.destroyAll() }, loop: false
+    })
   }
 
   private _startGreenAnimation = () => {
-    const startPhaserColor = new Phaser.Display.Color(255, 255, 255)
-    const startTextColor = new Phaser.Display.Color(45, 52, 75)
-    const endTextColor = new Phaser.Display.Color(255, 255, 255)
-    const endPhaserColor = new Phaser.Display.Color(110, 190, 104)
-    this._animations.push(this._scene.add.tween({
-      targets: this._copyContainer,
-      duration: Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      scale: 1,
-      ease: 'Power2',
-      onUpdate: (tweeen) => {
-        const interpolationValue = tweeen.progress + 0.1
-
-        const interpolatedColorText = Phaser.Display.Color.Interpolate.ColorWithColor(startTextColor, endTextColor, 100, interpolationValue * 100);
-        const interpolatedColorSprite = Phaser.Display.Color.Interpolate.ColorWithColor(startPhaserColor, endPhaserColor, 100, interpolationValue * 100);
-
-
-        const colorObjectText = new Phaser.Display.Color(Math.round(interpolatedColorText.r), Math.round(interpolatedColorText.g), Math.round(interpolatedColorText.b));
-        const colorObjectSprite = new Phaser.Display.Color(Math.round(interpolatedColorSprite.r), Math.round(interpolatedColorSprite.g), Math.round(interpolatedColorSprite.b));
-
-        const colorText = `#${colorObjectText.color.toString(16)}`
-        const colorSprite = Number(`0x${colorObjectSprite.color.toString(16)}`)
-
-        this._copyContainer.list.forEach((el) => {
-          if (el instanceof Phaser.GameObjects.Sprite) {
-            el.setTint(colorSprite);
-          } else if (el instanceof Phaser.GameObjects.Text) {
-            el.setColor(colorText)
-          }
-        });
-      },
-    }))
+    Utils.createChangeColorAnimation(
+      this._scene,
+      this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      Settings.WHITE, Settings.GREEN,
+      Settings.DARK_BLUE, Settings.WHITE,
+    )
   }
 
   private _startToWordAnimation(x: number, y: number, type: wordDirection): void {
@@ -215,7 +132,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       x: x,
       y: y,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
+      duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
@@ -239,7 +156,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
           scale: this._scene.words[0].scale,
           ease: 'Power2',
           x: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
-          duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
+          duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
         })
       })
     } else {
@@ -250,14 +167,14 @@ class CurrentWord extends Phaser.GameObjects.Container {
           ease: 'Power2',
           y: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
           x: 0,
-          duration: Settings.DURATION_ANIMATION_WORD_STANDART_RESOLVE,
+          duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
         })
       })
     }
   }
 
   private _createWord(): void {
-    const word =  Session.getCurrentWord()
+    const word = Session.getCurrentWord()
     word.split('').forEach((letter, i) => {
       const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, 'word-letter')
       sprite.setScale(Settings.REDUCE_SCALE)
@@ -271,7 +188,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
       this.add([sprite, text])
       const { centerX } = this._scene.cameras.main
 
-      this.setPosition(centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2),  this._scene.lettersCircle.getPosition().y - 230)
+      this.setPosition(centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2), this._scene.lettersCircle.getPosition().y - 230)
     })
   }
 
