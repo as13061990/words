@@ -39,7 +39,6 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
   protected preUpdate(time: number, delta: number): void {
     if (this._word?.scene) {
-      console.log('lel')
       this._startAnimation()
       this._word = null
     }

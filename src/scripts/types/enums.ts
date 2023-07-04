@@ -3,7 +3,7 @@ enum screen {
   COMPLETE,
 }
 
-enum resolveWord {
+enum solvedWord {
   STANDART,
   BOOSTER_WORD,
   BOOSTER_LETTER
@@ -25,6 +25,6 @@ enum wordDirection {
 export {
   currentWordType,
   wordDirection,
-  resolveWord,
+  solvedWord,
   screen
 }

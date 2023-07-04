@@ -1,3 +1,4 @@
+import BoosterRandomLetter from "../components/BoosterRandomLetter";
 import BoosterRandomWord from "../components/BoosterRandomWord";
 import Button from "../components/Button";
 import CurrentWord from "../components/CurrentWord";
@@ -9,7 +10,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType, resolveWord, screen, wordDirection } from "../types/enums";
+import { currentWordType, solvedWord, screen,  wordDirection } from "../types/enums";
 
 
 class GameActions {
@@ -351,7 +352,7 @@ class GameActions {
                 repeat = true
                 word.repeatAnimation()
               }
-              word.setSolved(resolveWord.STANDART)
+              word.setSolved(solvedWord.STANDART)
               Session.setCurrentWordType(currentWordType.SOLVED)
               Session.addToCompletedWords(word.getWord().toLowerCase())
               solved = true
@@ -396,28 +397,72 @@ class GameActions {
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
     const booster1 = this._scene.add.sprite(x - 240, y - 130, 'booster-circle').setTint(0x688ec4) 
-    const booster2 = this._scene.add.sprite(x + 240, y - 130, 'booster-circle').setTint(0x688ec4)
-
+    
+    const boosterRandomLetter = new BoosterRandomLetter(this._scene,x + 240, y - 130).setTint(0x688ec4)
     const boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(0x688ec4)
 
     const hummer = this._scene.add.sprite(booster1.getBounds().centerX, booster1.getBounds().centerY, 'hummer')
-    const finger = this._scene.add.sprite(booster2.getBounds().centerX, booster2.getBounds().centerY, 'finger')
 
-    const zone3 = Zone.createFromSprite(boosterRandomWord)
+    const boosterRandomLetterZone = Zone.createFromSprite(boosterRandomLetter)
+    const boosterRandomWordZone = Zone.createFromSprite(boosterRandomWord)
 
-    zone3.clickCallback = () => {
+    boosterRandomWordZone.clickCallback = () => {
       let randomWord: Word
       let counter = 0
-      while (counter < 100) {
+      while (counter < 20) {
+        const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
+        randomWord = this._scene.words[randomIndex]
+        counter++
+        console.log(counter)
+        if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
+        break;
+      }
+      if (counter === 20) return
+      Session.addToCompletedWords(randomWord.getWord().toLowerCase())
+      boosterRandomWord.setWord(randomWord)
+      randomWord.setSolved(solvedWord.BOOSTER_WORD)
+    }
+
+    boosterRandomLetterZone.clickCallback = () => {
+      let randomWord: Word
+      let counter = 0
+      while (counter < 20) {
         const randomIndex = Phaser.Math.Between(0, this._scene.words.length - 1)
         randomWord = this._scene.words[randomIndex]
         counter++
         if (Session.getToCompletedWords().includes(randomWord.getWord())) continue
         break;
       }
-      Session.addToCompletedWords(randomWord.getWord().toLowerCase())
-      boosterRandomWord.setWord(randomWord)
-      randomWord.setSolved(resolveWord.BOOSTER_WORD)
+
+      if (counter === 20) return
+      const arrWithOnlySprites = randomWord.list.map(el => {
+        if (el instanceof Phaser.GameObjects.Sprite) {
+          return el
+        }
+      })
+
+      let randomIndex
+      let counterSecond = 0
+
+      while (counterSecond < 20) {
+        randomIndex = Phaser.Math.Between(0, arrWithOnlySprites.length - 1)
+        counterSecond++
+        if (randomWord.getSolvedLetters()[randomIndex] !== 0) continue
+        break;
+      }
+      if (counterSecond === 20) return
+
+      const arr = randomWord.getSolvedLetters()
+      arr[randomIndex] = 1
+
+      randomWord.setSolvedLetters(arr) 
+      boosterRandomLetter.setLetter(arrWithOnlySprites[randomIndex])
+      randomWord.solveLetterAnimation(randomIndex)
+
+      if (randomWord.getSolvedLetters().filter(el => el === 0).length === 0) {
+        Session.addToCompletedWords(randomWord.getWord().toLowerCase())
+      }
+
     }
 
   }
