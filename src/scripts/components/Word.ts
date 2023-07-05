@@ -160,6 +160,14 @@ class Word extends Phaser.GameObjects.Container {
       ease: 'Power2',
       onStart: () => {
         this.setDepth(5)
+        this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
+          if (element instanceof Phaser.GameObjects.Sprite) {
+            this._startBoosterWordSolvedAnimation()
+            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            this._createLetter(x, y, index)
+          }
+        })
         Utils.createChangeSpriteColorAnimation(
           this._scene,
           this.list as (Phaser.GameObjects.Sprite)[],
@@ -255,7 +263,7 @@ class Word extends Phaser.GameObjects.Container {
     const text = this._scene.add.text(x, y, (this._word[index]).toUpperCase(), {
       color: 'rgb(255, 255, 255)',
       font: '60px Triomphe',
-    }).setOrigin(.5, .5).setDepth(3)
+    }).setOrigin(.5, .5).setDepth(4)
     this.add(text)
   }
 
