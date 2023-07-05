@@ -14,7 +14,7 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
   private _build(): void {
     this._scene.add.existing(this)
-    const lamp = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'lamp')
+    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'lamp')
   }
 
   private _startAnimation(): void {

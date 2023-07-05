@@ -79,40 +79,43 @@ class CurrentWord extends Phaser.GameObjects.Container {
   }
 
   private _startRedAnimation = () => {
-    Utils.createChangeColorAnimation(
+    this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       Settings.WHITE, Settings.RED,
       Settings.DARK_BLUE, Settings.WHITE
-    )
+    ))
   }
 
   private _startOrangeAnimation = () => {
-    Utils.createChangeColorAnimation(
+    this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       Settings.WHITE, Settings.ORANGE,
       Settings.DARK_BLUE, Settings.WHITE,
       this._destroyCurrentWordWithDelay.bind(this)
-    )
+    ))
   }
 
   private _destroyCurrentWordWithDelay(): void {
-    this._scene.time.addEvent({
-      delay: Settings.DELAY_ANIMATION_CURRENTWORD_DESTROY, callback: (): void => { this.destroyAll() }, loop: false
-    })
+    this._animations.push(this._scene.add.tween({
+      targets: this,
+      duration: Settings.DELAY_ANIMATION_CURRENTWORD_DESTROY,
+      alpha: 1,
+      onComplete: this.destroyAll.bind(this)
+    }))
   }
 
   private _startGreenAnimation = () => {
-    Utils.createChangeColorAnimation(
+    this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
       Settings.WHITE, Settings.GREEN,
       Settings.DARK_BLUE, Settings.WHITE,
-    )
+    ))
   }
 
   private _startToWordAnimation(x: number, y: number, type: wordDirection): void {

@@ -23,7 +23,6 @@ class GameActions {
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
 
-
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
 
@@ -115,7 +114,6 @@ class GameActions {
 
     if (configLevel.length > 0) {
       const { horizontal, vertical } = this._getWords()
-
       let scale = 1
 
       const space = width - 200;
@@ -286,9 +284,9 @@ class GameActions {
       }
 
       zone.hoverOn = () => {
-
         if (Session.getCurrentWord().length) {
           if (!button.getActivated()) {
+
             this._scene.currentWord.destroyAll()
             Session.addLetterToCurrentWord(letter)
             button.setActivated(true)
@@ -322,7 +320,6 @@ class GameActions {
       }
 
       zone.upCallback = () => {
-
 
         if (button.getActivated()) {
           graphicCircleStart.clear()

@@ -14,13 +14,12 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
   private _build(): void {
     this._scene.add.existing(this)
-    const finger = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'finger')
+    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'finger')
   }
 
   private _startAnimation(): void {
 
     if (this._letter instanceof Phaser.GameObjects.Sprite) {
-      console.log('lol')
       const star = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'star').setDepth(6)
       this._scene.tweens.add({
         targets: star,
