@@ -12,10 +12,19 @@ class BoosterSpecificLetter extends Phaser.GameObjects.Sprite {
   private _scene: Game
   private _letter: Phaser.GameObjects.Sprite = null
   private _isActive: boolean = false
+  private _text: Phaser.GameObjects.Text
+  private _icon: Phaser.GameObjects.Sprite
+  private _check: boolean = false
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'hummer')
+    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'hummer')
+    this._text = this._scene.add.text(this.getBounds().centerX, this.getBounds().bottom + 20, Session.getBoosterSpecificLetterTimer().toString(), {
+      color: 'white',
+      font: '30px Triomphe',
+      align: 'center'
+    }).setDepth(4).setOrigin(0.5, 0.5)
+    this._text.setVisible(false)
   }
 
   private _startAnimation(): void {
@@ -50,6 +59,37 @@ class BoosterSpecificLetter extends Phaser.GameObjects.Sprite {
       this._startAnimation()
       this._letter  = null
     }
+    
+    if (this._check && !this._isActive) {
+      this._check = false
+      this._icon.setTexture('hummer')
+      this.setTint(Settings.BOOSTER_ACTIVE)
+    }
+
+    if (!this._text.visible && Session.getBoosterSpecificLetterTimer() > 0 && Session.getIsActiveBoosterSpecificLetter()) {
+      this._text.setVisible(true)
+      this._icon.setTexture('hummer-inactive')
+      this.setTint(Settings.BOOSTER_INACTIVE)
+    }
+
+    if (!this._check && this._isActive) {
+      this._check = true
+      this._icon.setTexture('hummer-inactive')
+      this.setTint(Settings.BOOSTER_INACTIVE)
+    }
+
+
+    if (this._text.visible && this._text.text !== Session.getBoosterSpecificLetterTimer().toString()) {
+      this._text.setText(Session.getBoosterSpecificLetterTimer().toString())
+    }
+
+    if (this._text.visible && Session.getBoosterSpecificLetterTimer() === 0) {
+      this._text.setVisible(false)
+      this._icon.setTexture('hummer')
+      this.setTint(Settings.BOOSTER_ACTIVE)
+      Session.setIsActiveBoosterSpecificLetter(false)
+    }
+
   }
 }
 

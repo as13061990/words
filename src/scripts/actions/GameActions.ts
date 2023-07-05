@@ -439,6 +439,8 @@ class GameActions {
   }
 
   private _boosterRandomWordCallback(): void {
+    if (Session.getIsActiveBoosterRandomWord()) return
+    Session.setIsActiveBoosterRandomWord(true)
     let unsolvedWord = this._findUnsolvedWord()
     if (!unsolvedWord) return
     this._addCompletedWordWithBooster(unsolvedWord)
@@ -532,9 +534,10 @@ class GameActions {
   }
 
   private _boosterSpecificLetterCallback(): void {
+    if (Session.getIsActiveBoosterSpecificLetter()) return
     if (this._scene.boosterSpecificLetter.getIsActive()) return
     let zones = []
-    this._scene.boosterSpecificLetter.setIsActive(false)
+    this._scene.boosterSpecificLetter.setIsActive(true)
     this._scene.words.forEach(word => {
       word.list.forEach((el, i) => {
         if (el instanceof Phaser.GameObjects.Sprite) {
@@ -542,6 +545,7 @@ class GameActions {
           const zone = Zone.createFromSprite(el)
           zones.push(zone)
           zone.clickCallback = () => {
+            Session.setIsActiveBoosterSpecificLetter(true)
             const solvedLetters = word.getSolvedLetters();
             solvedLetters[i] = 1;
             word.setSolvedLetters(solvedLetters);

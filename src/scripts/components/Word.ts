@@ -83,8 +83,8 @@ class Word extends Phaser.GameObjects.Container {
 
 
   private _repeatAnimatioStepForward(): void {
+    this.setDepth(5)
     this._scene.add.tween({
-      onStart: () => this.setDepth(5),
       targets: this.list,
       duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
       scale: 1.09,
@@ -152,6 +152,7 @@ class Word extends Phaser.GameObjects.Container {
   }
 
   private _boosterLettersSolvedAnimation(): void {
+    this.setDepth(5)
     this._scene.add.tween({
       delay: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
       targets: this.list,
@@ -159,7 +160,6 @@ class Word extends Phaser.GameObjects.Container {
       scale: 1.09,
       ease: 'Power2',
       onStart: () => {
-        this.setDepth(5)
         this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
           if (element instanceof Phaser.GameObjects.Sprite) {
             this._startBoosterWordSolvedAnimation()
@@ -188,20 +188,20 @@ class Word extends Phaser.GameObjects.Container {
   }
 
   private _startBoosterWordSolvedAnimation(): void {
+    this.setDepth(5)
+
+    Utils.createChangeSpriteColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite)[],
+      Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      Settings.WHITE, Settings.GREEN,
+    )
+
     this._scene.add.tween({
       targets: this.list,
       duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
       scale: 1.09,
       ease: 'Power2',
-      onStart: () => {
-        this.setDepth(5)
-        Utils.createChangeSpriteColorAnimation(
-          this._scene,
-          this.list as (Phaser.GameObjects.Sprite)[],
-          Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
-          Settings.WHITE, Settings.GREEN,
-        )
-      },
       onComplete: () => {
         this._scene.add.tween({
           targets: this.list,
