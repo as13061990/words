@@ -220,7 +220,7 @@ class Word extends Phaser.GameObjects.Container {
         return el
       }
     })
-
+    arrWithOnlySprites[index].setDepth(5)
     this._scene.time.addEvent({
       delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => {
         this._scene.add.tween({
@@ -229,7 +229,6 @@ class Word extends Phaser.GameObjects.Container {
           scale: 1.09,
           ease: 'Power2',
           onStart: () => {
-            arrWithOnlySprites[index].setDepth(5)
             Utils.createChangeSpriteColorAnimation(
               this._scene,
               [arrWithOnlySprites[index]],
