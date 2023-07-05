@@ -49,8 +49,10 @@ class Word extends Phaser.GameObjects.Container {
 
   public setSolved(solved: solvedWord): void {
     if (solvedWord.STANDART === solved) {
+      this._solvedLetters = Array(this._word.length).fill(1)
       this._solved = true
     } else if (solvedWord.BOOSTER_WORD === solved) {
+      this._solvedLetters = Array(this._word.length).fill(1)
       this._solved = true
       this._boosterWord = true
     } else if (solvedWord.BOOSTER_LETTER === solved) {

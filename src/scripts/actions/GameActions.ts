@@ -51,7 +51,7 @@ class GameActions {
   private _getWords(): { horizontal: any[], vertical: any[] } {
     const configLevel = Session.getLevelConfig()
     const words = Session.getLevelWords()
-
+    console.log(configLevel)
     const verticalWords = [];
 
     for (let col = 0; col < configLevel[0].length; col++) {
@@ -63,7 +63,7 @@ class GameActions {
           word += configLevel[row][col];
         } else if (word !== '') {
           if (words.includes(word)) {
-            verticalWords.push({ word: word, position: col + 1, startPosition: first });
+            verticalWords.push({ word: word, positionX: col + 1, positionY: first });
           }
           word = '';
           first = -1;
@@ -71,7 +71,7 @@ class GameActions {
       }
       if (word !== '') {
         if (words.includes(word)) {
-          verticalWords.push({ word: word, position: col + 1, startPosition: first });
+          verticalWords.push({ word: word, positionX: col + 1, positionY: first });
         }
       }
     }
@@ -89,7 +89,7 @@ class GameActions {
         } else {
           if (word.length > 0) {
             if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
-              horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+              horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
             }
             word = '';
             first = -1;
@@ -99,12 +99,12 @@ class GameActions {
 
       if (word.length > 0) {
         if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
-          horizontalWords.push({ word: word, position: i + 1, startPosition: first });
+          horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
         }
         word = '';
       }
     });
-
+    console.log({ horizontal: horizontalWords, vertical: verticalWords })
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
@@ -138,20 +138,21 @@ class GameActions {
 
       vertical.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.position) - Settings.WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.startPosition) - Settings.WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionX) - Settings.WORD_STEP * scale / 2,
+          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionY) - Settings.WORD_STEP * scale / 2,
           wordDirection.VERTICAL).setScale(scale)
         this._scene.words.push(newWord)
       })
 
       horizontal.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.startPosition) - Settings.WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.position) - Settings.WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionX) - Settings.WORD_STEP * scale / 2,
+          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionY) - Settings.WORD_STEP * scale / 2,
           wordDirection.HORIZONTAL).setScale(scale)
         this._scene.words.push(newWord)
       })
     } else {
+
       const wordsStringArr = Session.getLevelWords()
       wordsStringArr.sort((a, b) => {
         if (a.length !== b.length) {
@@ -162,6 +163,7 @@ class GameActions {
       wordsStringArr.forEach((word, i) => {
         this._scene.words.push(new Word(this._scene, word, centerX - (Settings.WORD_STEP * (word.length / 2) - Settings.WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
       })
+
     }
   }
 
@@ -427,10 +429,39 @@ class GameActions {
 
     const arr = unsolvedWord.getSolvedLetters()
     arr[randomIndex] = 1
-
     unsolvedWord.setSolvedLetters(arr)
     this._scene.boosterRandomLetter.setLetter(spritesOnlyArray[randomIndex])
     unsolvedWord.solveLetterAnimation(randomIndex)
+
+    if (Session.getLevelConfig().length > 0) {
+      const unsolvedWords = this._scene.words.filter(word => !Session.getToCompletedWords().includes(word.getWord()))
+      const unsolvedWordsLists = unsolvedWords.map(word => word.list)
+      const WordsSpritesOnly = unsolvedWordsLists.map(list => list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[])
+
+      WordsSpritesOnly.forEach((list, i) => {
+
+        for (let j = 0; j < list.length; j++) {
+
+          if (
+            Math.floor(list[j].getBounds().centerX) === Math.floor(spritesOnlyArray[randomIndex].getBounds().centerX)
+            && Math.floor(list[j].getBounds().centerY) === Math.floor(spritesOnlyArray[randomIndex].getBounds().centerY)
+            && unsolvedWords[i].getWord() !== unsolvedWord.getWord()) {
+
+            const arr = unsolvedWords[i].getSolvedLetters()
+            arr[j] = 1
+            unsolvedWords[i].setSolvedLetters(arr)
+            this._scene.boosterRandomLetter.setLetter(list[j])
+            unsolvedWords[i].solveLetterAnimation(j)
+            if (unsolvedWords[i].getSolvedLetters().filter(el => el === 0).length === 0) {
+              this._addCompletedWordWithBooster(unsolvedWords[i])
+            }
+            break;
+          }
+
+        }
+
+      })
+    }
 
     if (unsolvedWord.getSolvedLetters().filter(el => el === 0).length === 0) {
       this._addCompletedWordWithBooster(unsolvedWord)
