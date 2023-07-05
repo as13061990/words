@@ -1,3 +1,4 @@
+import Session from "../data/Session"
 import Settings from "../data/Settings"
 import Game from "../scenes/Game"
 

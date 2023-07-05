@@ -39,6 +39,11 @@ class Settings {
   readonly DARK_BLUE = [45,52,75]
   readonly RED = [240, 85, 87]
 
+  readonly BOOSTER_ACTIVE = 0x688ec4
+  readonly BOOSTER_INACTIVE  = 0x898989
+  readonly BOOSTER_RANDOM_LETTER_TIME = 10
+  readonly BOOSTER_RANDOM_WORD_TIME = 60
+  readonly BOOSTER_SPECIFIC_LETTER_TIME = 20
 
 
   public sounds: Isounds;

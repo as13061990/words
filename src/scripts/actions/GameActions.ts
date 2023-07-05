@@ -425,9 +425,9 @@ class GameActions {
 
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
-    this._scene.boosterSpecificLetter = new BoosterSpecificLetter(this._scene, x - 240, y - 130,).setTint(0x688ec4)
-    this._scene.boosterRandomLetter = new BoosterRandomLetter(this._scene, x + 240, y - 130).setTint(0x688ec4)
-    this._scene.boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(0x688ec4)
+    this._scene.boosterSpecificLetter = new BoosterSpecificLetter(this._scene, x - 240, y - 130,).setTint(Settings.BOOSTER_ACTIVE)
+    this._scene.boosterRandomLetter = new BoosterRandomLetter(this._scene, x + 240, y - 130).setTint(Settings.BOOSTER_ACTIVE)
+    this._scene.boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(Settings.BOOSTER_ACTIVE)
 
     const boosterRandomLetterZone = Zone.createFromSprite(this._scene.boosterRandomLetter)
     const boosterRandomWordZone = Zone.createFromSprite(this._scene.boosterRandomWord)
@@ -476,6 +476,9 @@ class GameActions {
   }
 
   private _boosterRandomLetterCallback(): void {
+    if (Session.getIsActiveBoosterRandomLetter()) return
+    Session.setIsActiveBoosterRandomLetter(true)
+
     let unsolvedWord = this._findUnsolvedWord()
     if (!unsolvedWord) return
     const spritesOnlyArray = unsolvedWord.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];

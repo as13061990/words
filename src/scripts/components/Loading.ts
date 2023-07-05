@@ -3,6 +3,9 @@ import wordLetter from '../../assets/images/word-letter.png';
 import letterEmpty from '../../assets/images/letter-empty.png';
 import restartButtons from '../../assets/images/restart-buttons.png';
 import hummer from '../../assets/images/hummer.png';
+import hummerInactive from '../../assets/images/hummer-inactive.png';
+import lampInactive from '../../assets/images/lamp-inactive.png';
+import fingerInactive from '../../assets/images/finger-inactive.png';
 import lamp from '../../assets/images/lamp.png';
 import finger from '../../assets/images/finger.png';
 import boosterCircle from '../../assets/images/booster-circle.png';
@@ -58,6 +61,9 @@ class Loading {
     this._scene.load.image('restart-buttons', restartButtons);
 
     this._scene.load.image('hummer', hummer);
+    this._scene.load.image('hummer-inactive', hummerInactive);
+    this._scene.load.image('lamp-inactive', lampInactive);
+    this._scene.load.image('finger-inactive', fingerInactive);
     this._scene.load.image('lamp', lamp);
     this._scene.load.image('finger', finger);
     this._scene.load.image('booster-circle', boosterCircle);

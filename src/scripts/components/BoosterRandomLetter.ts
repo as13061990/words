@@ -1,3 +1,4 @@
+import Session from "../data/Session"
 import Settings from "../data/Settings"
 import Game from "../scenes/Game"
 
@@ -10,10 +11,18 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
   private _scene: Game
   private _letter: Phaser.GameObjects.Sprite = null
+  private _text: Phaser.GameObjects.Text
+  private _icon: Phaser.GameObjects.Sprite
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'finger')
+    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'finger')
+    this._text = this._scene.add.text(this.getBounds().centerX, this.getBounds().bottom + 20, Session.getBoosterRandomLetterTimer().toString(), {
+      color: 'white',
+      font: '30px Triomphe',
+      align: 'center'
+    }).setDepth(4).setOrigin(0.5, 0.5)
+    this._text.setVisible(false)
   }
 
   private _startAnimation(): void {
@@ -38,7 +47,24 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
   protected preUpdate(time: number, delta: number): void {
     if (this._letter?.scene) {
       this._startAnimation()
-      this._letter  = null
+      this._letter = null
+    }
+
+    if (!this._text.visible && Session.getBoosterRandomLetterTimer() > 0 && Session.getIsActiveBoosterRandomLetter()) {
+      this._text.setVisible(true)
+      this._icon.setTexture('finger-inactive')
+      this.setTint(Settings.BOOSTER_INACTIVE)
+    }
+
+    if (this._text.visible && this._text.text !== Session.getBoosterRandomLetterTimer().toString()) {
+      this._text.setText(Session.getBoosterRandomLetterTimer().toString())
+    }
+
+    if (this._text.visible && Session.getBoosterRandomLetterTimer() === 0) {
+      this._text.setVisible(false)
+      this._icon.setTexture('finger')
+      this.setTint(Settings.BOOSTER_ACTIVE)
+      Session.setIsActiveBoosterRandomLetter(false)
     }
   }
 }

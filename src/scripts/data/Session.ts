@@ -12,6 +12,13 @@ class Session {
   private _levelConfig: ((string | number)[])[] = []
   private _lastWordFromBooster: boolean = false
 
+  private _isActiveBoosterRandomWord: boolean = false
+  private _isActiveBoosterRandomLetter: boolean = false
+  private _isActiveBoosterSpecificLetter: boolean = false
+
+  private _boosterRandomWordTimer: number = 0
+  private _boosterRandomLetterTimer: number = 0
+  private _boosterSpecificLetterTimer: number = 0
 
   public startLevel(): void {
     this._levelWords = Settings.getCurrentLevel().data.words
@@ -28,6 +35,12 @@ class Session {
     this._levelComplete = false
     this._levelCompletedWords = []
     this._lastWordFromBooster = false
+    this._isActiveBoosterRandomWord = false
+    this._isActiveBoosterRandomLetter = false
+    this._isActiveBoosterSpecificLetter = false
+    this._boosterRandomWordTimer = 0
+    this._boosterRandomLetterTimer = 0
+    this._boosterSpecificLetterTimer = 0
   }
 
   public addLetterToCurrentWord(letter: string) {
@@ -108,6 +121,62 @@ class Session {
 
   public setLastWordFromBooster(booster: boolean): void {
     this._lastWordFromBooster = booster
+  }
+
+  public getIsActiveBoosterRandomWord(): boolean {
+    return this._isActiveBoosterRandomWord
+  }
+  public getIsActiveBoosterRandomLetter(): boolean {
+    return this._isActiveBoosterRandomLetter
+  }
+  public getIsActiveBoosterSpecificLetter(): boolean {
+    return this._isActiveBoosterSpecificLetter
+  }
+
+  public setIsActiveBoosterRandomWord(active: boolean): void {
+    if (active) this._boosterRandomWordTimer = Settings.BOOSTER_RANDOM_WORD_TIME
+    this._isActiveBoosterRandomWord = active
+  }
+  public setIsActiveBoosterRandomLetter(active: boolean): void {
+    if (active) this._boosterRandomLetterTimer = Settings.BOOSTER_RANDOM_LETTER_TIME
+    console.log(this._boosterRandomLetterTimer)
+    this._isActiveBoosterRandomLetter = active
+  }
+  public setIsActiveBoosterSpecificLetter(active: boolean): void {
+    if (active) this._boosterSpecificLetterTimer = Settings.BOOSTER_SPECIFIC_LETTER_TIME
+    this._isActiveBoosterSpecificLetter = active
+  }
+
+  public minusBoosterRandomWordTimer(): void {
+    if (this._boosterRandomWordTimer === 0) {
+      this._isActiveBoosterRandomWord = false;
+      return
+    }
+    this._boosterRandomWordTimer--
+  }
+  public minusBoosterRandomLetterTimer(): void {
+    if (this._boosterRandomLetterTimer === 0) {
+      this._isActiveBoosterRandomLetter = false;
+      return
+    }
+    this._boosterRandomLetterTimer--
+  }
+  public minusBoosterSpecificLetterTimer(): void {
+    if (this._boosterSpecificLetterTimer === 0) {
+      this._isActiveBoosterSpecificLetter = false;
+      return
+    }
+    this._boosterSpecificLetterTimer--
+  }
+
+  public getBoosterRandomWordTimer(): number {
+    return this._boosterRandomWordTimer
+  }
+  public getBoosterRandomLetterTimer(): number {
+    return this._boosterRandomLetterTimer
+  }
+  public getBoosterSpecificLetterTimer(): number {
+    return this._boosterSpecificLetterTimer
   }
 }
 
