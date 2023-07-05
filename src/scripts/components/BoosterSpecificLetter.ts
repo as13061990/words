@@ -1,7 +1,7 @@
 import Settings from "../data/Settings"
 import Game from "../scenes/Game"
 
-class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
+class BoosterSpecificLetter extends Phaser.GameObjects.Sprite {
   constructor(scene: Game, x: number, y: number,) {
     super(scene, x, y, 'booster-circle')
     this._scene = scene
@@ -10,10 +10,11 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
   private _scene: Game
   private _letter: Phaser.GameObjects.Sprite = null
+  private _isActive: boolean = false
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'finger')
+    this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'hummer')
   }
 
   private _startAnimation(): void {
@@ -31,6 +32,14 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
     }
   }
 
+  public getIsActive(): boolean {
+    return this._isActive
+  }
+
+  public setIsActive(active: boolean): void {
+    this._isActive = active
+  }
+
   public setLetter(letter: Phaser.GameObjects.Sprite) {
     this._letter = letter
   }
@@ -43,4 +52,4 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
   }
 }
 
-export default BoosterRandomLetter 
+export default BoosterSpecificLetter 
