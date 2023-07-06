@@ -29,7 +29,7 @@ class GameActions {
   private _level: number
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
-  private _solvedWord: IsolvedWord = {x: null, y: null, type: null}
+  private _solvedWord: IsolvedWord = { x: null, y: null, type: null }
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -190,10 +190,8 @@ class GameActions {
     const letters = Session.getLevelLetters()
     const circle = this._scene.lettersCircle
     const { centerX } = this._scene.cameras.main
-
     letters.forEach((letter, i) => {
       let theta = -Math.PI / 2 + (i * 2 * Math.PI / letters.length)
-
       const x = centerX + circle.getRadius() * Math.cos(theta);
       const y = this._centerYLettersCircle + circle.getRadius() * Math.sin(theta);
       this._scene.letterButtons.push(new LetterButton(this._scene, x, y, letter));
@@ -239,9 +237,7 @@ class GameActions {
     this._scene.letterButtonsLine.graphicCircleStart = this._scene.add.graphics().setDepth(6);;
     this._scene.letterButtonsLine.graphicCircleEnd = this._scene.add.graphics().setDepth(6);
     this._scene.letterButtonsLine.graphicCircleMid = this._scene.add.graphics().setDepth(6);;
-
     this._scene.letterButtonsLine.line = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } }).setDepth(6);;
-
     this._scene.input.on('pointermove', (pointer) => {
       if (this._scene.activeLetterButtons.length > 0) {
         this._scene.letterButtonsLine.pointsMouse.splice(0)
@@ -269,13 +265,9 @@ class GameActions {
   private _addLogicToLetterButtons(): void {
     this._scene.letterButtons.forEach((button, i) => {
       const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
-
       button.add(zone)
-
       zone.downClickCallback = this._letterButtonDownClickCallback.bind(this, button)
-
       zone.hoverOn = this._letterButtonHoverOnCallback.bind(this, button)
-
       zone.upCallback = this._letterButtonUpCallback.bind(this, button)
     })
   }
@@ -317,7 +309,7 @@ class GameActions {
     if (button.getActivated()) {
       this._clearLetterButtonsLine()
       this._deactivateAllLetterButtons()
-      
+
       let solved = false
       let repeat = false
 
@@ -329,34 +321,7 @@ class GameActions {
           }
           word.setSolved(solvedWord.STANDART)
 
-          // функция для нахождения букв в перекрестиях 
-          if (Session.getLevelConfig().length > 0) {
-            const spritesOnlyArray = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-            const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
-
-            unsolvedWords.forEach((wordItem, i) => {
-              const list = wordItem.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-
-              for (let k = 0; k < spritesOnlyArray.length; k++) {
-                const currentSprite = spritesOnlyArray[k];
-
-                if (list.some(sprite => this._isMatchingSprite(sprite, currentSprite) && wordItem.getWord() !== word.getWord())) {
-                  const solvedLetters = wordItem.getSolvedLetters();
-                  const j = list.findIndex(sprite => this._isMatchingSprite(sprite, currentSprite));
-
-                  solvedLetters[j] = 1;
-                  wordItem.setSolvedLetters(solvedLetters);
-
-                  if (wordItem.getSolvedLetters().filter(el => el === 0).length === 0) {
-                    this._addCompletedWordWithBooster(wordItem);
-                  }
-
-                  break;
-                }
-              }
-            });
-          }
-          // конец
+          if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(word, -1, false)
 
           Session.setCurrentWordType(currentWordType.SOLVED)
           Session.addToCompletedWords(word.getWord().toLowerCase())
@@ -420,7 +385,7 @@ class GameActions {
   }
 
   private _startSpecificWordAnimation(): void {
-    const {x, y, type} = this._solvedWord
+    const { x, y, type } = this._solvedWord
     switch (Session.getCurrentWordType()) {
       case currentWordType.WRONG:
         Session.setCurrentWordType(currentWordType.DEFAULT)
@@ -470,34 +435,8 @@ class GameActions {
     this._scene.boosterRandomWord.setWord(unsolvedWord)
     unsolvedWord.setSolved(solvedWord.BOOSTER_WORD)
 
-    // функция для нахождения букв в перекрестиях 
-    if (Session.getLevelConfig().length > 0) {
-      const spritesOnlyArray = unsolvedWord.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-      const unsolvedWords = this._scene.words.filter(word => !Session.getToCompletedWords().includes(word.getWord()));
-
-      unsolvedWords.forEach((word, i) => {
-        const list = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-
-        for (let k = 0; k < spritesOnlyArray.length; k++) {
-          const currentSprite = spritesOnlyArray[k];
-
-          if (list.some(sprite => this._isMatchingSprite(sprite, currentSprite) && word.getWord() !== unsolvedWord.getWord())) {
-            const solvedLetters = word.getSolvedLetters();
-            const j = list.findIndex(sprite => this._isMatchingSprite(sprite, currentSprite));
-
-            solvedLetters[j] = 1;
-            word.setSolvedLetters(solvedLetters);
-            word.solveLetterAnimation(j);
-
-            if (word.getSolvedLetters().filter(el => el === 0).length === 0) {
-              this._addCompletedWordWithBooster(word);
-            }
-
-            break;
-          }
-        }
-      });
-    }
+    if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(unsolvedWord, -1)
+    this._addCompletedWordWithBooster(unsolvedWord)
   }
 
   private _boosterRandomLetterCallback(): void {
@@ -518,42 +457,9 @@ class GameActions {
     this._scene.boosterRandomLetter.setLetter(spritesOnlyArray[randomIndex])
     unsolvedWord.solveLetterAnimation(randomIndex)
 
-    // функция для нахождения букв в перекрестиях 
-    if (Session.getLevelConfig().length > 0) {
-      const unsolvedWords = this._scene.words.filter(word => !Session.getToCompletedWords().includes(word.getWord()));
+    if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(unsolvedWord, randomIndex)
 
-      unsolvedWords.forEach(word => {
-        const list = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-
-        for (let j = 0; j < list.length; j++) {
-          const currentSprite = list[j];
-          const randomSprite = spritesOnlyArray[randomIndex];
-
-          if (
-            this._isMatchingSprite(currentSprite, randomSprite) &&
-            word.getWord() !== unsolvedWord.getWord()
-          ) {
-            const solvedLetters = word.getSolvedLetters();
-            solvedLetters[j] = 1;
-            word.setSolvedLetters(solvedLetters);
-
-            this._scene.boosterRandomLetter.setLetter(currentSprite);
-            word.solveLetterAnimation(j);
-
-            if (word.getSolvedLetters().filter(el => el === 0).length === 0) {
-              this._addCompletedWordWithBooster(word);
-            }
-
-            break;
-          }
-        }
-      });
-    }
-    // конец
-
-    if (unsolvedWord.getSolvedLetters().filter(el => el === 0).length === 0) {
-      this._addCompletedWordWithBooster(unsolvedWord)
-    }
+    this._addCompletedWordWithBooster(unsolvedWord)
   }
 
   private _boosterSpecificLetterCallback(): void {
@@ -575,41 +481,10 @@ class GameActions {
             this._scene.boosterSpecificLetter.setLetter(el);
             word.solveLetterAnimation(i);
 
-            // функция для нахождения букв в перекрестиях 
-            if (Session.getLevelConfig().length > 0) {
-              const spritesOnlyArrayWord = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-              const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
-              const lists = unsolvedWords.map(el => el.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[]);
+            if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(word, i)
 
-              for (let j = 0; j < lists.length; j++) {
-                const list = lists[j]
-                const mathchingWord = unsolvedWords[j]
-                for (let k = 0; k < list.length; k++) {
-                  const sprite = list[k]
-                  if (
-                    this._isMatchingSprite(sprite, spritesOnlyArrayWord[i]) &&
-                    word.getWord() !== mathchingWord.getWord()
-                  ) {
-                    const solvedLetters = mathchingWord.getSolvedLetters();
-                    solvedLetters[k] = 1;
+            this._addCompletedWordWithBooster(word);
 
-                    mathchingWord.setSolvedLetters(solvedLetters);
-                    mathchingWord.solveLetterAnimation(k);
-
-                    if (mathchingWord.getSolvedLetters().filter(el => el === 0).length === 0) {
-                      this._addCompletedWordWithBooster(mathchingWord);
-                    }
-
-                    break;
-                  }
-                }
-              }
-            }
-            // конец
-
-            if (word.getSolvedLetters().filter(el => el === 0).length === 0) {
-              this._addCompletedWordWithBooster(word);
-            }
             zones.forEach((el) => {
               el.disableInteractive()
               el.destroy
@@ -622,7 +497,48 @@ class GameActions {
     })
   }
 
-  
+  private _findCrossLettersInWord(word: Word, index: number, animation: boolean = true): void {
+    const spritesOnlyArrayWord = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+    const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
+    const lists = unsolvedWords.map(el => el.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[]);
+    let listUnknown = []
+    if (index === -1) listUnknown = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+
+    for (let j = 0; j < lists.length; j++) {
+      const list = lists[j]
+      const mathchingWord = unsolvedWords[j]
+
+      for (let k = 0; k < list.length; k++) {
+        const sprite = list[k]
+        if (index !== -1) {
+          if (this._isMatchingSprite(sprite, spritesOnlyArrayWord[index]) && word.getWord() !== mathchingWord.getWord()) {
+            const solvedLetters = mathchingWord.getSolvedLetters();
+            solvedLetters[k] = 1;
+
+            mathchingWord.setSolvedLetters(solvedLetters);
+            if (animation) mathchingWord.solveLetterAnimation(k);
+
+            this._addCompletedWordWithBooster(mathchingWord);
+
+            break;
+          }
+        } else if (index === -1) {
+          if (listUnknown.some(spriteWord => this._isMatchingSprite(spriteWord, sprite) && word.getWord() !== mathchingWord.getWord())) {
+            const solvedLetters = mathchingWord.getSolvedLetters();
+            solvedLetters[k] = 1;
+
+            mathchingWord.setSolvedLetters(solvedLetters);
+            if (animation) mathchingWord.solveLetterAnimation(k);
+
+            this._addCompletedWordWithBooster(mathchingWord);
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
   private _isMatchingSprite(spriteA, spriteB): boolean {
     return (
       Math.floor(spriteA.getBounds().centerX) === Math.floor(spriteB.getBounds().centerX) &&
@@ -631,12 +547,14 @@ class GameActions {
   }
 
   private _addCompletedWordWithBooster(word: Word): void {
-    Session.addToCompletedWords(word.getWord().toLowerCase())
-    Session.setLastWordFromBooster(true)
-    this._scene.time.addEvent({
-      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => { Session.setLastWordFromBooster(false) },
-      loop: false
-    })
+    if (word.getSolvedLetters().filter(el => el === 0).length === 0) {
+      Session.addToCompletedWords(word.getWord().toLowerCase())
+      Session.setLastWordFromBooster(true)
+      this._scene.time.addEvent({
+        delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => { Session.setLastWordFromBooster(false) },
+        loop: false
+      })
+    }
   }
 
   private _findUnsolvedWord(): Word | undefined {
