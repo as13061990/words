@@ -201,6 +201,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     if (this._text !== Session.getCurrentWord()) {
       const word = Session.getCurrentWord()
       if (word > this._text) {
+        this.destroyAll()
         this._text = word
         this._createWord()
       } else {

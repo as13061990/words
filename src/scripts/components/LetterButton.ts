@@ -17,6 +17,7 @@ class LetterButton extends Phaser.GameObjects.Container {
   private _text: Phaser.GameObjects.Text
   private _activated: boolean = false
   private _sprite: Phaser.GameObjects.Sprite
+  private _check: boolean = false
 
   private _build(): void {
     this._scene.add.existing(this)
@@ -83,6 +84,17 @@ class LetterButton extends Phaser.GameObjects.Container {
 
   public getSprite(): Phaser.GameObjects.Sprite {
     return this._sprite
+  }
+
+  protected preUpdate(time: number, delta: number): void {
+    if (this._activated && !this._check) {
+      this.scaleTween()
+      this._check = true
+    }
+    if (!this._activated && this._check) {
+      this.normalTween()
+      this._check = false
+    }
   }
 
 }

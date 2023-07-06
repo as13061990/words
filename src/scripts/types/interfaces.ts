@@ -28,3 +28,12 @@ interface IlevelResponse {
   id: string
   data: string
 }
+
+interface IbuttonsLine {
+  graphicCircleStart: Phaser.GameObjects.Graphics
+  graphicCircleEnd: Phaser.GameObjects.Graphics
+  graphicCircleMid: Phaser.GameObjects.Graphics
+  line: Phaser.GameObjects.Graphics
+  points: Phaser.Math.Vector2[]
+  pointsMouse: Phaser.Math.Vector2[]
+}

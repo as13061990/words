@@ -43,6 +43,7 @@ class GameActions {
     this._createCurrentWord()
     this._createWords()
     this._createLetterButtons()
+    this._addLogicToLetterButtonsLine()
     this._addLogicToLetterButtons()
     this._scene.lettersCircle.shuffleLettersCallback = this._addLogicToShuffleButtonsBtn.bind(this)
     this._createEndLevelRectangle()
@@ -227,194 +228,194 @@ class GameActions {
 
   }
 
+  private _addLogicToLetterButtonsLine(): void {
+    this._scene.letterButtonsLine.graphicCircleStart = this._scene.add.graphics().setDepth(6);;
+    this._scene.letterButtonsLine.graphicCircleEnd = this._scene.add.graphics().setDepth(6);
+    this._scene.letterButtonsLine.graphicCircleMid = this._scene.add.graphics().setDepth(6);;
 
-
-  private _addLogicToLetterButtons(): void {
-    const graphicCircleStart = this._scene.add.graphics().setDepth(6);;
-    const graphicCircleEnd = this._scene.add.graphics().setDepth(6);
-    const graphicCircleMid = this._scene.add.graphics().setDepth(6);;
-    const points = [];
-    const pointsMouse = []
-    this._scene.graphics = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } }).setDepth(6);;
+    this._scene.letterButtonsLine.line = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } }).setDepth(6);;
 
     this._scene.input.on('pointermove', (pointer) => {
-
       if (this._scene.activeLetterButtons.length > 0) {
-        pointsMouse.splice(0)
-        graphicCircleEnd.clear()
-        this._scene.graphics.clear();
+        this._scene.letterButtonsLine.pointsMouse.splice(0)
+        this._scene.letterButtonsLine.graphicCircleEnd.clear()
+        this._scene.letterButtonsLine.line.clear();
 
         for (let i = 0; i < this._scene.activeLetterButtons.length; i++) {
           const preLastBtn = this._scene.activeLetterButtons[i].getBounds()
           const preLastBtnPoint = new Phaser.Math.Vector2(preLastBtn.centerX, preLastBtn.centerY);
-          pointsMouse.push(preLastBtnPoint);
+          this._scene.letterButtonsLine.pointsMouse.push(preLastBtnPoint);
         }
 
         let circle = new Phaser.Geom.Circle(pointer.x, pointer.y, 1);
-        graphicCircleEnd.lineStyle(28, 0x568cbd);
-        graphicCircleEnd.strokeCircleShape(circle);
+        this._scene.letterButtonsLine.graphicCircleEnd.lineStyle(28, 0x568cbd);
+        this._scene.letterButtonsLine.graphicCircleEnd.strokeCircleShape(circle);
 
         const pointerPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
-        pointsMouse.push(pointerPoint);
-        const curve = new Phaser.Curves.Spline(pointsMouse);
-        this._scene.graphics.strokePoints(curve.getPoints(200));
+        this._scene.letterButtonsLine.pointsMouse.push(pointerPoint);
+        const curve = new Phaser.Curves.Spline(this._scene.letterButtonsLine.pointsMouse);
+        this._scene.letterButtonsLine.line.strokePoints(curve.getPoints(200));
       }
     });
+  }
 
+  private _addLogicToLetterButtons(): void {
     this._scene.letterButtons.forEach((button, i) => {
       const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
       const letter = button.getLetter()
 
       button.add(zone)
 
-      zone.downClickCallback = () => {
-        if (this._shuffleAnimation) return
+      zone.downClickCallback = this._letterButtonDownClickCallback.bind(this, button)
 
-        this._scene.currentWord.destroyAll()
+      zone.hoverOn = this._letterButtonHoverOnCallback.bind(this, button)
+
+      zone.upCallback = this._letterButtonUpCallback.bind(this, button)
+    })
+  }
+
+  private _letterButtonDownClickCallback(button: LetterButton): void {
+    if (this._shuffleAnimation) return
+    const letter = button.getLetter()
+
+
+    Session.addLetterToCurrentWord(letter)
+    button.setActivated(true)
+    this._scene.activeLetterButtons.push(button)
+
+    let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+    this._scene.letterButtonsLine.graphicCircleStart.lineStyle(28, 0x568cbd);
+    this._scene.letterButtonsLine.graphicCircleStart.strokeCircleShape(circle);
+
+    const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
+    this._scene.letterButtonsLine.points.push(point);
+    this._scene.letterButtonsLine.pointsMouse.push(point);
+  }
+
+  private _letterButtonHoverOnCallback(button: LetterButton): void {
+    if (Session.getCurrentWord().length > 0) {
+      const letter = button.getLetter()
+      if (!button.getActivated()) {
+
+
         Session.addLetterToCurrentWord(letter)
         button.setActivated(true)
-        button.scaleTween()
         this._scene.activeLetterButtons.push(button)
 
+        this._scene.letterButtonsLine.pointsMouse.splice(0)
+
+        this._scene.letterButtonsLine.graphicCircleMid.clear()
         let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-        graphicCircleStart.lineStyle(28, 0x568cbd);
-        graphicCircleStart.strokeCircleShape(circle);
+        this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
+        this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
 
-        const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
-        points.push(point);
-        pointsMouse.push(point);
-      }
+      } else {
+        if (Session.getCurrentWord().length > 1) {
+          const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn => btn === button)
+          if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated()) {
+            Session.minusCurrentWord()
+            this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
+            this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
 
-      zone.hoverOn = () => {
-        if (Session.getCurrentWord().length) {
-          if (!button.getActivated()) {
-
-            this._scene.currentWord.destroyAll()
-            Session.addLetterToCurrentWord(letter)
-            button.setActivated(true)
-            button.scaleTween()
-            this._scene.activeLetterButtons.push(button)
-
-            pointsMouse.splice(0)
-
-            graphicCircleMid.clear()
+            this._scene.letterButtonsLine.graphicCircleMid.clear()
             let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-            graphicCircleMid.lineStyle(29, 0x568cbd);
-            graphicCircleMid.strokeCircleShape(circle);
-
-          } else {
-            if (Session.getCurrentWord().length > 1) {
-              const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn => btn === button)
-              if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated()) {
-                Session.minusCurrentWord()
-                this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
-                this._scene.activeLetterButtons[activeBtnIndex + 1].normalTween()
-                this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
-
-                graphicCircleMid.clear()
-                let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-                graphicCircleMid.lineStyle(29, 0x568cbd);
-                graphicCircleMid.strokeCircleShape(circle);
-              }
-            }
+            this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
+            this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
           }
         }
       }
+    }
+  }
 
-      zone.upCallback = () => {
+  private _letterButtonUpCallback(button: LetterButton): void {
+    if (button.getActivated()) {
+      this._scene.letterButtonsLine.graphicCircleStart.clear()
+      this._scene.letterButtonsLine.graphicCircleEnd.clear()
+      this._scene.letterButtonsLine.graphicCircleMid.clear()
 
-        if (button.getActivated()) {
-          graphicCircleStart.clear()
-          graphicCircleEnd.clear()
-          graphicCircleMid.clear()
+      this._scene.letterButtonsLine.line.clear();
+      this._scene.letterButtonsLine.points.splice(0)
+      this._scene.letterButtonsLine.pointsMouse.splice(0)
 
-          this._scene?.graphics?.clear();
-          points.splice(0)
-          pointsMouse.splice(0)
+      this._scene.letterButtons.forEach((btn) => {
+        if (btn.getActivated()) {
+          btn.setActivated(false)
+        }
+      })
+      this._scene.activeLetterButtons = []
 
-          this._scene.letterButtons.forEach((btn) => {
-            if (btn.getActivated()) {
-              btn.setActivated(false)
-              btn.normalTween()
-            }
-          })
-          this._scene.activeLetterButtons = []
+      let solved = false
+      let repeat = false
+      let solvedX: number, solvedY: number
+      let type: wordDirection
 
-          let solved = false
-          let repeat = false
-          let solvedX: number, solvedY: number
-          let type: wordDirection
+      for (let word of this._scene.words) {
+        if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
+          if (word.getSolved()) {
+            repeat = true
+            word.repeatAnimation()
+          }
+          word.setSolved(solvedWord.STANDART)
 
-          for (let word of this._scene.words) {
-            if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
-              if (word.getSolved()) {
-                repeat = true
-                word.repeatAnimation()
-              }
-              word.setSolved(solvedWord.STANDART)
+          // функция для нахождения букв в перекрестиях 
+          if (Session.getLevelConfig().length > 0) {
+            const spritesOnlyArray = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+            const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
 
-              // функция для нахождения букв в перекрестиях 
-              if (Session.getLevelConfig().length > 0) {
-                const spritesOnlyArray = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
-                const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
+            unsolvedWords.forEach((wordItem, i) => {
+              const list = wordItem.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
 
-                unsolvedWords.forEach((wordItem, i) => {
-                  const list = wordItem.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+              for (let k = 0; k < spritesOnlyArray.length; k++) {
+                const currentSprite = spritesOnlyArray[k];
 
-                  for (let k = 0; k < spritesOnlyArray.length; k++) {
-                    const currentSprite = spritesOnlyArray[k];
+                if (list.some(sprite => this._isMatchingSprite(sprite, currentSprite) && wordItem.getWord() !== word.getWord())) {
+                  const solvedLetters = wordItem.getSolvedLetters();
+                  const j = list.findIndex(sprite => this._isMatchingSprite(sprite, currentSprite));
 
-                    if (list.some(sprite => this._isMatchingSprite(sprite, currentSprite) && wordItem.getWord() !== word.getWord())) {
-                      const solvedLetters = wordItem.getSolvedLetters();
-                      const j = list.findIndex(sprite => this._isMatchingSprite(sprite, currentSprite));
+                  solvedLetters[j] = 1;
+                  wordItem.setSolvedLetters(solvedLetters);
 
-                      solvedLetters[j] = 1;
-                      wordItem.setSolvedLetters(solvedLetters);
-
-                      if (wordItem.getSolvedLetters().filter(el => el === 0).length === 0) {
-                        this._addCompletedWordWithBooster(wordItem);
-                      }
-
-                      break;
-                    }
+                  if (wordItem.getSolvedLetters().filter(el => el === 0).length === 0) {
+                    this._addCompletedWordWithBooster(wordItem);
                   }
-                });
+
+                  break;
+                }
               }
-              // конец
-
-              Session.setCurrentWordType(currentWordType.SOLVED)
-              Session.addToCompletedWords(word.getWord().toLowerCase())
-              solved = true
-              solvedX = word.x
-              solvedY = word.y
-              type = word.getType()
-            }
+            });
           }
+          // конец
 
-          if (!solved) Session.setCurrentWordType(currentWordType.WRONG)
-          if (repeat) Session.setCurrentWordType(currentWordType.REPEAT)
-
-          switch (Session.getCurrentWordType()) {
-            case currentWordType.WRONG:
-              Session.setCurrentWordType(currentWordType.DEFAULT)
-              Session.resetCurrentWord()
-              this._scene.currentWord.wrongAnimation()
-              break;
-            case currentWordType.REPEAT:
-              Session.setCurrentWordType(currentWordType.DEFAULT)
-              Session.resetCurrentWord()
-              this._scene.currentWord.repeatAnimation()
-              break;
-            case currentWordType.SOLVED:
-              Session.setCurrentWordType(currentWordType.DEFAULT)
-              Session.resetCurrentWord()
-              this._scene.currentWord.solvedAnimation(solvedX, solvedY, type)
-              break;
-          }
+          Session.setCurrentWordType(currentWordType.SOLVED)
+          Session.addToCompletedWords(word.getWord().toLowerCase())
+          solved = true
+          solvedX = word.x
+          solvedY = word.y
+          type = word.getType()
         }
-
       }
-    })
+
+      if (!solved) Session.setCurrentWordType(currentWordType.WRONG)
+      if (repeat) Session.setCurrentWordType(currentWordType.REPEAT)
+
+      switch (Session.getCurrentWordType()) {
+        case currentWordType.WRONG:
+          Session.setCurrentWordType(currentWordType.DEFAULT)
+          Session.resetCurrentWord()
+          this._scene.currentWord.wrongAnimation()
+          break;
+        case currentWordType.REPEAT:
+          Session.setCurrentWordType(currentWordType.DEFAULT)
+          Session.resetCurrentWord()
+          this._scene.currentWord.repeatAnimation()
+          break;
+        case currentWordType.SOLVED:
+          Session.setCurrentWordType(currentWordType.DEFAULT)
+          Session.resetCurrentWord()
+          this._scene.currentWord.solvedAnimation(solvedX, solvedY, type)
+          break;
+      }
+    }
   }
 
   private _createEndLevelRectangle(): void {
@@ -572,11 +573,11 @@ class GameActions {
 
                     mathchingWord.setSolvedLetters(solvedLetters);
                     mathchingWord.solveLetterAnimation(k);
-        
+
                     if (mathchingWord.getSolvedLetters().filter(el => el === 0).length === 0) {
                       this._addCompletedWordWithBooster(mathchingWord);
                     }
-  
+
                     break;
                   }
                 }

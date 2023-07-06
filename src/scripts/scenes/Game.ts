@@ -10,8 +10,6 @@ import Word from "../components/Word";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 
-
-
 class Game extends Phaser.Scene {
   constructor() {
     super('Game')
@@ -24,7 +22,14 @@ class Game extends Phaser.Scene {
   public letterButtons: LetterButton[] = []
   public activeLetterButtons: LetterButton[] = []
   public currentWord: CurrentWord
-  public graphics: Phaser.GameObjects.Graphics;
+  public letterButtonsLine: IbuttonsLine = {
+    graphicCircleStart: null,
+    graphicCircleEnd: null,
+    graphicCircleMid: null,
+    line: null,
+    points: [],
+    pointsMouse: [],
+  }
   public endLevelRectangle: EndLevelRectangle;
   public boosterRandomWord: BoosterRandomWord
   public boosterRandomLetter: BoosterRandomLetter
