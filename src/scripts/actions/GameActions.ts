@@ -554,30 +554,33 @@ class GameActions {
 
             // функция для нахождения букв в перекрестиях 
             if (Session.getLevelConfig().length > 0) {
-              const spritesOnlyArray = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+              const spritesOnlyArrayWord = word.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
               const unsolvedWords = this._scene.words.filter(wordItem => !Session.getToCompletedWords().includes(wordItem.getWord()));
+              const lists = unsolvedWords.map(el => el.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[]);
 
-              unsolvedWords.forEach((wordItem, i) => {
-                const list = wordItem.list.filter(el => el instanceof Phaser.GameObjects.Sprite) as Phaser.GameObjects.Sprite[];
+              for (let j = 0; j < lists.length; j++) {
+                const list = lists[j]
+                const mathchingWord = unsolvedWords[j]
+                for (let k = 0; k < list.length; k++) {
+                  const sprite = list[k]
+                  if (
+                    this._isMatchingSprite(sprite, spritesOnlyArrayWord[i]) &&
+                    word.getWord() !== mathchingWord.getWord()
+                  ) {
+                    const solvedLetters = mathchingWord.getSolvedLetters();
+                    solvedLetters[k] = 1;
 
-                for (let k = 0; k < spritesOnlyArray.length; k++) {
-                  const currentSprite = spritesOnlyArray[k];
-
-                  if (list.some(sprite => this._isMatchingSprite(sprite, currentSprite) && wordItem.getWord() !== word.getWord())) {
-                    const solvedLetters = wordItem.getSolvedLetters();
-                    const j = list.findIndex(sprite => this._isMatchingSprite(sprite, currentSprite));
-
-                    solvedLetters[j] = 1;
-                    wordItem.setSolvedLetters(solvedLetters);
-
-                    if (wordItem.getSolvedLetters().filter(el => el === 0).length === 0) {
-                      this._addCompletedWordWithBooster(wordItem);
+                    mathchingWord.setSolvedLetters(solvedLetters);
+                    mathchingWord.solveLetterAnimation(k);
+        
+                    if (mathchingWord.getSolvedLetters().filter(el => el === 0).length === 0) {
+                      this._addCompletedWordWithBooster(mathchingWord);
                     }
-
+  
                     break;
                   }
                 }
-              });
+              }
             }
             // конец
 

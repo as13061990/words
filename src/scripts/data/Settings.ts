@@ -41,9 +41,9 @@ class Settings {
 
   readonly BOOSTER_ACTIVE = 0x688ec4
   readonly BOOSTER_INACTIVE  = 0x898989
-  readonly BOOSTER_RANDOM_LETTER_TIME = 10
-  readonly BOOSTER_RANDOM_WORD_TIME = 60
-  readonly BOOSTER_SPECIFIC_LETTER_TIME = 20
+  readonly BOOSTER_RANDOM_LETTER_TIME = 2
+  readonly BOOSTER_RANDOM_WORD_TIME = 2
+  readonly BOOSTER_SPECIFIC_LETTER_TIME = 2
 
 
   public sounds: Isounds;

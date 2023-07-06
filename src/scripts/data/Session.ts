@@ -139,7 +139,6 @@ class Session {
   }
   public setIsActiveBoosterRandomLetter(active: boolean): void {
     if (active) this._boosterRandomLetterTimer = Settings.BOOSTER_RANDOM_LETTER_TIME
-    console.log(this._boosterRandomLetterTimer)
     this._isActiveBoosterRandomLetter = active
   }
   public setIsActiveBoosterSpecificLetter(active: boolean): void {
