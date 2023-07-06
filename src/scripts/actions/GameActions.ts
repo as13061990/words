@@ -451,11 +451,8 @@ class GameActions {
     const randomIndex = randomIndices.find(index => unsolvedWord.getSolvedLetters()[index] === 0);
     if (randomIndex === undefined) return
 
-    const arr = unsolvedWord.getSolvedLetters()
-    arr[randomIndex] = 1
-    unsolvedWord.setSolvedLetters(arr)
+    this._solveLetterInWord(unsolvedWord, randomIndex, true)
     this._scene.boosterRandomLetter.setLetter(spritesOnlyArray[randomIndex])
-    unsolvedWord.solveLetterAnimation(randomIndex)
 
     if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(unsolvedWord, randomIndex)
 
@@ -475,12 +472,8 @@ class GameActions {
           zones.push(zone)
           zone.clickCallback = () => {
             Session.setIsActiveBoosterSpecificLetter(true)
-            const solvedLetters = word.getSolvedLetters();
-            solvedLetters[i] = 1;
-            word.setSolvedLetters(solvedLetters);
+            this._solveLetterInWord(word, i, true)
             this._scene.boosterSpecificLetter.setLetter(el);
-            word.solveLetterAnimation(i);
-
             if (Session.getLevelConfig().length > 0) this._findCrossLettersInWord(word, i)
 
             this._addCompletedWordWithBooster(word);
@@ -512,31 +505,27 @@ class GameActions {
         const sprite = list[k]
         if (index !== -1) {
           if (this._isMatchingSprite(sprite, spritesOnlyArrayWord[index]) && word.getWord() !== mathchingWord.getWord()) {
-            const solvedLetters = mathchingWord.getSolvedLetters();
-            solvedLetters[k] = 1;
-
-            mathchingWord.setSolvedLetters(solvedLetters);
-            if (animation) mathchingWord.solveLetterAnimation(k);
-
+            this._solveLetterInWord(mathchingWord, k, animation)
             this._addCompletedWordWithBooster(mathchingWord);
-
             break;
           }
         } else if (index === -1) {
           if (listUnknown.some(spriteWord => this._isMatchingSprite(spriteWord, sprite) && word.getWord() !== mathchingWord.getWord())) {
-            const solvedLetters = mathchingWord.getSolvedLetters();
-            solvedLetters[k] = 1;
-
-            mathchingWord.setSolvedLetters(solvedLetters);
-            if (animation) mathchingWord.solveLetterAnimation(k);
-
+            this._solveLetterInWord(mathchingWord, k, animation)
             this._addCompletedWordWithBooster(mathchingWord);
-
             break;
           }
         }
       }
     }
+  }
+
+  private _solveLetterInWord(word: Word, index: number, animation): void {
+    const solvedLetters = word.getSolvedLetters();
+    solvedLetters[index] = 1;
+
+    word.setSolvedLetters(solvedLetters);
+    if (animation) word.solveLetterAnimation(index);
   }
 
   private _isMatchingSprite(spriteA, spriteB): boolean {
