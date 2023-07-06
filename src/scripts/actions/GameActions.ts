@@ -13,6 +13,12 @@ import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType, solvedWord, screen, wordDirection } from "../types/enums";
 
+interface IsolvedWord {
+  x: number
+  y: number
+  type: wordDirection
+}
+
 
 class GameActions {
   constructor(scene: Game) {
@@ -23,6 +29,7 @@ class GameActions {
   private _level: number
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
+  private _solvedWord: IsolvedWord = {x: null, y: null, type: null}
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -262,7 +269,6 @@ class GameActions {
   private _addLogicToLetterButtons(): void {
     this._scene.letterButtons.forEach((button, i) => {
       const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
-      const letter = button.getLetter()
 
       button.add(zone)
 
@@ -274,47 +280,27 @@ class GameActions {
     })
   }
 
+
+
   private _letterButtonDownClickCallback(button: LetterButton): void {
     if (this._shuffleAnimation) return
-    const letter = button.getLetter()
-
-
-    Session.addLetterToCurrentWord(letter)
-    button.setActivated(true)
-    this._scene.activeLetterButtons.push(button)
-
-    let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-    this._scene.letterButtonsLine.graphicCircleStart.lineStyle(28, 0x568cbd);
-    this._scene.letterButtonsLine.graphicCircleStart.strokeCircleShape(circle);
-
-    const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
-    this._scene.letterButtonsLine.points.push(point);
-    this._scene.letterButtonsLine.pointsMouse.push(point);
+    this._activateLetterButton(button, true)
   }
 
   private _letterButtonHoverOnCallback(button: LetterButton): void {
     if (Session.getCurrentWord().length > 0) {
-      const letter = button.getLetter()
       if (!button.getActivated()) {
 
-
-        Session.addLetterToCurrentWord(letter)
-        button.setActivated(true)
-        this._scene.activeLetterButtons.push(button)
-
-        this._scene.letterButtonsLine.pointsMouse.splice(0)
-
-        this._scene.letterButtonsLine.graphicCircleMid.clear()
-        let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-        this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
-        this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
+        this._activateLetterButton(button, false)
 
       } else {
         if (Session.getCurrentWord().length > 1) {
           const activeBtnIndex = this._scene?.activeLetterButtons.findIndex(btn => btn === button)
-          if (button.getActivated() === this._scene?.activeLetterButtons[activeBtnIndex + 1]?.getActivated() && !this._scene?.activeLetterButtons[activeBtnIndex + 2]?.getActivated()) {
+          const nextButton = this._scene.activeLetterButtons[activeBtnIndex + 1]
+          const afterNextButton = this._scene?.activeLetterButtons[activeBtnIndex + 2]
+          if (button.getActivated() === nextButton?.getActivated() && !afterNextButton?.getActivated()) {
             Session.minusCurrentWord()
-            this._scene.activeLetterButtons[activeBtnIndex + 1].setActivated(false)
+            nextButton.setActivated(false)
             this._scene.activeLetterButtons = this._scene.activeLetterButtons.slice(0, -1)
 
             this._scene.letterButtonsLine.graphicCircleMid.clear()
@@ -329,25 +315,11 @@ class GameActions {
 
   private _letterButtonUpCallback(button: LetterButton): void {
     if (button.getActivated()) {
-      this._scene.letterButtonsLine.graphicCircleStart.clear()
-      this._scene.letterButtonsLine.graphicCircleEnd.clear()
-      this._scene.letterButtonsLine.graphicCircleMid.clear()
-
-      this._scene.letterButtonsLine.line.clear();
-      this._scene.letterButtonsLine.points.splice(0)
-      this._scene.letterButtonsLine.pointsMouse.splice(0)
-
-      this._scene.letterButtons.forEach((btn) => {
-        if (btn.getActivated()) {
-          btn.setActivated(false)
-        }
-      })
-      this._scene.activeLetterButtons = []
-
+      this._clearLetterButtonsLine()
+      this._deactivateAllLetterButtons()
+      
       let solved = false
       let repeat = false
-      let solvedX: number, solvedY: number
-      let type: wordDirection
 
       for (let word of this._scene.words) {
         if (word.getWord().toLowerCase() === Session.getCurrentWord().toLowerCase()) {
@@ -389,32 +361,82 @@ class GameActions {
           Session.setCurrentWordType(currentWordType.SOLVED)
           Session.addToCompletedWords(word.getWord().toLowerCase())
           solved = true
-          solvedX = word.x
-          solvedY = word.y
-          type = word.getType()
+          this._solvedWord = {
+            x: word.x,
+            y: word.y,
+            type: word.getType()
+          }
         }
       }
 
       if (!solved) Session.setCurrentWordType(currentWordType.WRONG)
       if (repeat) Session.setCurrentWordType(currentWordType.REPEAT)
 
-      switch (Session.getCurrentWordType()) {
-        case currentWordType.WRONG:
-          Session.setCurrentWordType(currentWordType.DEFAULT)
-          Session.resetCurrentWord()
-          this._scene.currentWord.wrongAnimation()
-          break;
-        case currentWordType.REPEAT:
-          Session.setCurrentWordType(currentWordType.DEFAULT)
-          Session.resetCurrentWord()
-          this._scene.currentWord.repeatAnimation()
-          break;
-        case currentWordType.SOLVED:
-          Session.setCurrentWordType(currentWordType.DEFAULT)
-          Session.resetCurrentWord()
-          this._scene.currentWord.solvedAnimation(solvedX, solvedY, type)
-          break;
+      this._startSpecificWordAnimation()
+    }
+  }
+
+  private _activateLetterButton(button: LetterButton, first: boolean): void {
+    const letter = button.getLetter()
+    Session.addLetterToCurrentWord(letter)
+    button.setActivated(true)
+    this._scene.activeLetterButtons.push(button)
+
+    if (first) {
+      let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+      this._scene.letterButtonsLine.graphicCircleStart.lineStyle(28, 0x568cbd);
+      this._scene.letterButtonsLine.graphicCircleStart.strokeCircleShape(circle);
+
+      const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
+      this._scene.letterButtonsLine.points.push(point);
+      this._scene.letterButtonsLine.pointsMouse.push(point);
+    } else {
+      this._scene.letterButtonsLine.pointsMouse.splice(0)
+
+      this._scene.letterButtonsLine.graphicCircleMid.clear()
+      let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
+      this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
+      this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
+    }
+  }
+
+  private _clearLetterButtonsLine(): void {
+    this._scene.letterButtonsLine.graphicCircleStart.clear()
+    this._scene.letterButtonsLine.graphicCircleEnd.clear()
+    this._scene.letterButtonsLine.graphicCircleMid.clear()
+
+    this._scene.letterButtonsLine.line.clear();
+    this._scene.letterButtonsLine.points.splice(0)
+    this._scene.letterButtonsLine.pointsMouse.splice(0)
+  }
+
+  private _deactivateAllLetterButtons(): void {
+    this._scene.letterButtons.forEach((btn) => {
+      if (btn.getActivated()) {
+        btn.setActivated(false)
       }
+    })
+    this._scene.activeLetterButtons = []
+  }
+
+  private _startSpecificWordAnimation(): void {
+    const {x, y, type} = this._solvedWord
+    switch (Session.getCurrentWordType()) {
+      case currentWordType.WRONG:
+        Session.setCurrentWordType(currentWordType.DEFAULT)
+        Session.resetCurrentWord()
+        this._scene.currentWord.wrongAnimation()
+        break;
+      case currentWordType.REPEAT:
+        Session.setCurrentWordType(currentWordType.DEFAULT)
+        Session.resetCurrentWord()
+        this._scene.currentWord.repeatAnimation()
+        break;
+      case currentWordType.SOLVED:
+        Session.setCurrentWordType(currentWordType.DEFAULT)
+        Session.resetCurrentWord()
+        this._scene.currentWord.solvedAnimation(x, y, type)
+        break;
     }
   }
 
@@ -600,6 +622,7 @@ class GameActions {
     })
   }
 
+  
   private _isMatchingSprite(spriteA, spriteB): boolean {
     return (
       Math.floor(spriteA.getBounds().centerX) === Math.floor(spriteB.getBounds().centerX) &&
