@@ -421,9 +421,9 @@ class GameActions {
     const boosterRandomWordZone = Zone.createFromSprite(this._scene.boosterRandomWord)
     const boosterSpecificLetterZone = Zone.createFromSprite(this._scene.boosterSpecificLetter)
 
-    boosterRandomWordZone.clickCallback = this._boosterRandomWordCallback.bind(this)
-    boosterRandomLetterZone.clickCallback = this._boosterRandomLetterCallback.bind(this)
-    boosterSpecificLetterZone.clickCallback = this._boosterSpecificLetterCallback.bind(this)
+    boosterRandomWordZone.downClickCallback = this._boosterRandomWordCallback.bind(this)
+    boosterRandomLetterZone.downClickCallback = this._boosterRandomLetterCallback.bind(this)
+    boosterSpecificLetterZone.downClickCallback = this._boosterSpecificLetterCallback.bind(this)
   }
 
   private _boosterRandomWordCallback(): void {
@@ -470,7 +470,7 @@ class GameActions {
           if (word.getSolvedLetters()[i] === 1) return
           const zone = Zone.createFromSprite(el)
           zones.push(zone)
-          zone.clickCallback = () => {
+          zone.downClickCallback = () => {
             Session.setIsActiveBoosterSpecificLetter(true)
             this._solveLetterInWord(word, i, true)
             this._scene.boosterSpecificLetter.setLetter(el);
