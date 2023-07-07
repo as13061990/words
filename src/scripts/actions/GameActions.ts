@@ -428,6 +428,7 @@ class GameActions {
 
   private _boosterRandomWordCallback(): void {
     if (Session.getIsActiveBoosterRandomWord()) return
+    if (this._scene.boosterSpecificLetter.getIsActive()) return
     Session.setIsActiveBoosterRandomWord(true)
     let unsolvedWord = this._findUnsolvedWord()
     if (!unsolvedWord) return
@@ -441,6 +442,7 @@ class GameActions {
 
   private _boosterRandomLetterCallback(): void {
     if (Session.getIsActiveBoosterRandomLetter()) return
+    if (this._scene.boosterSpecificLetter.getIsActive()) return
     Session.setIsActiveBoosterRandomLetter(true)
 
     let unsolvedWord = this._findUnsolvedWord()
