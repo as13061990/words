@@ -2,6 +2,7 @@ import Button from "../components/Button";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Menu from "../scenes/Menu";
+import { screen } from "../types/enums";
 
 
 
@@ -51,7 +52,6 @@ class Main {
     btnDown.setDisplaySize(btnDown.text.width + 15, btnDown.text.height + 15)
     btnDown.callback = this._lvlDown.bind(this)
 
-
   }
 
   private _lvlUp(): void {
@@ -82,6 +82,7 @@ class Main {
     this._scene.scene.start('Game');
     Session.setLevel(Settings.getCurrentLevel().data.level)
   }
+
 }
 
 export default Main;

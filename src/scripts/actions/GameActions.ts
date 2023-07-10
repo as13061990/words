@@ -6,6 +6,7 @@ import CurrentWord from "../components/CurrentWord";
 import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
+import Modal from "../components/Modal";
 import Word from "../components/Word";
 import Zone from "../components/Zone";
 import Session from "../data/Session";
@@ -30,6 +31,7 @@ class GameActions {
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
   private _solvedWord: IsolvedWord = { x: null, y: null, type: null }
+  private _letterButtonsZones: Zone[] = []
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
@@ -37,12 +39,19 @@ class GameActions {
     Session.startLevel()
     this._level = Session.getLevel()
 
-    const btn = new Button(this._scene, centerX, centerY - 600, 'button-green')
+    const btn = new Button(this._scene, centerX + 150, centerY - 600, 'button-green')
     btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
       color: 'white',
       font: '40px Triomphe',
-    }).setOrigin(.5, .6).setDepth(11);
+    }).setOrigin(.5, .6)
     btn.callback = this._back.bind(this)
+
+    const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'button-green')
+    btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
+      color: 'white',
+      font: '40px Triomphe',
+    }).setOrigin(.5, .6)
+    btnRating.callback = this._rating.bind(this)
 
     this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
 
@@ -265,6 +274,7 @@ class GameActions {
   private _addLogicToLetterButtons(): void {
     this._scene.letterButtons.forEach((button, i) => {
       const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
+      this._letterButtonsZones.push(zone)
       button.add(zone)
       zone.downClickCallback = this._letterButtonDownClickCallback.bind(this, button)
       zone.hoverOn = this._letterButtonHoverOnCallback.bind(this, button)
@@ -554,6 +564,28 @@ class GameActions {
     return unsolvedWords[randomIndex]
   }
 
+  private _disableInteractive(): void {
+    this._scene.children.list.forEach((el) => {
+      if (el instanceof Zone || el instanceof Button) {
+        el.disableInteractive()
+      }
+    })
+    this._letterButtonsZones.forEach(el => {
+      el.disableInteractive()
+    })
+  }
+
+  private _activeInteractive(): void {
+    this._scene.children.list.forEach((el) => {
+      if (el instanceof Zone || el instanceof Button) {
+        el.setInteractive()
+      }
+    })
+    this._letterButtonsZones.forEach(el => {
+      el.setInteractive()
+    })
+  }
+
   private _complete(): void {
     this._scene.scene.start('Menu')
     Settings.setScreen(screen.COMPLETE)
@@ -562,6 +594,12 @@ class GameActions {
   private _back(): void {
     this._scene.scene.start('Menu')
     Settings.setScreen(screen.MAIN)
+  }
+
+  private _rating(): void {
+    const modal = new Modal(this._scene)
+    modal.closeModalCallback = this._activeInteractive.bind(this)
+    this._disableInteractive()
   }
 }
 

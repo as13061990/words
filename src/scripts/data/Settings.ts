@@ -29,8 +29,13 @@ class Settings {
   public readonly DELAY_ANIMATION_WORD_STANDART_SOLVED = 650 // задержка анимации решенного слова 
   public readonly DELAY_ANIMATION_ENDLEVELRECTANGLE = 1200 // задержка анимации завершения уровня
 
+  public readonly DURATION_ANIMATION_MODAL_STEP_1 = 400  // 1 шаг(их2) анимации модалки
+  public readonly DURATION_ANIMATION_MODAL_STEP_2 = 100  // 2 шаг(их2) анимации модалки
+
+
   public readonly WORD_STEP = 110  // ширина и высота одной клетки с отступом
   public readonly REDUCE_SCALE = 0.4  // уменьшение у текущего слова
+
 
   // rgb цвета
   public readonly WHITE = [255, 255, 255]
