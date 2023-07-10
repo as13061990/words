@@ -13,6 +13,8 @@ import star from '../../assets/images/star.png';
 import modal from '../../assets/images/modal.png';
 import blackPixel from '../../assets/images/black-pixel.png';
 import close from '../../assets/images/close.png';
+import avatar from '../../assets/images/avatar.jpg';
+
 
 
 // import sound from '../../assets/images/sound.mp3';
@@ -75,7 +77,7 @@ class Loading {
     this._scene.load.image('modal', modal);
     this._scene.load.image('black-pixel', blackPixel);
     this._scene.load.image('close', close);
-
+    this._scene.load.image('avatar', avatar);
   }
 
   private _loadSounds(): void {
