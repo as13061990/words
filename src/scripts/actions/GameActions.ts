@@ -12,7 +12,7 @@ import Zone from "../components/Zone";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
-import { currentWordType, solvedWord, screen, wordDirection } from "../types/enums";
+import { currentWordType, solvedWord, screen, wordDirection, modal } from "../types/enums";
 
 interface IsolvedWord {
   x: number
@@ -597,8 +597,9 @@ class GameActions {
   }
 
   private _rating(): void {
-    const modal = new Modal(this._scene)
-    modal.closeModalCallback = this._activeInteractive.bind(this)
+    Settings.setModal(modal.RATING)
+    const newModal = new Modal(this._scene)
+    newModal.closeModalCallback = this._activeInteractive.bind(this)
     this._disableInteractive()
   }
 }

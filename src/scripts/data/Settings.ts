@@ -1,5 +1,5 @@
 import Interval from '../actions/Interval';
-import { screen } from '../types/enums';
+import { modal, screen } from '../types/enums';
 
 class Settings {
 
@@ -8,6 +8,7 @@ class Settings {
     minHeight: 1367,
     maxHeight: 2500
   }
+  private _modal: modal = null;
   private _screen: screen = screen.MAIN;
   private _mobile: boolean = false;
   private _levels: Ilevel[] = []
@@ -24,7 +25,7 @@ class Settings {
   public readonly DURATION_ANIMATION_CURRENTWORD_WRONG_STEP = 60 // 1 шаг(их3) анимации неправильного слова у текущего слова
   public readonly DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE = 130 //  анимация изменения цвета у текущего слова
   public readonly DURATION_ANIMATION_CURRENTWORD_SOLVED_DESTOY = 100 //  анимация разрушения решенного у текущего слова
-  
+
   public readonly DELAY_ANIMATION_CURRENTWORD_DESTROY = 500 //  анимация разрушения у текущего слова
   public readonly DELAY_ANIMATION_WORD_STANDART_SOLVED = 650 // задержка анимации решенного слова 
   public readonly DELAY_ANIMATION_ENDLEVELRECTANGLE = 1200 // задержка анимации завершения уровня
@@ -42,17 +43,18 @@ class Settings {
   public readonly GREEN = [110, 190, 104]
   public readonly ORANGE = [222, 153, 85]
   public readonly PINK = [227, 109, 162]
-  public readonly DARK_BLUE = [45,52,75]
+  public readonly DARK_BLUE = [45, 52, 75]
   public readonly RED = [240, 85, 87]
 
- // rgb16 цвета для бустеров
-  readonly BOOSTER_ACTIVE = 0x688ec4
-  readonly BOOSTER_INACTIVE  = 0x898989
+  public readonly PINK_16 = 0xe36da2
+  // rgb16 цвета для бустеров
+  public readonly BOOSTER_ACTIVE = 0x688ec4
+  public readonly BOOSTER_INACTIVE = 0x898989
 
   // кд бустеров
-  readonly BOOSTER_RANDOM_LETTER_TIME = 5
-  readonly BOOSTER_RANDOM_WORD_TIME = 5
-  readonly BOOSTER_SPECIFIC_LETTER_TIME = 5
+  public readonly BOOSTER_RANDOM_LETTER_TIME = 5
+  public readonly BOOSTER_RANDOM_WORD_TIME = 5
+  public readonly BOOSTER_SPECIFIC_LETTER_TIME = 5
 
 
   public sounds: Isounds;
@@ -65,6 +67,15 @@ class Settings {
 
   public getScreen(): screen {
     return this._screen;
+  }
+
+  public setModal(modal: modal): modal {
+    this._modal = modal;
+    return this._modal;
+  }
+
+  public getModal(): modal {
+    return this._modal;
   }
 
   public isMobile(): boolean {

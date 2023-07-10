@@ -3,6 +3,10 @@ enum screen {
   COMPLETE,
 }
 
+enum modal {
+  RATING
+}
+
 enum solvedWord {
   STANDART,
   BOOSTER_WORD,
@@ -26,5 +30,6 @@ export {
   currentWordType,
   wordDirection,
   solvedWord,
-  screen
+  screen,
+  modal
 }
