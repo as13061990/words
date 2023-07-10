@@ -14,6 +14,7 @@ import modal from '../../assets/images/modal.png';
 import blackPixel from '../../assets/images/black-pixel.png';
 import close from '../../assets/images/close.png';
 
+
 // import sound from '../../assets/images/sound.mp3';
 class Loading {
   constructor(scene: Phaser.Scene) {
@@ -74,6 +75,7 @@ class Loading {
     this._scene.load.image('modal', modal);
     this._scene.load.image('black-pixel', blackPixel);
     this._scene.load.image('close', close);
+
   }
 
   private _loadSounds(): void {
