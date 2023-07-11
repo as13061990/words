@@ -42,6 +42,31 @@ class Complete {
     }).setOrigin(.5, .6).setDepth(11);
     this._btn.callback = this._next.bind(this)
 
+    //
+    const lvlProgress = Math.floor((index + 1) / 5)
+    const progress = this._scene.add.text(centerX, this._btn.getBounds().bottom + 70, `Новый цвет фона \n\n${(index + 1) % 5}/5`,
+      {
+        color: 'white',
+        fontSize: '30px',
+        fontFamily: 'Triomphe',
+        align: 'center'
+      }
+    ).setOrigin(0.5, 0.5)
+    switch (lvlProgress) {
+      case 0:
+        break;
+      case 1:
+        this._scene.cameras.main.setBackgroundColor('#543964')
+        break;
+      case 2:
+        this._scene.cameras.main.setBackgroundColor('#320a18')
+        break;
+      case 3:
+        this._scene.cameras.main.setBackgroundColor('#320a18')
+        break;
+    }
+    //
+
   }
 
   private _next(): void {

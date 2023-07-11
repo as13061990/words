@@ -36,6 +36,22 @@ class GameActions {
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
 
+    //
+    const lvlProgress =  Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 5)
+    switch (lvlProgress) {
+      case 0:
+        break;
+      case 1:
+        this._scene.cameras.main.setBackgroundColor('#543964')
+        break;
+      case 2:
+        this._scene.cameras.main.setBackgroundColor('#320a18')
+        break;
+      case 3:
+        this._scene.cameras.main.setBackgroundColor('#320a18')
+        break;
+    }
+    //
     Session.startLevel()
     this._level = Session.getLevel()
 
