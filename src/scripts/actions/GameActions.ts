@@ -37,7 +37,7 @@ class GameActions {
     const { centerX, centerY } = this._scene.cameras.main
 
     //
-    const lvlProgress =  Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 5)
+    const lvlProgress =  Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 8)
     switch (lvlProgress) {
       case 0:
         break;
