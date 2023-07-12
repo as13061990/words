@@ -35,9 +35,9 @@ class GameActions {
 
   public build(): void {
     const { centerX, centerY } = this._scene.cameras.main
-
+    this._letterButtonsZones = []
     //
-    const lvlProgress =  Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 8)
+    const lvlProgress = Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 8)
     switch (lvlProgress) {
       case 0:
         break;
@@ -583,22 +583,30 @@ class GameActions {
   private _disableInteractive(): void {
     this._scene.children.list.forEach((el) => {
       if (el instanceof Zone || el instanceof Button) {
-        el.disableInteractive()
+        if (el?.scene) {
+          el.disableInteractive()
+        }
       }
     })
     this._letterButtonsZones.forEach(el => {
-      el.disableInteractive()
+      if (el?.scene) {
+        el.disableInteractive()
+      }
     })
   }
 
   private _activeInteractive(): void {
     this._scene.children.list.forEach((el) => {
       if (el instanceof Zone || el instanceof Button) {
-        el.setInteractive()
+        if (el?.scene) {
+          el.setInteractive()
+        }
       }
     })
     this._letterButtonsZones.forEach(el => {
-      el.setInteractive()
+      if (el?.scene) {
+        el.setInteractive()
+      }
     })
   }
 
