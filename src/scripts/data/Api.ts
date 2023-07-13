@@ -4,8 +4,8 @@ class Api {
 
   public async getLevels(): Promise<any> {
     try {
-      const response = await axios.get(process.env.API + '/getLevels')
-      return response.data.map((el: IlevelResponse) => {
+      const response = await axios.get(process.env.API + '/levels/list')
+      return response.data.data.map((el: IlevelResponse) => {
         return {
           id: el.id,
           data: JSON.parse(el.data)
