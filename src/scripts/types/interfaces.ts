@@ -37,3 +37,21 @@ interface IbuttonsLine {
   points: Phaser.Math.Vector2[]
   pointsMouse: Phaser.Math.Vector2[]
 }
+
+
+interface IuserRating {
+  place: number,
+  name: string,
+  score: number,
+  self: boolean,
+  platform?: null
+}
+
+interface Iratings {
+  rating: {
+    dayLevels: IuserRating[],
+    allLevels: IuserRating[],
+    dayWords: IuserRating[],
+    allWords: IuserRating[]
+  }
+}
