@@ -1,27 +1,41 @@
 type rgbArr = [number, number, number]
 
 interface IgameConfig {
+  // размеры
+  sizes: {
+    wordStep: number; // ширина и высота одной клетки с отступом
+    reduceScale: number  // уменьшение у текущего слова
+  },
+
+  //цвета
   colors: {
-    defaultWord: rgbArr;
-    repeatWord: rgbArr;
-    wrongWord: rgbArr;
-    solveWord: rgbArr;
+    defaultWord: rgbArr; // начальный цвет спрайта слова
+    repeatWord: rgbArr; // цвет спрайта повторения слова
+    wrongWord: rgbArr; // цвет спрайта ошибочного слова
+    solveWord: rgbArr; // цвет спрайта решенного слова
 
-    solveLetter: rgbArr,
-    solveLetterText: rgbArr, 
+    solveLetter: rgbArr, // цвет спрайта решенной буквы
+    solveLetterText: rgbArr, // цвет текста решенной буквы
 
-    defaultWordText: rgbArr;
-    repeatWordText: rgbArr;
-    wrongWordText: rgbArr;
-    solveWordText: rgbArr;
+    defaultWordText: rgbArr; // начальный цвет текста слова
+    repeatWordText: rgbArr; // цвет текста повторения слова
+    wrongWordText: rgbArr; // цвет текста ошибочного  слова
+    solveWordText: rgbArr; // цвет текста решенного слова
 
-    letterButtonActive: rgbArr;
-    letterButtonActiveText: rgbArr;
-    letterButtonInactive: rgbArr;
-    letterButtonInactiveText: rgbArr;
+    letterButtonActive: rgbArr;  // цвет активной кнопки буквы
+    letterButtonActiveText: rgbArr;  // цвет текста активной кнопки буквы
+    letterButtonInactive: rgbArr; // цвет неактивной кнопки буквы
+    letterButtonInactiveText: rgbArr;  // цвет текста неактивной кнопки буквы
 
-    boosterActive_16: number;
-    boosterInactive_16: number;
+    boosterActive_16: number; // цвет активного бустера в 16ричном формате
+    boosterInactive_16: number; // цвет неактивного бустера в 16ричном формат
+  },
+
+  //перезарядки
+  cooldowns: {
+    boosterRandomLetter: number; // перезарядка бустера рандомной буквы
+    boosterRandomWord: number; // перезарядка бустера рандомного слова
+    boosterSpecificLetter: number; // перезарядка бустера конкретной буквы
   }
 }
 
@@ -38,6 +52,11 @@ const BOOSTER_INACTIVE: number = 0x898989
 class GameConfig {
 
   private _data: IgameConfig = {
+    sizes: {
+      wordStep: 110,
+      reduceScale: 0.4,
+    },
+
     colors: {
       defaultWord: WHITE,
       repeatWord: ORANGE,
@@ -45,13 +64,13 @@ class GameConfig {
       solveWord: GREEN,
 
       solveLetter: ORANGE,
-      solveLetterText: WHITE, 
+      solveLetterText: WHITE,
 
       defaultWordText: DARK_BLUE,
       repeatWordText: WHITE,
       wrongWordText: WHITE,
       solveWordText: WHITE,
-  
+
       letterButtonActive: PINK,
       letterButtonActiveText: WHITE,
       letterButtonInactive: WHITE,
@@ -59,7 +78,13 @@ class GameConfig {
 
       boosterActive_16: BOOSTER_ACTIVE,
       boosterInactive_16: BOOSTER_INACTIVE,
-    }
+    },
+
+    cooldowns: {
+      boosterRandomLetter: 5,
+      boosterRandomWord: 5,
+      boosterSpecificLetter: 5,
+    },
   }
 
   public get(): IgameConfig {

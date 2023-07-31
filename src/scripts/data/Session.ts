@@ -134,15 +134,15 @@ class Session {
   }
 
   public setIsActiveBoosterRandomWord(active: boolean): void {
-    if (active) this._boosterRandomWordTimer = Settings.BOOSTER_RANDOM_WORD_TIME
+    if (active) this._boosterRandomWordTimer = Settings.getGameConfig().cooldowns.boosterRandomWord
     this._isActiveBoosterRandomWord = active
   }
   public setIsActiveBoosterRandomLetter(active: boolean): void {
-    if (active) this._boosterRandomLetterTimer = Settings.BOOSTER_RANDOM_LETTER_TIME
+    if (active) this._boosterRandomLetterTimer = Settings.getGameConfig().cooldowns.boosterRandomLetter
     this._isActiveBoosterRandomLetter = active
   }
   public setIsActiveBoosterSpecificLetter(active: boolean): void {
-    if (active) this._boosterSpecificLetterTimer = Settings.BOOSTER_SPECIFIC_LETTER_TIME
+    if (active) this._boosterSpecificLetterTimer = Settings.getGameConfig().cooldowns.boosterSpecificLetter
     this._isActiveBoosterSpecificLetter = active
   }
 

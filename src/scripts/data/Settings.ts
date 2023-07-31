@@ -38,12 +38,6 @@ class Settings {
   public readonly WORD_STEP = 110  // ширина и высота одной клетки с отступом
   public readonly REDUCE_SCALE = 0.4  // уменьшение у текущего слова
 
-  // кд бустеров
-  public readonly BOOSTER_RANDOM_LETTER_TIME = 5
-  public readonly BOOSTER_RANDOM_WORD_TIME = 5
-  public readonly BOOSTER_SPECIFIC_LETTER_TIME = 5
-
-
   public sounds: Isounds;
   public interval: Interval;
   private _preloadConfig: IpreloadConfig;
