@@ -26,12 +26,12 @@ class PreloadConfig {
       wordLetter: wordLetter,
       letterEmpty: letterEmpty,
       restartButtons: restartButtons,
-      BoosterSpecificLetter: BoosterSpecificLetter,
-      BoosterSpecificLetterInactive: BoosterSpecificLetterInactive, 
-      BoosterRandomWord: BoosterRandomWord, 
-      BoosterRandomWordInactive: BoosterRandomWordInactive, 
-      BoosterRandomLetter: BoosterRandomLetter, 
-      BoosterRandomLetterInactive: BoosterRandomLetterInactive, 
+      boosterSpecificLetter: BoosterSpecificLetter,
+      boosterSpecificLetterInactive: BoosterSpecificLetterInactive,
+      boosterRandomWord: BoosterRandomWord,
+      boosterRandomWordInactive: BoosterRandomWordInactive,
+      boosterRandomLetter: BoosterRandomLetter,
+      boosterRandomLetterInactive: BoosterRandomLetterInactive,
       boosterCircle: boosterCircle,
       star: star,
       modal: modal,
@@ -40,7 +40,6 @@ class PreloadConfig {
       avatar: avatar,
     },
     "sounds": {
-
     }
   }
 

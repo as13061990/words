@@ -1,9 +1,10 @@
 import Settings from "../data/Settings"
 import Utils from "../data/Utils"
+import Game from "../scenes/Game"
 import { solvedWord, wordDirection } from "../types/enums"
 
 class Word extends Phaser.GameObjects.Container {
-  constructor(scene: Phaser.Scene, word: string, x: number, y: number, type?: wordDirection,) {
+  constructor(scene: Game, word: string, x: number, y: number, type?: wordDirection,) {
     super(scene, x, y)
     this._scene = scene
     this._word = word
@@ -12,7 +13,7 @@ class Word extends Phaser.GameObjects.Container {
     this._build()
   }
 
-  private _scene: Phaser.Scene
+  private _scene: Game
   private _word: string
   private _solved: boolean = false
   private _empty: boolean = true
@@ -92,11 +93,12 @@ class Word extends Phaser.GameObjects.Container {
       onComplete: this._repeatAnimatioStepBack.bind(this)
     })
 
-    Utils.createChangeSpriteColorAnimation(
+    Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
-      Settings.GREEN, Settings.ORANGE,
+      this._scene.config.colors.solveWord, this._scene.config.colors.repeatWord,
+      this._scene.config.colors.solveWordText, this._scene.config.colors.repeatWordText,
       this._repeatAnimatioStepBack.bind(this)
     )
   }
@@ -112,11 +114,12 @@ class Word extends Phaser.GameObjects.Container {
       }
     })
 
-    Utils.createChangeSpriteColorAnimation(
+    Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
-      Settings.ORANGE, Settings.GREEN,
+      this._scene.config.colors.repeatWord, this._scene.config.colors.solveWord,
+      this._scene.config.colors.repeatWordText, this._scene.config.colors.solveWordText,
     )
   }
 
@@ -168,11 +171,12 @@ class Word extends Phaser.GameObjects.Container {
             this._createLetter(x, y, index)
           }
         })
-        Utils.createChangeSpriteColorAnimation(
+        Utils.createChangeColorAnimation(
           this._scene,
           this.list as (Phaser.GameObjects.Sprite)[],
           Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
-          Settings.ORANGE, Settings.GREEN,
+          this._scene.config.colors.solveLetter, this._scene.config.colors.solveWord,
+          this._scene.config.colors.solveLetterText, this._scene.config.colors.solveWordText,
         )
       },
       onComplete: () => {
@@ -194,7 +198,7 @@ class Word extends Phaser.GameObjects.Container {
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
-      Settings.WHITE, Settings.GREEN,
+      this._scene.config.colors.defaultWord,  this._scene.config.colors.solveWord,
     )
 
     this._scene.add.tween({
@@ -229,11 +233,12 @@ class Word extends Phaser.GameObjects.Container {
           scale: 1.09,
           ease: 'Power2',
           onStart: () => {
-            Utils.createChangeSpriteColorAnimation(
+            Utils.createChangeColorAnimation(
               this._scene,
               [arrWithOnlySprites[index]],
               Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
-              Settings.WHITE, Settings.ORANGE,
+              this._scene.config.colors.defaultWord, this._scene.config.colors.solveLetter,
+              this._scene.config.colors.defaultWordText, this._scene.config.colors.solveLetterText,
             )
           },
           onComplete: () => {

@@ -61,7 +61,3 @@ interface IpreloadConfig {
   images: { [key: string]: string };
   sounds: { [key: string]: string };
 }
-
-interface gameConfig {
-  
-}

@@ -29,7 +29,7 @@ class LetterButton extends Phaser.GameObjects.Container {
     this.add([this._sprite, this._text])
   }
 
-  public normalTween(): void {
+  public inactiveTween(): void {
     this._scene.add.tween({
       targets: [this, this._text],
       scaleX: 1,
@@ -42,12 +42,12 @@ class LetterButton extends Phaser.GameObjects.Container {
       this._scene,
       [this._text, this._sprite],
       Settings.DURATION_ANIMATION_LETTER_BUTTON,
-      Settings.PINK, Settings.WHITE,
-      Settings.WHITE, Settings.DARK_BLUE
+      this._scene.config.colors.letterButtonActive, this._scene.config.colors.letterButtonInactive,
+      this._scene.config.colors.letterButtonActiveText, this._scene.config.colors.letterButtonInactiveText
     )
   }
 
-  public scaleTween(): void {
+  public activeTween(): void {
 
     this._scene.add.tween({
       targets: [this, this._text],
@@ -61,8 +61,8 @@ class LetterButton extends Phaser.GameObjects.Container {
       this._scene,
       [this._text, this._sprite],
       Settings.DURATION_ANIMATION_LETTER_BUTTON,
-      Settings.WHITE, Settings.PINK,
-      Settings.DARK_BLUE, Settings.WHITE
+      this._scene.config.colors.letterButtonInactive, this._scene.config.colors.letterButtonActive,
+      this._scene.config.colors.letterButtonInactiveText, this._scene.config.colors.letterButtonActiveText,
     )
   }
 
@@ -88,11 +88,11 @@ class LetterButton extends Phaser.GameObjects.Container {
 
   protected preUpdate(time: number, delta: number): void {
     if (this._activated && !this._check) {
-      this.scaleTween()
+      this.activeTween()
       this._check = true
     }
     if (!this._activated && this._check) {
-      this.normalTween()
+      this.inactiveTween()
       this._check = false
     }
   }

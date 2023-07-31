@@ -1,5 +1,6 @@
 import Interval from '../actions/Interval';
 import { modal, screen } from '../types/enums';
+import { IgameConfig } from './GameConfig';
 
 class Settings {
 
@@ -37,20 +38,6 @@ class Settings {
   public readonly WORD_STEP = 110  // ширина и высота одной клетки с отступом
   public readonly REDUCE_SCALE = 0.4  // уменьшение у текущего слова
 
-
-  // rgb цвета
-  public readonly WHITE = [255, 255, 255]
-  public readonly GREEN = [110, 190, 104]
-  public readonly ORANGE = [222, 153, 85]
-  public readonly PINK = [227, 109, 162]
-  public readonly DARK_BLUE = [45, 52, 75]
-  public readonly RED = [240, 85, 87]
-
-  // rgb16 цвета для бустеров
-  public readonly PINK_16 = 0xe36da2
-  public readonly BOOSTER_ACTIVE = 0x688ec4
-  public readonly BOOSTER_INACTIVE = 0x898989
-
   // кд бустеров
   public readonly BOOSTER_RANDOM_LETTER_TIME = 5
   public readonly BOOSTER_RANDOM_WORD_TIME = 5
@@ -60,6 +47,15 @@ class Settings {
   public sounds: Isounds;
   public interval: Interval;
   private _preloadConfig: IpreloadConfig;
+  private _gameConfig: IgameConfig;
+
+  public setGameConfig(config: IgameConfig): void {
+    this._gameConfig = config;
+  }
+
+  public getGameConfig(): IgameConfig {
+    return this._gameConfig;
+  }
 
   public setPreloadConfig(config: IpreloadConfig): void {
     this._preloadConfig = config;

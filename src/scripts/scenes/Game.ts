@@ -7,6 +7,7 @@ import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
+import { IgameConfig } from "../data/GameConfig";
 import Session from "../data/Session";
 import Settings from "../data/Settings";
 
@@ -34,9 +35,11 @@ class Game extends Phaser.Scene {
   public boosterRandomWord: BoosterRandomWord
   public boosterRandomLetter: BoosterRandomLetter
   public boosterSpecificLetter: BoosterSpecificLetter
+  public config: IgameConfig
 
   public init(): void {
     Session.clear()
+    this.config = Settings.getGameConfig()
     this.words = []
     this.letterButtons = []
     this.activeLetterButtons = []

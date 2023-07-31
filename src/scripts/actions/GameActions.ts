@@ -439,9 +439,9 @@ class GameActions {
 
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
-    this._scene.boosterSpecificLetter = new BoosterSpecificLetter(this._scene, x - 240, y - 130,).setTint(Settings.BOOSTER_ACTIVE)
-    this._scene.boosterRandomLetter = new BoosterRandomLetter(this._scene, x + 240, y - 130).setTint(Settings.BOOSTER_ACTIVE)
-    this._scene.boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(Settings.BOOSTER_ACTIVE)
+    this._scene.boosterSpecificLetter = new BoosterSpecificLetter(this._scene, x - 240, y - 130,).setTint(this._scene.config.colors.boosterActive_16)
+    this._scene.boosterRandomLetter = new BoosterRandomLetter(this._scene, x + 240, y - 130).setTint(this._scene.config.colors.boosterActive_16)
+    this._scene.boosterRandomWord = new BoosterRandomWord(this._scene, x + 240, y + 80).setTint(this._scene.config.colors.boosterActive_16)
 
     const boosterRandomLetterZone = Zone.createFromSprite(this._scene.boosterRandomLetter)
     const boosterRandomWordZone = Zone.createFromSprite(this._scene.boosterRandomWord)

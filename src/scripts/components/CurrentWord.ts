@@ -35,17 +35,36 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   public wrongAnimation(): void {
     this._startShakingAnimation()
-    this._startRedAnimation()
+    this._animations.push(Utils.createChangeColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.colors.defaultWord, this._scene.config.colors.wrongWord,
+      this._scene.config.colors.defaultWordText, this._scene.config.colors.wrongWordText,
+    ))
   }
 
   public repeatAnimation(): void {
-    this._startOrangeAnimation()
+    this._animations.push(Utils.createChangeColorAnimation(
+      this._scene,
+      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.colors.defaultWord, this._scene.config.colors.repeatWord,
+      this._scene.config.colors.defaultWordText, this._scene.config.colors.repeatWordText,
+      this._destroyCurrentWordWithDelay.bind(this)
+    ))
   }
 
   public solvedAnimation(x: number, y: number, type: wordDirection): void {
     this._startToWordAnimation(x, y, type)
     this.destroyAll()
-    this._startGreenAnimation()
+    this._animations.push(Utils.createChangeColorAnimation(
+      this._scene,
+      this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
+      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.colors.defaultWord, this._scene.config.colors.solveWord,
+      this._scene.config.colors.defaultWordText, this._scene.config.colors.solveWordText,
+    ))
   }
 
   public resetPosition(): void {
@@ -78,27 +97,6 @@ class CurrentWord extends Phaser.GameObjects.Container {
     }))
   }
 
-  private _startRedAnimation = () => {
-    this._animations.push(Utils.createChangeColorAnimation(
-      this._scene,
-      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      Settings.WHITE, Settings.RED,
-      Settings.DARK_BLUE, Settings.WHITE
-    ))
-  }
-
-  private _startOrangeAnimation = () => {
-    this._animations.push(Utils.createChangeColorAnimation(
-      this._scene,
-      this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      Settings.WHITE, Settings.ORANGE,
-      Settings.DARK_BLUE, Settings.WHITE,
-      this._destroyCurrentWordWithDelay.bind(this)
-    ))
-  }
-
   private _destroyCurrentWordWithDelay(): void {
     this._animations.push(this._scene.add.tween({
       targets: this,
@@ -106,16 +104,6 @@ class CurrentWord extends Phaser.GameObjects.Container {
       alpha: 1,
       onComplete: this.destroyAll.bind(this)
     }))
-  }
-
-  private _startGreenAnimation = () => {
-    this._animations.push(Utils.createChangeColorAnimation(
-      this._scene,
-      this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
-      Settings.WHITE, Settings.GREEN,
-      Settings.DARK_BLUE, Settings.WHITE,
-    ))
   }
 
   private _startToWordAnimation(x: number, y: number, type: wordDirection): void {

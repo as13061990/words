@@ -9,6 +9,7 @@ import User from '../data/User';
 import Api from '../data/Api';
 import Session from '../data/Session';
 import PreloadConfig from '../data/PreloadConfig';
+import GameConfig from '../data/GameConfig';
 
 class Boot extends Phaser.Scene {
   constructor() {
@@ -33,16 +34,18 @@ class Boot extends Phaser.Scene {
 
     this._checkUser();
     this._initLevels()
-    this._setupPreloadingConfig()
+    this._setupConfigs()
   }
 
   public preload(): void {
     this.load.image('loading', loading);
   }
 
-  private _setupPreloadingConfig(): void {
+  private _setupConfigs(): void {
     Settings.setPreloadConfig(PreloadConfig.get())
+    Settings.setGameConfig(GameConfig.get())
   }
+
 
   public update(): void {
     if (!this._fonts) return;

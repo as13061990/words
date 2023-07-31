@@ -52,7 +52,7 @@ class Ratings {
     const friendsZone = new Zone(this._scene, this._friends.getBounds().centerX, this._friends.getBounds().centerY, this._friends.getBounds().width + 20, this._friends.getBounds().height + 10).setOrigin(0.5, 0.5)
     friendsZone.downClickCallback = this._friendsCallback.bind(this)
 
-    this._rectangle = this._scene.add.rectangle(this._all.getBounds().centerX, this._all.getBounds().centerY, this._all.getBounds().width + 20, this._all.getBounds().height + 10, Settings.PINK_16).setOrigin(0.5, 0.5)
+    this._rectangle = this._scene.add.rectangle(this._all.getBounds().centerX, this._all.getBounds().centerY, this._all.getBounds().width + 20, this._all.getBounds().height + 10, 0xe36da2).setOrigin(0.5, 0.5)
     this._createRatingList()
     this._elements.push(this._rectangle, this._all, allZone, this._day, dayZone, this._friends, friendsZone)
   }

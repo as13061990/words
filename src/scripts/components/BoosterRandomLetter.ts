@@ -16,7 +16,7 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'BoosterRandomLetter')
+    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'boosterRandomLetter')
     this._text = this._scene.add.text(this.getBounds().centerX, this.getBounds().bottom + 20, Session.getBoosterRandomLetterTimer().toString(), {
       color: 'white',
       font: '30px Triomphe',
@@ -52,8 +52,8 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
     if (!this._text.visible && Session.getBoosterRandomLetterTimer() > 0 && Session.getIsActiveBoosterRandomLetter()) {
       this._text.setVisible(true)
-      this._icon.setTexture('BoosterRandomLetterInactive')
-      this.setTint(Settings.BOOSTER_INACTIVE)
+      this._icon.setTexture('boosterRandomLetterInactive')
+      this.setTint(this._scene.config.colors.boosterInactive_16)
     }
 
     if (this._text.visible && this._text.text !== Session.getBoosterRandomLetterTimer().toString()) {
@@ -62,8 +62,8 @@ class BoosterRandomLetter extends Phaser.GameObjects.Sprite {
 
     if (this._text.visible && Session.getBoosterRandomLetterTimer() === 0) {
       this._text.setVisible(false)
-      this._icon.setTexture('BoosterRandomLetter')
-      this.setTint(Settings.BOOSTER_ACTIVE)
+      this._icon.setTexture('boosterRandomLetter')
+      this.setTint(this._scene.config.colors.boosterActive_16)
       Session.setIsActiveBoosterRandomLetter(false)
     }
   }
