@@ -26,12 +26,12 @@ class Word extends Phaser.GameObjects.Container {
     this._scene.add.existing(this)
     if (this._type === wordDirection.VERTICAL) {
       this._word.split('').forEach((letter, i) => {
-        const sprite = this._scene.add.sprite(0, 0 + (i * Settings.WORD_STEP), 'word-letter')
+        const sprite = this._scene.add.sprite(0, 0 + (i * Settings.WORD_STEP), 'wordLetter')
         this.add(sprite)
       })
     } else {
       this._word.split('').forEach((letter, i) => {
-        const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP), 0, 'word-letter')
+        const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP), 0, 'wordLetter')
         this.add(sprite)
       })
     }

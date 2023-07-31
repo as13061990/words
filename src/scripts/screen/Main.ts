@@ -23,7 +23,7 @@ class Main {
     const title = this._scene.add.text(centerX, centerY - 400, 'Words', { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
     this._currentLevelIndex = Settings.getLevels().findIndex(el => el.id === Settings.getCurrentLevel().id ) 
 
-    const btnUp = new Button(this._scene, centerX, title.getBounds().bottom + 70, 'button-green')
+    const btnUp = new Button(this._scene, centerX, title.getBounds().bottom + 70, 'buttonGreen')
     btnUp.text = this._scene.add.text(btnUp.x, btnUp.y, '↑', {
       color: 'white',
       font: '50px Triomphe',
@@ -31,7 +31,7 @@ class Main {
     btnUp.setDisplaySize(btnUp.text.width + 15, btnUp.text.height + 15)
     btnUp.callback = this._lvlUp.bind(this)
 
-    this._btn = new Button(this._scene, centerX, btnUp.getBounds().bottom + 70, 'button-green')
+    this._btn = new Button(this._scene, centerX, btnUp.getBounds().bottom + 70, 'buttonGreen')
     const text = (Settings.getCurrentLevel().data.level + ' уровень').toUpperCase()
     this._btn.text = this._scene.add.text(this._btn.x, this._btn.y, text, {
       color: 'white',
@@ -44,7 +44,7 @@ class Main {
       font: '28px Triomphe',
     }).setOrigin(.5, .6).setDepth(11);
 
-    const btnDown = new Button(this._scene, centerX, this._currentLevelText.getBounds().bottom + 70, 'button-green')
+    const btnDown = new Button(this._scene, centerX, this._currentLevelText.getBounds().bottom + 70, 'buttonGreen')
     btnDown.text = this._scene.add.text(btnDown.x, btnDown.y, '↓', {
       color: 'white',
       font: '50px Triomphe',

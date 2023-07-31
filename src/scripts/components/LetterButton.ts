@@ -21,7 +21,7 @@ class LetterButton extends Phaser.GameObjects.Container {
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._sprite = this._scene.add.sprite(0, 0, 'letter-empty').setOrigin(.5, .5)
+    this._sprite = this._scene.add.sprite(0, 0, 'letterEmpty').setOrigin(.5, .5)
     this._text = this._scene.add.text(0, 0, (this._letter).toUpperCase(), {
       color: 'rgb(44,52,75)',
       font: '40px Triomphe',

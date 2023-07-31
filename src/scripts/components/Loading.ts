@@ -1,23 +1,3 @@
-import buttonGreen from '../../assets/images/button-green.png';
-import wordLetter from '../../assets/images/word-letter.png';
-import letterEmpty from '../../assets/images/letter-empty.png';
-import restartButtons from '../../assets/images/restart-buttons.png';
-import hummer from '../../assets/images/hummer.png';
-import hummerInactive from '../../assets/images/hummer-inactive.png';
-import lampInactive from '../../assets/images/lamp-inactive.png';
-import fingerInactive from '../../assets/images/finger-inactive.png';
-import lamp from '../../assets/images/lamp.png';
-import finger from '../../assets/images/finger.png';
-import boosterCircle from '../../assets/images/booster-circle.png';
-import star from '../../assets/images/star.png';
-import modal from '../../assets/images/modal.png';
-import blackPixel from '../../assets/images/black-pixel.png';
-import close from '../../assets/images/close.png';
-import avatar from '../../assets/images/avatar.jpg';
-
-
-
-// import sound from '../../assets/images/sound.mp3';
 class Loading {
   constructor(scene: Phaser.Scene) {
     this._scene = scene;
@@ -61,23 +41,7 @@ class Loading {
   }
 
   private _loadImages(): void {
-    this._scene.load.image('button-green', buttonGreen);
-    this._scene.load.image('word-letter', wordLetter);
-    this._scene.load.image('letter-empty', letterEmpty);
-    this._scene.load.image('restart-buttons', restartButtons);
 
-    this._scene.load.image('hummer', hummer);
-    this._scene.load.image('hummer-inactive', hummerInactive);
-    this._scene.load.image('lamp-inactive', lampInactive);
-    this._scene.load.image('finger-inactive', fingerInactive);
-    this._scene.load.image('lamp', lamp);
-    this._scene.load.image('finger', finger);
-    this._scene.load.image('booster-circle', boosterCircle);
-    this._scene.load.image('star', star);
-    this._scene.load.image('modal', modal);
-    this._scene.load.image('black-pixel', blackPixel);
-    this._scene.load.image('close', close);
-    this._scene.load.image('avatar', avatar);
   }
 
   private _loadSounds(): void {

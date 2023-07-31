@@ -46,8 +46,8 @@ class Settings {
   public readonly DARK_BLUE = [45, 52, 75]
   public readonly RED = [240, 85, 87]
 
-  public readonly PINK_16 = 0xe36da2
   // rgb16 цвета для бустеров
+  public readonly PINK_16 = 0xe36da2
   public readonly BOOSTER_ACTIVE = 0x688ec4
   public readonly BOOSTER_INACTIVE = 0x898989
 
@@ -59,6 +59,15 @@ class Settings {
 
   public sounds: Isounds;
   public interval: Interval;
+  private _preloadConfig: IpreloadConfig;
+
+  public setPreloadConfig(config: IpreloadConfig): void {
+    this._preloadConfig = config;
+  }
+
+  public getPreloadConfig(): IpreloadConfig {
+    return this._preloadConfig;
+  }
 
   public setScreen(screen: screen): screen {
     this._screen = screen;

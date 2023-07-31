@@ -55,14 +55,14 @@ class GameActions {
     Session.startLevel()
     this._level = Session.getLevel()
 
-    const btn = new Button(this._scene, centerX + 150, centerY - 600, 'button-green')
+    const btn = new Button(this._scene, centerX + 150, centerY - 600, 'buttonGreen')
     btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
       color: 'white',
       font: '40px Triomphe',
     }).setOrigin(.5, .6)
     btn.callback = this._back.bind(this)
 
-    const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'button-green')
+    const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
     btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
       color: 'white',
       font: '40px Triomphe',

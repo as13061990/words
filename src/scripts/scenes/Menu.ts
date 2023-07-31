@@ -12,10 +12,7 @@ class Menu extends Phaser.Scene {
   private _loading: boolean = false;
 
   public preload(): void {
-    if (this._loading === false) {
-      this._loading = true;
-      new Loading(this);
-    }
+
   }
 
   public create(): void {

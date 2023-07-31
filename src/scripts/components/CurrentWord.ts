@@ -179,7 +179,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _createWord(): void {
     const word = Session.getCurrentWord()
     word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, 'word-letter')
+      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, 'wordLetter')
       sprite.setScale(Settings.REDUCE_SCALE)
 
       const text = this._scene.add.text(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, (letter).toUpperCase(), {

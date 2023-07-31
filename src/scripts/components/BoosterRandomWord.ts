@@ -5,7 +5,7 @@ import Word from "./Word"
 
 class BoosterRandomWord extends Phaser.GameObjects.Sprite {
   constructor(scene: Game, x: number, y: number,) {
-    super(scene, x, y, 'booster-circle')
+    super(scene, x, y, 'boosterCircle')
     this._scene = scene
     this._build()
   }
@@ -17,7 +17,7 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
   private _build(): void {
     this._scene.add.existing(this)
-    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'lamp')
+    this._icon = this._scene.add.sprite(this.getBounds().centerX, this.getBounds().centerY, 'BoosterRandomWord')
     this._text = this._scene.add.text(this.getBounds().centerX, this.getBounds().bottom + 20, Session.getBoosterRandomWordTimer().toString(), {
       color: 'white',
       font: '30px Triomphe',
@@ -54,7 +54,7 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
     if (!this._text.visible && Session.getBoosterRandomWordTimer() > 0 && Session.getIsActiveBoosterRandomWord()) {
       this._text.setVisible(true)
-      this._icon.setTexture('lamp-inactive')
+      this._icon.setTexture('BoosterRandomWordInactive')
       this.setTint(Settings.BOOSTER_INACTIVE)
     }
 
@@ -64,7 +64,7 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
 
     if (this._text.visible && Session.getBoosterRandomWordTimer() === 0) {
       this._text.setVisible(false)
-      this._icon.setTexture('lamp')
+      this._icon.setTexture('BoosterRandomWord')
       this.setTint(Settings.BOOSTER_ACTIVE)
       Session.setIsActiveBoosterRandomWord(false)
     }

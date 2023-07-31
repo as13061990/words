@@ -7,6 +7,8 @@ import Sounds from '../actions/Sounds';
 import Settings from '../data/Settings';
 import User from '../data/User';
 import Api from '../data/Api';
+import Session from '../data/Session';
+import PreloadConfig from '../data/PreloadConfig';
 
 class Boot extends Phaser.Scene {
   constructor() {
@@ -31,10 +33,15 @@ class Boot extends Phaser.Scene {
 
     this._checkUser();
     this._initLevels()
+    this._setupPreloadingConfig()
   }
 
   public preload(): void {
     this.load.image('loading', loading);
+  }
+
+  private _setupPreloadingConfig(): void {
+    Settings.setPreloadConfig(PreloadConfig.get())
   }
 
   public update(): void {
@@ -44,7 +51,7 @@ class Boot extends Phaser.Scene {
     this._fonts = false;
     this._user = false;
     this._levels = false;
-    this.scene.launch('Menu');
+    this.scene.launch('Loading');
   }
 
   private async _checkUser(): Promise<void> {

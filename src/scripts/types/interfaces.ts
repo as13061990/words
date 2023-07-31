@@ -55,3 +55,13 @@ interface Iratings {
     allWords: IuserRating[]
   }
 }
+
+interface IpreloadConfig {
+  scene: string;
+  images: { [key: string]: string };
+  sounds: { [key: string]: string };
+}
+
+interface gameConfig {
+  
+}

@@ -6,6 +6,7 @@ import Menu from './scenes/Menu';
 import Settings from './data/Settings';
 import Utils from './data/Utils';
 import Game from './scenes/Game';
+import Loading from './scenes/Loading';
 
 window.onload = (): void => {
   setTimeout((): void => {
@@ -45,7 +46,7 @@ window.onload = (): void => {
         }
       },
       render: { transparent: true },
-      scene: [ Boot, Game, Menu]
+      scene: [ Boot, Game, Menu, Loading]
     }
     new Phaser.Game(config);
   }, 100);

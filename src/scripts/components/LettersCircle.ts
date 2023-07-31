@@ -23,7 +23,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
     this._scene.add.existing(this)
     this.lineStyle(25, 0x3f4a68, 1);
     this.strokeCircle(this._x, this._y, this._radius)
-    this._btnSprite = this._scene.add.sprite(this._x, this._y, 'restart-buttons')
+    this._btnSprite = this._scene.add.sprite(this._x, this._y, 'restartButtons')
     const zone = Zone.createFromSprite(this._btnSprite)
 
     zone.downClickCallback = () => {

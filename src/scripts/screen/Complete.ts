@@ -21,7 +21,7 @@ class Complete {
     const { centerX, centerY } = this._scene.cameras.main;
     const title = this._scene.add.text(centerX, centerY - 500, 'Поздравляем!', { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
 
-    this._btn = new Button(this._scene, centerX, centerY + 400, 'button-green')
+    this._btn = new Button(this._scene, centerX, centerY + 400, 'buttonGreen')
 
 
     const index = Settings.getLevels().findIndex(el => el.id === Settings.getCurrentLevel().id)
