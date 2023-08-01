@@ -1,0 +1,2 @@
+Конфиг для Loading устанавливается в Boot
+И достается из Settings.getPreloadConfig()

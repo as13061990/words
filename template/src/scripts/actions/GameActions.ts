@@ -62,6 +62,7 @@ class GameActions {
     }).setOrigin(.5, .6)
     btn.callback = this._back.bind(this)
 
+
     const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
     btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
       color: 'white',
@@ -621,10 +622,7 @@ class GameActions {
 
 
   private _rating(): void {
-    Settings.setModal(modal.RATING)
-    const newModal = new Modal(this._scene)
-    newModal.closeModalCallback = this._activeInteractive.bind(this)
-    this._disableInteractive()
+    console.log('Rating')
   }
 }
 

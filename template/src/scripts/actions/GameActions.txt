@@ -1,0 +1,11 @@
+В функцию rating нужно добавить код, который будет вызывать модалку и указать что контент в модалке будет рейтинги: Settings.setModal(modal.RATING)
+Так же нужно дизейблить все интерактивные блоки на Game сцене с помощью _disableInteractive()
+
+```
+  private _rating(): void {
+    Settings.setModal(modal.RATING)
+    const newModal = new Modal(this._scene)
+    newModal.closeModalCallback = this._activeInteractive.bind(this)
+    this._disableInteractive()
+  }
+```
