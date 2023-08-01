@@ -27,12 +27,12 @@ class Word extends Phaser.GameObjects.Container {
     this._scene.add.existing(this)
     if (this._type === wordDirection.VERTICAL) {
       this._word.split('').forEach((letter, i) => {
-        const sprite = this._scene.add.sprite(0, 0 + (i * Settings.WORD_STEP), 'wordLetter')
+        const sprite = this._scene.add.sprite(0, 0 + (i * this._scene.config.sizes.wordStep ), 'wordLetter')
         this.add(sprite)
       })
     } else {
       this._word.split('').forEach((letter, i) => {
-        const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP), 0, 'wordLetter')
+        const sprite = this._scene.add.sprite(0 + (i * this._scene.config.sizes.wordStep ), 0, 'wordLetter')
         this.add(sprite)
       })
     }
@@ -87,7 +87,7 @@ class Word extends Phaser.GameObjects.Container {
     this.setDepth(5)
     this._scene.add.tween({
       targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      duration: this._scene.config.durations.animationWordRepeatStep,
       scale: 1.09,
       ease: 'Power2',
       onComplete: this._repeatAnimatioStepBack.bind(this)
@@ -96,7 +96,7 @@ class Word extends Phaser.GameObjects.Container {
     Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
-      Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      this._scene.config.durations.animationWordRepeatStep,
       this._scene.config.colors.solveWord, this._scene.config.colors.repeatWord,
       this._scene.config.colors.solveWordText, this._scene.config.colors.repeatWordText,
       this._repeatAnimatioStepBack.bind(this)
@@ -106,7 +106,7 @@ class Word extends Phaser.GameObjects.Container {
   private _repeatAnimatioStepBack(): void {
     this._scene.add.tween({
       targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      duration: this._scene.config.durations.animationWordRepeatStep,
       scale: 1,
       ease: 'Power2',
       onComplete: () => {
@@ -117,7 +117,7 @@ class Word extends Phaser.GameObjects.Container {
     Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
-      Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      this._scene.config.durations.animationWordRepeatStep,
       this._scene.config.colors.repeatWord, this._scene.config.colors.solveWord,
       this._scene.config.colors.repeatWordText, this._scene.config.colors.solveWordText,
     )
@@ -125,13 +125,13 @@ class Word extends Phaser.GameObjects.Container {
 
   private _standartSolvedAnimation(): void {
     this._scene.time.addEvent({
-      delay: Settings.DELAY_ANIMATION_WORD_STANDART_SOLVED, callback: (): void => {
+      delay: this._scene.config.delays.animationWordStandartSolved, callback: (): void => {
         this.setDepth(2)
         this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
           if (element instanceof Phaser.GameObjects.Sprite) {
             element.setTint(0x6ebe68)
-            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
-            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            const x = this._type === 'horizontal' ? (index * this._scene.config.sizes.wordStep ) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * this._scene.config.sizes.wordStep )
             this._createLetter(x, y, index)
           }
         })
@@ -141,12 +141,12 @@ class Word extends Phaser.GameObjects.Container {
 
   private _boosterWordSolvedAnimation(): void {
     this._scene.time.addEvent({
-      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => {
+      delay: this._scene.config.durations.animationBooster, callback: (): void => {
         this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
           if (element instanceof Phaser.GameObjects.Sprite) {
             this._startBoosterWordSolvedAnimation()
-            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
-            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            const x = this._type === 'horizontal' ? (index * this._scene.config.sizes.wordStep ) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * this._scene.config.sizes.wordStep )
             this._createLetter(x, y, index)
           }
         })
@@ -157,24 +157,24 @@ class Word extends Phaser.GameObjects.Container {
   private _boosterLettersSolvedAnimation(): void {
     this.setDepth(5)
     this._scene.add.tween({
-      delay: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+      delay: this._scene.config.durations.animationWordRepeatStep,
       targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      duration: this._scene.config.durations.animationWordBoosterSolvedStep,
       scale: 1.09,
       ease: 'Power2',
       onStart: () => {
         this.list.forEach((element: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text, index) => {
           if (element instanceof Phaser.GameObjects.Sprite) {
             this._startBoosterWordSolvedAnimation()
-            const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
-            const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+            const x = this._type === 'horizontal' ? (index * this._scene.config.sizes.wordStep ) : 0
+            const y = this._type === 'horizontal' ? 0 : (index * this._scene.config.sizes.wordStep )
             this._createLetter(x, y, index)
           }
         })
         Utils.createChangeColorAnimation(
           this._scene,
           this.list as (Phaser.GameObjects.Sprite)[],
-          Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          this._scene.config.durations.animationWordBoosterSolvedStep,
           this._scene.config.colors.solveLetter, this._scene.config.colors.solveWord,
           this._scene.config.colors.solveLetterText, this._scene.config.colors.solveWordText,
         )
@@ -182,7 +182,7 @@ class Word extends Phaser.GameObjects.Container {
       onComplete: () => {
         this._scene.add.tween({
           targets: this.list,
-          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          duration: this._scene.config.durations.animationWordBoosterSolvedStep,
           scale: 1,
           ease: 'Power2',
         })
@@ -197,19 +197,19 @@ class Word extends Phaser.GameObjects.Container {
     Utils.createChangeSpriteColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
-      Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      this._scene.config.durations.animationWordBoosterSolvedStep,
       this._scene.config.colors.defaultWord,  this._scene.config.colors.solveWord,
     )
 
     this._scene.add.tween({
       targets: this.list,
-      duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+      duration: this._scene.config.durations.animationWordBoosterSolvedStep,
       scale: 1.09,
       ease: 'Power2',
       onComplete: () => {
         this._scene.add.tween({
           targets: this.list,
-          duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+          duration: this._scene.config.durations.animationWordBoosterSolvedStep,
           scale: 1,
           ease: 'Power2',
         })
@@ -226,17 +226,17 @@ class Word extends Phaser.GameObjects.Container {
     })
     arrWithOnlySprites[index].setDepth(5)
     this._scene.time.addEvent({
-      delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => {
+      delay: this._scene.config.durations.animationBooster, callback: (): void => {
         this._scene.add.tween({
           targets: arrWithOnlySprites[index],
-          duration: Settings.DURATION_ANIMATION_WORD_REPEAT_STEP,
+          duration: this._scene.config.durations.animationWordRepeatStep,
           scale: 1.09,
           ease: 'Power2',
           onStart: () => {
             Utils.createChangeColorAnimation(
               this._scene,
               [arrWithOnlySprites[index]],
-              Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+              this._scene.config.durations.animationWordBoosterSolvedStep,
               this._scene.config.colors.defaultWord, this._scene.config.colors.solveLetter,
               this._scene.config.colors.defaultWordText, this._scene.config.colors.solveLetterText,
             )
@@ -244,7 +244,7 @@ class Word extends Phaser.GameObjects.Container {
           onComplete: () => {
             this._scene.add.tween({
               targets: arrWithOnlySprites[index],
-              duration: Settings.DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP,
+              duration: this._scene.config.durations.animationWordBoosterSolvedStep,
               scale: 1,
               ease: 'Power2',
             })
@@ -255,8 +255,8 @@ class Word extends Phaser.GameObjects.Container {
           }
         })
 
-        const x = this._type === 'horizontal' ? (index * Settings.WORD_STEP) : 0
-        const y = this._type === 'horizontal' ? 0 : (index * Settings.WORD_STEP)
+        const x = this._type === 'horizontal' ? (index * this._scene.config.sizes.wordStep ) : 0
+        const y = this._type === 'horizontal' ? 0 : (index * this._scene.config.sizes.wordStep )
 
         this._createLetter(x, y, index)
       }, loop: false

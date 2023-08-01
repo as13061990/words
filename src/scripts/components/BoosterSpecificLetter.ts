@@ -35,7 +35,7 @@ class BoosterSpecificLetter extends Phaser.GameObjects.Sprite {
         targets: star,
         x: this._letter.getBounds().centerX,
         y: this._letter.getBounds().centerY,
-        duration: Settings.DURATION_ANIMATION_BOOSTER,
+        duration: this._scene.config.durations.animationBooster,
         ease: 'Power1',
         onComplete: () => star.destroy()
       })

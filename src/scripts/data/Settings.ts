@@ -9,37 +9,16 @@ class Settings {
     minHeight: 1367,
     maxHeight: 2500
   }
+  
+  public sounds: Isounds;
+  public interval: Interval;
+
   private _modal: modal = null;
   private _screen: screen = screen.MAIN;
   private _mobile: boolean = false;
   private _levels: Ilevel[] = []
   private _currentLevel: Ilevel = null
 
-  public readonly DURATION_ANIMATION_WORD_STANDART_SOLVED = 600 // анимация решенного слова 
-  public readonly DURATION_ANIMATION_BOOSTER = 1000 // анимация от бустера к слову
-  public readonly DURATION_ANIMATION_WORD_BOOSTER_SOLVED_STEP = 310  // 1 шаг (их 2) анимации решенного слова от бустера
-  public readonly DURATION_ANIMATION_SHUFFLE_STEP = 200 // 1 шаг (их 2) анимации перемешиванния слов
-  public readonly DURATION_ANIMATION_LETTER_BUTTON = 280 // анимация кнопки с буквой
-  public readonly DURATION_ANIMATION_SHUFFLE_BUTTON = 100 // анимация кнопки перемешки
-  public readonly DURATION_ANIMATION_WORD_REPEAT_STEP = 310 // 1 шаг(их2) анимации повторения у слова
-  public readonly DURATION_ANIMATION_ENDLEVELRECTANGLE = 800 // анимация завршения уровня
-  public readonly DURATION_ANIMATION_CURRENTWORD_WRONG_STEP = 60 // 1 шаг(их3) анимации неправильного слова у текущего слова
-  public readonly DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE = 130 //  анимация изменения цвета у текущего слова
-  public readonly DURATION_ANIMATION_CURRENTWORD_SOLVED_DESTOY = 100 //  анимация разрушения решенного у текущего слова
-
-  public readonly DELAY_ANIMATION_CURRENTWORD_DESTROY = 500 //  анимация разрушения у текущего слова
-  public readonly DELAY_ANIMATION_WORD_STANDART_SOLVED = 650 // задержка анимации решенного слова 
-  public readonly DELAY_ANIMATION_ENDLEVELRECTANGLE = 1200 // задержка анимации завершения уровня
-
-  public readonly DURATION_ANIMATION_MODAL_STEP_1 = 400  // 1 шаг(их2) анимации модалки
-  public readonly DURATION_ANIMATION_MODAL_STEP_2 = 100  // 2 шаг(их2) анимации модалки
-
-
-  public readonly WORD_STEP = 110  // ширина и высота одной клетки с отступом
-  public readonly REDUCE_SCALE = 0.4  // уменьшение у текущего слова
-
-  public sounds: Isounds;
-  public interval: Interval;
   private _preloadConfig: IpreloadConfig;
   private _gameConfig: IgameConfig;
 

@@ -34,7 +34,7 @@ class BoosterRandomWord extends Phaser.GameObjects.Sprite {
           targets: star,
           x: el.getBounds().centerX,
           y: el.getBounds().centerY,
-          duration: Settings.DURATION_ANIMATION_BOOSTER,
+          duration: this._scene.config.durations.animationBooster,
           ease: 'Power1',
           onComplete: () => star.destroy()
         })

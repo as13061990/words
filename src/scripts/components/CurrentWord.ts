@@ -38,7 +38,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.durations.animationCurrentWordColorChange,
       this._scene.config.colors.defaultWord, this._scene.config.colors.wrongWord,
       this._scene.config.colors.defaultWordText, this._scene.config.colors.wrongWordText,
     ))
@@ -48,7 +48,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.durations.animationCurrentWordColorChange,
       this._scene.config.colors.defaultWord, this._scene.config.colors.repeatWord,
       this._scene.config.colors.defaultWordText, this._scene.config.colors.repeatWordText,
       this._destroyCurrentWordWithDelay.bind(this)
@@ -61,7 +61,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
     this._animations.push(Utils.createChangeColorAnimation(
       this._scene,
       this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
-      Settings.DURATION_ANIMATION_CURRENTWORD_COLOR_CHANGE,
+      this._scene.config.durations.animationCurrentWordColorChange,
       this._scene.config.colors.defaultWord, this._scene.config.colors.solveWord,
       this._scene.config.colors.defaultWordText, this._scene.config.colors.solveWordText,
     ))
@@ -74,20 +74,20 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   private _startShakingAnimation = () => {
     const { centerX } = this._scene.cameras.main
-    const x = centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (this.list.length / 4) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2)
+    const x = centerX - (this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale * (this.list.length / 4) - this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale / 2)
     this._animations.push(this._scene.add.tween({
       targets: this,
-      duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
+      duration: this._scene.config.durations.animationCurrentWordWrongStep,
       x: x + 12,
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
-          duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
+          duration: this._scene.config.durations.animationCurrentWordWrongStep,
           x: x - 12,
           onComplete: () => {
             this._animations.push(this._scene.add.tween({
               targets: this,
-              duration: Settings.DURATION_ANIMATION_CURRENTWORD_WRONG_STEP,
+              duration: this._scene.config.durations.animationCurrentWordWrongStep,
               x: x,
               onComplete: this._destroyCurrentWordWithDelay.bind(this)
             }))
@@ -100,7 +100,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _destroyCurrentWordWithDelay(): void {
     this._animations.push(this._scene.add.tween({
       targets: this,
-      duration: Settings.DELAY_ANIMATION_CURRENTWORD_DESTROY,
+      duration: this._scene.config.delays.animationCurrentWordDestroy,
       alpha: 1,
       onComplete: this.destroyAll.bind(this)
     }))
@@ -123,11 +123,11 @@ class CurrentWord extends Phaser.GameObjects.Container {
       x: x,
       y: y,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
+      duration: this._scene.config.durations.animationWordStandartSolved,
       onComplete: () => {
         this._animations.push(this._scene.add.tween({
           targets: this,
-          duration: Settings.DURATION_ANIMATION_CURRENTWORD_SOLVED_DESTOY,
+          duration: this._scene.config.durations.animationCurrentWordSolvedDestroy,
           scale: this.scale,
           onComplete: () => {
             this._copyContainer.removeAll(true)
@@ -146,8 +146,8 @@ class CurrentWord extends Phaser.GameObjects.Container {
           targets: [el, texts[i]],
           scale: this._scene.words[0].scale,
           ease: 'Power2',
-          x: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
-          duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
+          x: 0 + (i * this._scene.config.sizes.wordStep * this._scene.words[0].scale),
+          duration: this._scene.config.durations.animationWordStandartSolved,
         })
       })
     } else {
@@ -156,9 +156,9 @@ class CurrentWord extends Phaser.GameObjects.Container {
           targets: [el, texts[i]],
           scale: this._scene.words[0].scale,
           ease: 'Power2',
-          y: 0 + (i * Settings.WORD_STEP * this._scene.words[0].scale),
+          y: 0 + (i * this._scene.config.sizes.wordStep * this._scene.words[0].scale),
           x: 0,
-          duration: Settings.DURATION_ANIMATION_WORD_STANDART_SOLVED,
+          duration: this._scene.config.durations.animationWordStandartSolved,
         })
       })
     }
@@ -167,19 +167,19 @@ class CurrentWord extends Phaser.GameObjects.Container {
   private _createWord(): void {
     const word = Session.getCurrentWord()
     word.split('').forEach((letter, i) => {
-      const sprite = this._scene.add.sprite(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, 'wordLetter')
-      sprite.setScale(Settings.REDUCE_SCALE)
+      const sprite = this._scene.add.sprite(0 + (i * this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale), 0, 'wordLetter')
+      sprite.setScale(this._scene.config.sizes.reduceScale)
 
-      const text = this._scene.add.text(0 + (i * Settings.WORD_STEP * Settings.REDUCE_SCALE), 0, (letter).toUpperCase(), {
+      const text = this._scene.add.text(0 + (i * this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale), 0, (letter).toUpperCase(), {
         color: 'rgb(44,52,75)',
         font: '60px Triomphe',
       }).setOrigin(0.5, 0.5)
-      text.setScale(Settings.REDUCE_SCALE)
+      text.setScale(this._scene.config.sizes.reduceScale)
 
       this.add([sprite, text])
       const { centerX } = this._scene.cameras.main
 
-      this.setPosition(centerX - (Settings.WORD_STEP * Settings.REDUCE_SCALE * (word.length / 2) - Settings.WORD_STEP * Settings.REDUCE_SCALE / 2), this._scene.lettersCircle.getPosition().y - 230)
+      this.setPosition(centerX - (this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale * (word.length / 2) - this._scene.config.sizes.wordStep * this._scene.config.sizes.reduceScale / 2), this._scene.lettersCircle.getPosition().y - 230)
     })
   }
 

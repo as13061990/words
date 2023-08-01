@@ -37,7 +37,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
       targets: this._btnSprite,
       scale: 0.9,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_SHUFFLE_BUTTON,
+      duration: this._scene.config.durations.animationShuffleButton,
       onComplete: this._scaleAnimation.bind(this)
     })
   }
@@ -47,7 +47,7 @@ class LettersCircle extends Phaser.GameObjects.Graphics {
       targets: this._btnSprite,
       scale: 1,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_SHUFFLE_BUTTON,
+      duration: this._scene.config.durations.animationShuffleButton,
     })
   }
 

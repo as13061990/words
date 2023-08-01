@@ -1,17 +1,18 @@
 import Settings from "../data/Settings"
 import Ratings from "../modals/Ratings"
+import Game from "../scenes/Game"
 import { modal } from "../types/enums"
 import Zone from "./Zone"
 
 class Modal extends Phaser.GameObjects.Container {
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Game) {
     const { centerX, centerY } = scene.cameras.main
     super(scene, centerX, -1500)
     this._scene = scene
     this._build()
   }
 
-  private _scene: Phaser.Scene
+  private _scene: Game
   private _content: Ratings
   public sprite: Phaser.GameObjects.Sprite
   public overlay: Phaser.GameObjects.Sprite
@@ -45,11 +46,12 @@ class Modal extends Phaser.GameObjects.Container {
   }
 
   private _startOverlayAnimation(): void {
+    this._scene.config.durations.animationModalStepSecond
     this._scene.add.tween({
       targets: this.overlay,
       alpha: 0.7,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_MODAL_STEP_1 + Settings.DURATION_ANIMATION_MODAL_STEP_2,
+      duration: this._scene.config.durations.animationModalStepFirst + this._scene.config.durations.animationModalStepSecond,
     })
   }
 
@@ -58,7 +60,7 @@ class Modal extends Phaser.GameObjects.Container {
       targets: this.overlay,
       alpha: 0,
       ease: 'Power2',
-      duration: Settings.DURATION_ANIMATION_MODAL_STEP_1 + Settings.DURATION_ANIMATION_MODAL_STEP_2,
+      duration: this._scene.config.durations.animationModalStepFirst + this._scene.config.durations.animationModalStepSecond,
       onComplete: () => {
         this.overlay.destroy()
       }
@@ -72,14 +74,14 @@ class Modal extends Phaser.GameObjects.Container {
       x: centerX,
       y: centerY + 100,
       ease: 'Power1',
-      duration: Settings.DURATION_ANIMATION_MODAL_STEP_1,
+      duration: this._scene.config.durations.animationModalStepFirst,
       onComplete: () => {
         this._scene.tweens.add({
           targets: this,
           x: centerX,
           y: centerY,
           ease: 'Power1',
-          duration: Settings.DURATION_ANIMATION_MODAL_STEP_2,
+          duration: this._scene.config.durations.animationModalStepSecond,
         })
       }
     })
@@ -92,14 +94,14 @@ class Modal extends Phaser.GameObjects.Container {
       x: centerX,
       y: centerY + 100,
       ease: 'Power1',
-      duration: Settings.DURATION_ANIMATION_MODAL_STEP_2,
+      duration: this._scene.config.durations.animationModalStepSecond,
       onComplete: () => {
         this._scene.tweens.add({
           targets: this,
           x: centerX,
           y: -1000,
           ease: 'Power1',
-          duration: Settings.DURATION_ANIMATION_MODAL_STEP_1,
+          duration: this._scene.config.durations.animationModalStepFirst,
           onComplete: () => {
             this.removeAll(true)
             this.destroy()

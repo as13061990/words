@@ -151,7 +151,7 @@ class GameActions {
 
       const space = width - 200;
       const length = configLevel[0].length
-      scale = space / (Settings.WORD_STEP * length);
+      scale = space / (this._scene.config.sizes.wordStep * length);
 
       const startY = this._scene.title.getBounds().bottom + 20
       const endY = this._scene.currentWord.y - 60 - (configLevel.length * 8)
@@ -159,7 +159,7 @@ class GameActions {
 
       const spaceY = Math.abs(endY - startY)
       const lengthY = configLevel.length
-      const scaleY = spaceY / (Settings.WORD_STEP * lengthY);
+      const scaleY = spaceY / (this._scene.config.sizes.wordStep * lengthY);
 
       if (scaleY < scale) {
         scale = scaleY
@@ -171,16 +171,16 @@ class GameActions {
 
       vertical.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionX) - Settings.WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionY) - Settings.WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (this._scene.config.sizes.wordStep * scale)) + (this._scene.config.sizes.wordStep * scale * word.positionX) - this._scene.config.sizes.wordStep * scale / 2,
+          centerY - (configLevel.length / 2 * (this._scene.config.sizes.wordStep * scale)) + (this._scene.config.sizes.wordStep * scale * word.positionY) - this._scene.config.sizes.wordStep * scale / 2,
           wordDirection.VERTICAL).setScale(scale)
         this._scene.words.push(newWord)
       })
 
       horizontal.forEach((word, i) => {
         const newWord = new Word(this._scene, word.word,
-          centerX - (configLevel[0].length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionX) - Settings.WORD_STEP * scale / 2,
-          centerY - (configLevel.length / 2 * (Settings.WORD_STEP * scale)) + (Settings.WORD_STEP * scale * word.positionY) - Settings.WORD_STEP * scale / 2,
+          centerX - (configLevel[0].length / 2 * (this._scene.config.sizes.wordStep * scale)) + (this._scene.config.sizes.wordStep * scale * word.positionX) - this._scene.config.sizes.wordStep * scale / 2,
+          centerY - (configLevel.length / 2 * (this._scene.config.sizes.wordStep * scale)) + (this._scene.config.sizes.wordStep * scale * word.positionY) - this._scene.config.sizes.wordStep * scale / 2,
           wordDirection.HORIZONTAL).setScale(scale)
         this._scene.words.push(newWord)
       })
@@ -194,7 +194,7 @@ class GameActions {
         return a.localeCompare(b);
       });
       wordsStringArr.forEach((word, i) => {
-        this._scene.words.push(new Word(this._scene, word, centerX - (Settings.WORD_STEP * (word.length / 2) - Settings.WORD_STEP / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
+        this._scene.words.push(new Word(this._scene, word, centerX - (this._scene.config.sizes.wordStep * (word.length / 2) - this._scene.config.sizes.wordStep / 2), this._scene.title.getBounds().bottom + 80 + (i * 110), wordDirection.HORIZONTAL))
       })
 
     }
@@ -235,7 +235,7 @@ class GameActions {
         ease: 'Exponential.easeOut',
         x: this._scene.lettersCircle.getPosition().x,
         y: this._scene.lettersCircle.getPosition().y,
-        duration: Settings.DURATION_ANIMATION_SHUFFLE_STEP,
+        duration: this._scene.config.durations.animationShuffleStep,
         onComplete: () => {
           const shuffledButtons = Phaser.Utils.Array.Shuffle(this._scene.letterButtons.slice());
           shuffledButtons.forEach((button, i) => {
@@ -248,7 +248,7 @@ class GameActions {
               ease: 'Exponential.easeOut',
               x,
               y,
-              duration: Settings.DURATION_ANIMATION_SHUFFLE_STEP,
+              duration: this._scene.config.durations.animationShuffleStep,
               onComplete: () => this._shuffleAnimation = false
             });
           });
@@ -433,7 +433,7 @@ class GameActions {
 
   private _createEndLevelRectangle(): void {
     const { centerX, centerY, height, width } = this._scene.cameras.main
-    this._scene.endLevelRectangle = new EndLevelRectangle(this._scene, centerX, centerY, width, height, 0x2d344b)
+    this._scene.endLevelRectangle = new EndLevelRectangle(this._scene, centerX, centerY, width, height, this._scene.config.colors.endLevelRectangle_16)
     this._scene.endLevelRectangle.endAnimationCallback = this._complete.bind(this)
   }
 
@@ -568,7 +568,7 @@ class GameActions {
       Session.addToCompletedWords(word.getWord().toLowerCase())
       Session.setLastWordFromBooster(true)
       this._scene.time.addEvent({
-        delay: Settings.DURATION_ANIMATION_BOOSTER, callback: (): void => { Session.setLastWordFromBooster(false) },
+        delay: this._scene.config.durations.animationBooster, callback: (): void => { Session.setLastWordFromBooster(false) },
         loop: false
       })
     }

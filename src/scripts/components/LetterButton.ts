@@ -34,14 +34,14 @@ class LetterButton extends Phaser.GameObjects.Container {
       targets: [this, this._text],
       scaleX: 1,
       scaleY: 1,
-      duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
+      duration:  this._scene.config.durations.animationLetterButton,
       ease: 'Power2',
     })
 
     Utils.createChangeColorAnimation(
       this._scene,
       [this._text, this._sprite],
-      Settings.DURATION_ANIMATION_LETTER_BUTTON,
+       this._scene.config.durations.animationLetterButton,
       this._scene.config.colors.letterButtonActive, this._scene.config.colors.letterButtonInactive,
       this._scene.config.colors.letterButtonActiveText, this._scene.config.colors.letterButtonInactiveText
     )
@@ -53,14 +53,14 @@ class LetterButton extends Phaser.GameObjects.Container {
       targets: [this, this._text],
       scaleX: 1.2,
       scaleY: 1.2,
-      duration: Settings.DURATION_ANIMATION_LETTER_BUTTON,
+      duration:  this._scene.config.durations.animationLetterButton,
       ease: 'Power2',
     })
-
+    this._scene.config.durations.animationLetterButton
     Utils.createChangeColorAnimation(
       this._scene,
       [this._text, this._sprite],
-      Settings.DURATION_ANIMATION_LETTER_BUTTON,
+       this._scene.config.durations.animationLetterButton,
       this._scene.config.colors.letterButtonInactive, this._scene.config.colors.letterButtonActive,
       this._scene.config.colors.letterButtonInactiveText, this._scene.config.colors.letterButtonActiveText,
     )
