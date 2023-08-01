@@ -29,8 +29,8 @@ interface IgameConfig {
 
     boosterActive_16: number; // цвет активного бустера в 16ричном формате
     boosterInactive_16: number; // цвет неактивного бустера в 16ричном формат
-
     endLevelRectangle_16: number; // цвет прямуогольника который появляется в конце уровня в 16ричном формат
+    buttonLine_16: number; // цвет линии у кнопок букв в 16ричном формат
   },
 
   //перезарядки
@@ -74,9 +74,7 @@ const RED: rgbArr = [240, 85, 87]
 const BOOSTER_ACTIVE = 0x688ec4
 const BOOSTER_INACTIVE: number = 0x898989
 const END_LEVEL_RECTANGLE: number = 0x2d344b
-
-
-
+const BUTTON_LINE: number = 0x568cbd
 
 class GameConfig {
 
@@ -109,6 +107,7 @@ class GameConfig {
       boosterActive_16: BOOSTER_ACTIVE,
       boosterInactive_16: BOOSTER_INACTIVE,
       endLevelRectangle_16: END_LEVEL_RECTANGLE,
+      buttonLine_16: BUTTON_LINE
     },
 
     cooldowns: {

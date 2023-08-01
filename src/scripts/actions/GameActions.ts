@@ -37,20 +37,20 @@ class GameActions {
     const { centerX, centerY } = this._scene.cameras.main
     this._letterButtonsZones = []
     //
-    const lvlProgress = Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 8)
-    switch (lvlProgress) {
-      case 0:
-        break;
-      case 1:
-        this._scene.cameras.main.setBackgroundColor('#543964')
-        break;
-      case 2:
-        this._scene.cameras.main.setBackgroundColor('#320a18')
-        break;
-      case 3:
-        this._scene.cameras.main.setBackgroundColor('#320a18')
-        break;
-    }
+    // const lvlProgress = Math.floor((Settings.getLevels().findIndex(el => el === Settings.getCurrentLevel())) / 8)
+    // switch (lvlProgress) {
+    //   case 0:
+    //     break;
+    //   case 1:
+    //     this._scene.cameras.main.setBackgroundColor('#543964')
+    //     break;
+    //   case 2:
+    //     this._scene.cameras.main.setBackgroundColor('#320a18')
+    //     break;
+    //   case 3:
+    //     this._scene.cameras.main.setBackgroundColor('#320a18')
+    //     break;
+    // }
     //
     Session.startLevel()
     this._level = Session.getLevel()
@@ -62,12 +62,13 @@ class GameActions {
     }).setOrigin(.5, .6)
     btn.callback = this._back.bind(this)
 
-    const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
-    btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
-      color: 'white',
-      font: '40px Triomphe',
-    }).setOrigin(.5, .6)
-    btnRating.callback = this._rating.bind(this)
+    // добавление кнопки для рейтинга
+    // const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
+    // btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
+    //   color: 'white',
+    //   font: '40px Triomphe',
+    // }).setOrigin(.5, .6)
+    // btnRating.callback = this._rating.bind(this)
 
     this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
 
@@ -82,7 +83,7 @@ class GameActions {
     this._createBoosters()
   }
 
-  private _getWords(): { horizontal: any[], vertical: any[] } {
+  private _getWords(): IwordsFromConfig {
     const configLevel = Session.getLevelConfig()
     const words = Session.getLevelWords()
     const verticalWords = [];
@@ -137,7 +138,6 @@ class GameActions {
         word = '';
       }
     });
-    console.log({ horizontal: horizontalWords, vertical: verticalWords })
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
@@ -262,7 +262,7 @@ class GameActions {
     this._scene.letterButtonsLine.graphicCircleStart = this._scene.add.graphics().setDepth(6);;
     this._scene.letterButtonsLine.graphicCircleEnd = this._scene.add.graphics().setDepth(6);
     this._scene.letterButtonsLine.graphicCircleMid = this._scene.add.graphics().setDepth(6);;
-    this._scene.letterButtonsLine.line = this._scene.add.graphics({ lineStyle: { width: 30, color: 0x568cbd } }).setDepth(6);;
+    this._scene.letterButtonsLine.line = this._scene.add.graphics({ lineStyle: { width: 30, color: this._scene.config.colors.buttonLine_16 } }).setDepth(6);;
     this._scene.input.on('pointermove', (pointer) => {
       if (this._scene.activeLetterButtons.length > 0) {
         this._scene.letterButtonsLine.pointsMouse.splice(0)
@@ -276,7 +276,7 @@ class GameActions {
         }
 
         let circle = new Phaser.Geom.Circle(pointer.x, pointer.y, 1);
-        this._scene.letterButtonsLine.graphicCircleEnd.lineStyle(28, 0x568cbd);
+        this._scene.letterButtonsLine.graphicCircleEnd.lineStyle(28, this._scene.config.colors.buttonLine_16);
         this._scene.letterButtonsLine.graphicCircleEnd.strokeCircleShape(circle);
 
         const pointerPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
@@ -323,7 +323,7 @@ class GameActions {
 
             this._scene.letterButtonsLine.graphicCircleMid.clear()
             let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-            this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
+            this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, this._scene.config.colors.buttonLine_16);
             this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
           }
         }
@@ -375,7 +375,7 @@ class GameActions {
 
     if (first) {
       let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-      this._scene.letterButtonsLine.graphicCircleStart.lineStyle(28, 0x568cbd);
+      this._scene.letterButtonsLine.graphicCircleStart.lineStyle(28, this._scene.config.colors.buttonLine_16);
       this._scene.letterButtonsLine.graphicCircleStart.strokeCircleShape(circle);
 
       const point = new Phaser.Math.Vector2(button.getBounds().centerX, button.getBounds().centerY);
@@ -386,7 +386,7 @@ class GameActions {
 
       this._scene.letterButtonsLine.graphicCircleMid.clear()
       let circle = new Phaser.Geom.Circle(button.getBounds().centerX, button.getBounds().centerY, 1);
-      this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, 0x568cbd);
+      this._scene.letterButtonsLine.graphicCircleMid.lineStyle(29, this._scene.config.colors.buttonLine_16);
       this._scene.letterButtonsLine.graphicCircleMid.strokeCircleShape(circle);
     }
   }
@@ -620,12 +620,13 @@ class GameActions {
     Settings.setScreen(screen.MAIN)
   }
 
-  private _rating(): void {
-    Settings.setModal(modal.RATING)
-    const newModal = new Modal(this._scene)
-    newModal.closeModalCallback = this._activeInteractive.bind(this)
-    this._disableInteractive()
-  }
+  //** Вызов модалки с рейтингом */
+  // private _rating(): void {
+  //   Settings.setModal(modal.RATING)
+  //   const newModal = new Modal(this._scene)
+  //   newModal.closeModalCallback = this._activeInteractive.bind(this)
+  //   this._disableInteractive()
+  // }
 }
 
 export default GameActions

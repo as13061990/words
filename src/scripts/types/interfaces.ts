@@ -38,6 +38,16 @@ interface IbuttonsLine {
   pointsMouse: Phaser.Math.Vector2[]
 }
 
+interface IwordFromConfig {
+  word: string;
+  positionX: number;
+  positionY: number;
+}
+
+interface IwordsFromConfig {
+  horizontal: IwordFromConfig[];
+  vertical: IwordFromConfig[];
+}
 
 interface IuserRating {
   place: number,

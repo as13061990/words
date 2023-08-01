@@ -48,19 +48,19 @@ class Complete {
     const lvlProgressPrecentPrev = Math.floor((index % 8) * 100 / 8)
 
     const lvlProgressPrev = Math.floor((index) / 8)
-    switch (lvlProgressPrev) {
-      case 0:
-        break;
-      case 1:
-        this._scene.cameras.main.setBackgroundColor('#543964')
-        break;
-      case 2:
-        this._scene.cameras.main.setBackgroundColor('#320a18')
-        break;
-      case 3:
-        this._scene.cameras.main.setBackgroundColor('#320a18')
-        break;
-    }
+    // switch (lvlProgressPrev) {
+    //   case 0:
+    //     break;
+    //   case 1:
+    //     this._scene.cameras.main.setBackgroundColor('#543964')
+    //     break;
+    //   case 2:
+    //     this._scene.cameras.main.setBackgroundColor('#320a18')
+    //     break;
+    //   case 3:
+    //     this._scene.cameras.main.setBackgroundColor('#320a18')
+    //     break;
+    // }
 
 
     const circleY = centerY - 200
