@@ -1,11 +1,11 @@
-В функцию rating нужно добавить код, который будет вызывать модалку и указать что контент в модалке будет рейтинги: Settings.setModal(modal.RATING)
-Так же нужно дизейблить все интерактивные блоки на Game сцене с помощью _disableInteractive()
+В функции _complete находится завершение уровня
+В нем вызывался экран
+
+Чтобы вызвать экран:
 
 ```
-  private _rating(): void {
-    Settings.setModal(modal.RATING)
-    const newModal = new Modal(this._scene)
-    newModal.closeModalCallback = this._activeInteractive.bind(this)
-    this._disableInteractive()
-  }
+    this._scene.scene.start('Menu')
+    Settings.setScreen(screen.COMPLETE)
 ```
+
+В функции _rating находится вызов модалки с котнентом рейтингов

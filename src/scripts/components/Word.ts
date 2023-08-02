@@ -1,5 +1,4 @@
-import Settings from "../data/Settings"
-import Utils from "../data/Utils"
+import GameUtils from "../actions/GameUtils"
 import Game from "../scenes/Game"
 import { solvedWord, wordDirection } from "../types/enums"
 
@@ -93,7 +92,7 @@ class Word extends Phaser.GameObjects.Container {
       onComplete: this._repeatAnimatioStepBack.bind(this)
     })
 
-    Utils.createChangeColorAnimation(
+    GameUtils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       this._scene.config.durations.animationWordRepeatStep,
@@ -114,7 +113,7 @@ class Word extends Phaser.GameObjects.Container {
       }
     })
 
-    Utils.createChangeColorAnimation(
+    GameUtils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       this._scene.config.durations.animationWordRepeatStep,
@@ -171,7 +170,7 @@ class Word extends Phaser.GameObjects.Container {
             this._createLetter(x, y, index)
           }
         })
-        Utils.createChangeColorAnimation(
+        GameUtils.createChangeColorAnimation(
           this._scene,
           this.list as (Phaser.GameObjects.Sprite)[],
           this._scene.config.durations.animationWordBoosterSolvedStep,
@@ -194,7 +193,7 @@ class Word extends Phaser.GameObjects.Container {
   private _startBoosterWordSolvedAnimation(): void {
     this.setDepth(5)
 
-    Utils.createChangeSpriteColorAnimation(
+    GameUtils.createChangeSpriteColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite)[],
       this._scene.config.durations.animationWordBoosterSolvedStep,
@@ -233,7 +232,7 @@ class Word extends Phaser.GameObjects.Container {
           scale: 1.09,
           ease: 'Power2',
           onStart: () => {
-            Utils.createChangeColorAnimation(
+            GameUtils.createChangeColorAnimation(
               this._scene,
               [arrWithOnlySprites[index]],
               this._scene.config.durations.animationWordBoosterSolvedStep,

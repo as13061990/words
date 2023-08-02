@@ -1,3 +1,4 @@
+import GameUtils from "../actions/GameUtils"
 import Session from "../data/Session"
 import Settings from "../data/Settings"
 import Utils from "../data/Utils"
@@ -38,7 +39,7 @@ class LetterButton extends Phaser.GameObjects.Container {
       ease: 'Power2',
     })
 
-    Utils.createChangeColorAnimation(
+    GameUtils.createChangeColorAnimation(
       this._scene,
       [this._text, this._sprite],
        this._scene.config.durations.animationLetterButton,
@@ -57,7 +58,7 @@ class LetterButton extends Phaser.GameObjects.Container {
       ease: 'Power2',
     })
     this._scene.config.durations.animationLetterButton
-    Utils.createChangeColorAnimation(
+    GameUtils.createChangeColorAnimation(
       this._scene,
       [this._text, this._sprite],
        this._scene.config.durations.animationLetterButton,

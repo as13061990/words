@@ -1,4 +1,5 @@
 import GameActions from "../actions/GameActions";
+import GameInteval from "../actions/GameInteval";
 import BoosterRandomLetter from "../components/BoosterRandomLetter";
 import BoosterRandomWord from "../components/BoosterRandomWord";
 import BoosterSpecificLetter from "../components/BoosterSpecificLetter";
@@ -40,6 +41,7 @@ class Game extends Phaser.Scene {
   public init(): void {
     Session.clear()
     this.config = Settings.getGameConfig()
+    Session.gameInterval = new GameInteval(this);
     this.words = []
     this.letterButtons = []
     this.activeLetterButtons = []

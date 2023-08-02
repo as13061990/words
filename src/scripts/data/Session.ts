@@ -1,7 +1,12 @@
+import GameInteval from "../actions/GameInteval"
 import { currentWordType } from "../types/enums"
+import GameConfig from "./GameConfig"
 import Settings from "./Settings"
 
 class Session {
+
+  public gameInterval: GameInteval
+
   private _currentWord: string = ""
   private _currentWordType: currentWordType = currentWordType.DEFAULT
   private _levelComplete: boolean = false
@@ -134,15 +139,15 @@ class Session {
   }
 
   public setIsActiveBoosterRandomWord(active: boolean): void {
-    if (active) this._boosterRandomWordTimer = Settings.getGameConfig().cooldowns.boosterRandomWord
+    if (active) this._boosterRandomWordTimer = GameConfig.get().cooldowns.boosterRandomWord
     this._isActiveBoosterRandomWord = active
   }
   public setIsActiveBoosterRandomLetter(active: boolean): void {
-    if (active) this._boosterRandomLetterTimer = Settings.getGameConfig().cooldowns.boosterRandomLetter
+    if (active) this._boosterRandomLetterTimer = GameConfig.get().cooldowns.boosterRandomLetter
     this._isActiveBoosterRandomLetter = active
   }
   public setIsActiveBoosterSpecificLetter(active: boolean): void {
-    if (active) this._boosterSpecificLetterTimer = Settings.getGameConfig().cooldowns.boosterSpecificLetter
+    if (active) this._boosterSpecificLetterTimer = GameConfig.get().cooldowns.boosterSpecificLetter
     this._isActiveBoosterSpecificLetter = active
   }
 

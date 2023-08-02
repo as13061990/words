@@ -1,8 +1,9 @@
+import { wordDirection } from "../actions/GameActions";
+import GameUtils from "../actions/GameUtils";
 import Session from "../data/Session";
-import Settings from "../data/Settings";
 import Utils from "../data/Utils";
 import Game from "../scenes/Game";
-import { currentWordType, wordDirection } from "../types/enums";
+
 
 
 class CurrentWord extends Phaser.GameObjects.Container {
@@ -35,7 +36,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
 
   public wrongAnimation(): void {
     this._startShakingAnimation()
-    this._animations.push(Utils.createChangeColorAnimation(
+    this._animations.push(GameUtils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       this._scene.config.durations.animationCurrentWordColorChange,
@@ -45,7 +46,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   }
 
   public repeatAnimation(): void {
-    this._animations.push(Utils.createChangeColorAnimation(
+    this._animations.push(GameUtils.createChangeColorAnimation(
       this._scene,
       this.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       this._scene.config.durations.animationCurrentWordColorChange,
@@ -58,7 +59,7 @@ class CurrentWord extends Phaser.GameObjects.Container {
   public solvedAnimation(x: number, y: number, type: wordDirection): void {
     this._startToWordAnimation(x, y, type)
     this.destroyAll()
-    this._animations.push(Utils.createChangeColorAnimation(
+    this._animations.push(GameUtils.createChangeColorAnimation(
       this._scene,
       this._copyContainer.list as (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text)[],
       this._scene.config.durations.animationCurrentWordColorChange,

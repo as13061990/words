@@ -1,14 +1,13 @@
 import Session from '../data/Session';
-import Boot from '../scenes/BootExample';
 import Game from '../scenes/Game';
 
-class Interval {
-  constructor(scene: Boot) {
+class GameInteval {
+  constructor(scene: Game) {
     this._scene = scene;
     this.init();
   }
 
-  private _scene: Boot;
+  private _scene: Game;
   private _loop: Phaser.Time.TimerEvent;
 
   private init(): void {
@@ -26,4 +25,4 @@ class Interval {
   }
 }
 
-export default Interval;
+export default GameInteval;

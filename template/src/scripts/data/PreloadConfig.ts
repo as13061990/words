@@ -20,7 +20,7 @@ import avatar from '../../assets/images/avatar.jpg';
 
 class PreloadConfig {
   private _data: IpreloadConfig = {
-    "scene": "Menu",
+    "scene": "Game",
     "images": {
       buttonGreen: buttonGreen,
       wordLetter: wordLetter,
