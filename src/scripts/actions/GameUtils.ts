@@ -1,3 +1,5 @@
+import Session from "../data/Session";
+
 class GameUtils {
 
   public static createChangeSpriteColorAnimation(
@@ -76,6 +78,64 @@ class GameUtils {
       },
       onComplete: onComplete
     })
+  }
+
+  public static getWords(): IwordsFromConfig {
+    const configLevel = Session.getLevelConfig()
+    const words = Session.getLevelWords()
+    const verticalWords = [];
+
+    for (let col = 0; col < configLevel[0].length; col++) {
+      let word = '';
+      let first = -1;
+      for (let row = 0; row < configLevel.length; row++) {
+        if (configLevel[row][col] !== 0) {
+          if (first === -1) first = row + 1;
+          word += configLevel[row][col];
+        } else if (word !== '') {
+          if (words.includes(word)) {
+            verticalWords.push({ word: word, positionX: col + 1, positionY: first });
+          }
+          word = '';
+          first = -1;
+        }
+      }
+      if (word !== '') {
+        if (words.includes(word)) {
+          verticalWords.push({ word: word, positionX: col + 1, positionY: first });
+        }
+      }
+    }
+
+    const horizontalWords = [];
+    let word = '';
+
+    configLevel.forEach((row, i) => {
+      let first = -1;
+
+      row.forEach((letter, j) => {
+        if (letter !== 0) {
+          if (first === -1) first = j + 1;
+          word += letter;
+        } else {
+          if (word.length > 0) {
+            if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
+              horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
+            }
+            word = '';
+            first = -1;
+          }
+        }
+      });
+
+      if (word.length > 0) {
+        if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
+          horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
+        }
+        word = '';
+      }
+    });
+    return { horizontal: horizontalWords, vertical: verticalWords }
   }
 }
 

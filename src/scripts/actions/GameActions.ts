@@ -13,6 +13,7 @@ import Session from "../data/Session";
 import Settings from "../data/Settings";
 import Game from "../scenes/Game";
 import { currentWordType, solvedWord, screen, wordDirection, modal } from "../types/enums";
+import GameUtils from "./GameUtils";
 
 interface IsolvedWord {
   x: number
@@ -82,70 +83,12 @@ class GameActions {
     this._createBoosters()
   }
 
-  private _getWords(): IwordsFromConfig {
-    const configLevel = Session.getLevelConfig()
-    const words = Session.getLevelWords()
-    const verticalWords = [];
-
-    for (let col = 0; col < configLevel[0].length; col++) {
-      let word = '';
-      let first = -1;
-      for (let row = 0; row < configLevel.length; row++) {
-        if (configLevel[row][col] !== 0) {
-          if (first === -1) first = row + 1;
-          word += configLevel[row][col];
-        } else if (word !== '') {
-          if (words.includes(word)) {
-            verticalWords.push({ word: word, positionX: col + 1, positionY: first });
-          }
-          word = '';
-          first = -1;
-        }
-      }
-      if (word !== '') {
-        if (words.includes(word)) {
-          verticalWords.push({ word: word, positionX: col + 1, positionY: first });
-        }
-      }
-    }
-
-    const horizontalWords = [];
-    let word = '';
-
-    configLevel.forEach((row, i) => {
-      let first = -1;
-
-      row.forEach((letter, j) => {
-        if (letter !== 0) {
-          if (first === -1) first = j + 1;
-          word += letter;
-        } else {
-          if (word.length > 0) {
-            if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
-              horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
-            }
-            word = '';
-            first = -1;
-          }
-        }
-      });
-
-      if (word.length > 0) {
-        if (words.includes(word) && !horizontalWords.some(el => el.word === word)) {
-          horizontalWords.push({ word: word, positionY: i + 1, positionX: first });
-        }
-        word = '';
-      }
-    });
-    return { horizontal: horizontalWords, vertical: verticalWords }
-  }
-
   private _createWords(): void {
     const { centerX, width } = this._scene.cameras.main
     const configLevel = Session.getLevelConfig()
 
     if (configLevel.length > 0) {
-      const { horizontal, vertical } = this._getWords()
+      const { horizontal, vertical } = GameUtils.getWords()
       let scale = 1
 
       const space = width - 200;
@@ -557,8 +500,8 @@ class GameActions {
 
   private _isMatchingSprite(spriteA, spriteB): boolean {
     return (
-      Math.floor(spriteA.getBounds().centerX) === Math.floor(spriteB.getBounds().centerX) &&
-      Math.floor(spriteA.getBounds().centerY) === Math.floor(spriteB.getBounds().centerY)
+      Math.abs(spriteA.getBounds().centerX - spriteB.getBounds().centerX) < 2 && 
+      Math.abs(spriteA.getBounds().centerY - spriteB.getBounds().centerY) < 2
     );
   }
 
