@@ -1,5 +1,5 @@
 import GameActions from "../actions/GameActions";
-import GameInteval from "../actions/GameInteval";
+import GameInteval from "../actions/GameInterval";
 import BoosterRandomLetter from "../components/BoosterRandomLetter";
 import BoosterRandomWord from "../components/BoosterRandomWord";
 import BoosterSpecificLetter from "../components/BoosterSpecificLetter";
@@ -8,9 +8,17 @@ import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
 import Word from "../components/Word";
-import { IgameConfig } from "../data/GameConfig";
+import GameConfig, { IgameConfig } from "../data/GameConfig";
 import Session from "../data/Session";
-import Settings from "../data/Settings";
+
+interface IbuttonsLine {
+  graphicCircleStart: Phaser.GameObjects.Graphics | null
+  graphicCircleEnd: Phaser.GameObjects.Graphics | null
+  graphicCircleMid: Phaser.GameObjects.Graphics | null
+  line: Phaser.GameObjects.Graphics | null
+  points: Phaser.Math.Vector2[]
+  pointsMouse: Phaser.Math.Vector2[]
+}
 
 class Game extends Phaser.Scene {
   constructor() {
@@ -40,7 +48,7 @@ class Game extends Phaser.Scene {
 
   public init(): void {
     Session.clear()
-    this.config = Settings.getGameConfig()
+    this.config = GameConfig.get()
     Session.gameInterval = new GameInteval(this);
     this.words = []
     this.letterButtons = []

@@ -1,7 +1,14 @@
-import GameInteval from "../actions/GameInteval"
-import { currentWordType } from "../types/enums"
+import GameInteval from "../actions/GameInterval"
 import GameConfig from "./GameConfig"
-import Settings from "./Settings"
+
+
+export enum currentWordType {
+  DEFAULT = 'default',
+  WRONG = 'wrong',
+  SOLVED = 'solved',
+  REPEAT = 'repeat'
+}
+
 
 class Session {
 
@@ -10,7 +17,7 @@ class Session {
   private _currentWord: string = ""
   private _currentWordType: currentWordType = currentWordType.DEFAULT
   private _levelComplete: boolean = false
-  private _level: number = null
+  private _level: number | null = null
   private _levelWords: string[] = []
   private _levelCompletedWords: string[] = []
   private _levelLetters: string[] = []
@@ -26,10 +33,32 @@ class Session {
   private _boosterSpecificLetterTimer: number = 0
 
   public startLevel(): void {
-    this._levelWords = Settings.getCurrentLevel().data.words
-    this._levelLetters = Settings.getCurrentLevel().data.letters
-    if (Settings.getCurrentLevel().data?.config?.length > 0) {
-      this._levelConfig = Settings.getCurrentLevel().data.config
+    
+    // this._levelWords = Settings.getCurrentLevel().data.words
+    // this._levelLetters = Settings.getCurrentLevel().data.letters
+    // if (Settings.getCurrentLevel().data?.config?.length > 0) {
+    //   this._levelConfig = Settings.getCurrentLevel().data.config
+    // }
+
+    const data = {
+      id: '1',
+      data:
+      {
+        level: 1,
+        words: ['тест', 'тост', 'сто', 'тесто'],
+        letters: ['т', 'е', 'с', 'о', 'т'],
+        config: [[0, 'т', 0, 0, 0, 0],
+        ['т', 'е', 'с', 'т', 0, 0],
+        [0, 'с', 0, 'о', 0, 0],
+        [0, 'т', 0, 'с', 'т', 'о'],
+        [0, 'о', 0, 'т', 0, 0]]
+      }
+    }  
+    this._levelWords = data.data.words
+    this._level = data.data.level
+    this._levelLetters = data.data.letters
+    if (data.data?.config?.length > 0) {
+      this._levelConfig = data.data.config
     }
   }
 
@@ -68,7 +97,7 @@ class Session {
     this._level = level
   }
 
-  public getLevel(): number {
+  public getLevel(): number | null {
     return this._level
   }
 

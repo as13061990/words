@@ -1,6 +1,7 @@
+import { solvedWord, wordDirection } from "../actions/GameActions"
 import GameUtils from "../actions/GameUtils"
+import Utils from "../data/Utils"
 import Game from "../scenes/Game"
-import { solvedWord, wordDirection } from "../types/enums"
 
 class Word extends Phaser.GameObjects.Container {
   constructor(scene: Game, word: string, x: number, y: number, type?: wordDirection,) {

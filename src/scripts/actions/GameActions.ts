@@ -6,13 +6,55 @@ import CurrentWord from "../components/CurrentWord";
 import EndLevelRectangle from "../components/EndLevelRectangle";
 import LetterButton from "../components/LetterButton";
 import LettersCircle from "../components/LettersCircle";
-import Modal from "../components/Modal";
 import Word from "../components/Word";
 import Zone from "../components/Zone";
-import Session from "../data/Session";
-import Settings from "../data/Settings";
+import Session, { currentWordType } from "../data/Session";
 import Game from "../scenes/Game";
-import { currentWordType, solvedWord, screen, wordDirection, modal } from "../types/enums";
+
+
+export enum modal {
+  RATING
+}
+
+export enum solvedWord {
+  STANDART,
+  BOOSTER_WORD,
+  BOOSTER_LETTER
+}
+
+
+export enum wordDirection {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical'
+}
+
+export interface Ilevel {
+  id: string
+  data: {
+    level: number;
+    words: string[];
+    letters: string[];
+    config?: ((string | number)[])[];
+  }
+}
+
+interface IlevelResponse {
+  id: string
+  data: string
+}
+
+
+interface IwordFromConfig {
+  word: string;
+  positionX: number;
+  positionY: number;
+}
+
+interface IwordsFromConfig {
+  horizontal: IwordFromConfig[];
+  vertical: IwordFromConfig[];
+}
+
 
 interface IsolvedWord {
   x: number
@@ -27,7 +69,7 @@ class GameActions {
   }
 
   private _scene: Game;
-  private _level: number
+  private _level: number | null
   private _centerYLettersCircle: number
   private _shuffleAnimation: boolean = false
   private _solvedWord: IsolvedWord = { x: null, y: null, type: null }
@@ -55,19 +97,20 @@ class GameActions {
     Session.startLevel()
     this._level = Session.getLevel()
 
-    const btn = new Button(this._scene, centerX + 150, centerY - 600, 'buttonGreen')
-    btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
-      color: 'white',
-      font: '40px Triomphe',
-    }).setOrigin(.5, .6)
-    btn.callback = this._back.bind(this)
+    // const btn = new Button(this._scene, centerX + 150, centerY - 600, 'buttonGreen')
+    // btn.text = this._scene.add.text(btn.x, btn.y, ('назад').toUpperCase(), {
+    //   color: 'white',
+    //   font: '40px Triomphe',
+    // }).setOrigin(.5, .6)
+    // btn.callback = this._back.bind(this)
 
-    const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
-    btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
-      color: 'white',
-      font: '40px Triomphe',
-    }).setOrigin(.5, .6)
-    btnRating.callback = this._rating.bind(this)
+
+    // const btnRating = new Button(this._scene, centerX - 150, centerY - 600, 'buttonGreen')
+    // btnRating.text = this._scene.add.text(btnRating.x, btnRating.y, 'Рейтинг'.toUpperCase(), {
+    //   color: 'white',
+    //   font: '40px Triomphe',
+    // }).setOrigin(.5, .6)
+    // btnRating.callback = this._rating.bind(this)
 
     this._scene.title = this._scene.add.text(centerX, centerY - 500, `Уровень ${this._level}`, { color: 'white', fontSize: '80px', fontFamily: 'Triomphe' }).setOrigin(0.5, 0.5)
 
@@ -82,13 +125,18 @@ class GameActions {
     this._createBoosters()
   }
 
+
+  /**
+    * Функция, которая вызывается, когда есть конфиг для кроссворда и преобразует его в удобны формат работы, чтобы отрисовать кроссворд
+    * Возвращает IwordsFromConfig
+    */
   private _getWords(): IwordsFromConfig {
     const configLevel = Session.getLevelConfig()
     const words = Session.getLevelWords()
     const verticalWords = [];
 
     for (let col = 0; col < configLevel[0].length; col++) {
-      let word = '';
+      let word: string = '';
       let first = -1;
       for (let row = 0; row < configLevel.length; row++) {
         if (configLevel[row][col] !== 0) {
@@ -140,6 +188,11 @@ class GameActions {
     return { horizontal: horizontalWords, vertical: verticalWords }
   }
 
+  /**
+  * Функция, которая рисует кроссворд
+  * Если нет конфига, то просто сверху вниз
+  * Если есть конфиг то уже рисует полноценный кроссворд на основе данных из функции getWords()
+  */
   private _createWords(): void {
     const { centerX, width } = this._scene.cameras.main
     const configLevel = Session.getLevelConfig()
@@ -199,17 +252,28 @@ class GameActions {
     }
   }
 
+  /**
+    * Функция, которая создаем компонент текущего слова
+    * Текущее слово отрисовывает введенные пользователем слова
+    */
   private _createCurrentWord(): void {
     this._scene.currentWord = new CurrentWord(this._scene)
   }
 
+  /**
+    * Функция, которая создает круг на котором будут кнопки для ввода слов
+    */
   private _createLettersCircle(): void {
     const { centerX, height } = this._scene.cameras.main
     this._centerYLettersCircle = height - 240
     this._scene.lettersCircle = new LettersCircle(this._scene, centerX, this._centerYLettersCircle)
   }
 
-
+  /**
+    * Функция, которая рисует кнопки букв для ввода на круге
+    * Для формулы нужно иметь центр круга
+    * Также автоматически расставляются на равном расстоянии друг от друга вне зависимости от кол-ва
+    */
   private _createLetterButtons(): void {
     const letters = Session.getLevelLetters()
     const circle = this._scene.lettersCircle
@@ -222,6 +286,10 @@ class GameActions {
     })
   }
 
+  /**
+    * Функция, которая добавляет логику для перемешки кнопок букв
+    * Сначала они отправляются в центр, а потом уже от центра для каждой кнопки создается анимация до новой позиции
+    */
   private _addLogicToShuffleButtonsBtn(): void {
     if (!this._shuffleAnimation) {
       const circle = this._scene.lettersCircle;
@@ -257,6 +325,14 @@ class GameActions {
 
   }
 
+  /**
+    * Функция, которая добавляет логику для линии ввода которая приследует мышку
+    * graphicCircleStart, graphicCircleEnd, graphicCircleMid нужны для сглаживания начала, конца линии, а так же промежуточных точках на кнопках
+    * line - сама линия
+    * если есть активные кнопки, то при движении мышки график стирается и рисуется заново на основе точек, где находится мышка
+    * а также на основе точек активируемых кнопок букв
+    * вся мягий находится в curve и strokePoints()
+    */
   private _addLogicToLetterButtonsLine(): void {
     this._scene.letterButtonsLine.graphicCircleStart = this._scene.add.graphics().setDepth(6);;
     this._scene.letterButtonsLine.graphicCircleEnd = this._scene.add.graphics().setDepth(6);
@@ -286,6 +362,12 @@ class GameActions {
     });
   }
 
+  /**
+   * Функция, которая добавляет логику кнопок букв для ввода
+   * downClickCallback - при первом клике
+   * hoverOn - при наведении на другую кнопку
+   * upCallback - при отпускании мышки
+   */
   private _addLogicToLetterButtons(): void {
     this._scene.letterButtons.forEach((button, i) => {
       const zone = new Zone(this._scene, 0, 0, button.getSprite().width, button.getSprite().height)
@@ -298,11 +380,19 @@ class GameActions {
   }
 
 
-
+  /**
+   * Функция, которая срабатывает при клике на кнопку буквы
+   */
   private _letterButtonDownClickCallback(button: LetterButton): void {
     if (this._shuffleAnimation) return
     this._activateLetterButton(button, true)
   }
+
+  /**
+   * Функция, которая вызывается при ховере на кнопку буквы
+   * Если кнопка неактивна, то просто активирует ее
+   * Если эта кнопка активирована то идут проверки на предпоследнюю активную кнопку, чтобы деактвировать последнюю активную кнопку буквы
+   */
 
   private _letterButtonHoverOnCallback(button: LetterButton): void {
     if (Session.getCurrentWord().length > 0) {
@@ -329,6 +419,12 @@ class GameActions {
       }
     }
   }
+
+  /**
+ * Функция, которая вызывает при отпуске мышки
+ * Где идут проверки, является ли слово решенным, ошибочным, повторным
+ * Если это решенное слово, то нужны кординаты слова
+ */
 
   private _letterButtonUpCallback(button: LetterButton): void {
     if (button.getActivated()) {
@@ -366,6 +462,14 @@ class GameActions {
     }
   }
 
+  /**
+     * Функция, которая активирует кнопку буквы
+     * Входные данные это сама кнопка и является ли она первой
+     * Добавляет букву в текущее слово 
+     * Активирует кнопку
+     * Остальные манипуляции для линии ввода
+     */
+
   private _activateLetterButton(button: LetterButton, first: boolean): void {
     const letter = button.getLetter()
     Session.addLetterToCurrentWord(letter)
@@ -390,6 +494,9 @@ class GameActions {
     }
   }
 
+  /**
+ * Функция, которая чистит линнию ввода
+ */
   private _clearLetterButtonsLine(): void {
     this._scene.letterButtonsLine.graphicCircleStart.clear()
     this._scene.letterButtonsLine.graphicCircleEnd.clear()
@@ -400,6 +507,9 @@ class GameActions {
     this._scene.letterButtonsLine.pointsMouse.splice(0)
   }
 
+  /**
+  * Функция, которая деактивирует все кнопки букв
+  */
   private _deactivateAllLetterButtons(): void {
     this._scene.letterButtons.forEach((btn) => {
       if (btn.getActivated()) {
@@ -408,6 +518,10 @@ class GameActions {
     })
     this._scene.activeLetterButtons = []
   }
+
+  /**
+  * Функция, которая проверяет слово и запускат нужные анимации
+  */
 
   private _startSpecificWordAnimation(): void {
     const { x, y, type } = this._solvedWord
@@ -430,12 +544,18 @@ class GameActions {
     }
   }
 
+  /**
+  * Функция, которая создает прямоугольник при завершении уровня
+  */
   private _createEndLevelRectangle(): void {
     const { centerX, centerY, height, width } = this._scene.cameras.main
     this._scene.endLevelRectangle = new EndLevelRectangle(this._scene, centerX, centerY, width, height, this._scene.config.colors.endLevelRectangle_16)
     this._scene.endLevelRectangle.endAnimationCallback = this._complete.bind(this)
   }
 
+  /**
+  * Функция, которая бустеры и их логику
+  */
   private _createBoosters(): void {
     const { x, y } = this._scene.lettersCircle.getPosition()
     this._scene.boosterSpecificLetter = new BoosterSpecificLetter(this._scene, x - 240, y - 130,).setTint(this._scene.config.colors.boosterActive_16)
@@ -610,21 +730,16 @@ class GameActions {
   }
 
   private _complete(): void {
-    this._scene.scene.start('Menu')
-    Settings.setScreen(screen.COMPLETE)
+    console.log('Complete screen')
   }
 
   private _back(): void {
-    this._scene.scene.start('Menu')
-    Settings.setScreen(screen.MAIN)
+    console.log('Main screen')
   }
 
 
   private _rating(): void {
-    Settings.setModal(modal.RATING)
-    const newModal = new Modal(this._scene)
-    newModal.closeModalCallback = this._activeInteractive.bind(this)
-    this._disableInteractive()
+    console.log('Rating modal')
   }
 }
 

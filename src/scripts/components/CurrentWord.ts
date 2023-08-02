@@ -1,9 +1,9 @@
+import { wordDirection } from "../actions/GameActions";
 import GameUtils from "../actions/GameUtils";
 import Session from "../data/Session";
-import Settings from "../data/Settings";
 import Utils from "../data/Utils";
 import Game from "../scenes/Game";
-import { currentWordType, wordDirection } from "../types/enums";
+
 
 
 class CurrentWord extends Phaser.GameObjects.Container {
